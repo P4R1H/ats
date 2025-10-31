@@ -1,0 +1,17 @@
+{
+  "weights": {
+    "skills": 0.4,
+    "experience": 0.3,
+    "education": 0.2,
+    "certification": 0.05,
+    "leadership": 0.05
+  },
+  "education_scores": {
+    "PhD": 100,
+    "Master's": 85,
+    "Bachelor's": 70,
+    "Diploma": 50,
+    "Not Specified": 40
+  },
+  "version": "1.0"
+}

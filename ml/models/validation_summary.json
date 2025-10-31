@@ -1,0 +1,19 @@
+{
+  "Dataset": {
+    "Total Candidates": 495,
+    "Features Used": 9
+  },
+  "Clustering": {
+    "Number of Clusters": 8,
+    "Average Silhouette Score": 0.3307241121424085
+  },
+  "Scoring": {
+    "Average Score": "30.83/100",
+    "Score Range": "-2.28 - 86.31",
+    "Standard Deviation": "19.37"
+  },
+  "Top Performers": {
+    "Top 10%": 50,
+    "Top 25%": 124
+  }
+}
