@@ -8,7 +8,6 @@ This script creates realistic resume data with:
 - Education backgrounds
 - Realistic text content
 """
-
 import pandas as pd
 import numpy as np
 import random
