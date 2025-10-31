@@ -1,0 +1,15 @@
+KEY INSIGHTS & FINDINGS
+================================================================================
+
+1. Average candidate score is 30.83/100 (std: 19.37)
+
+2. Top 10% of candidates (50 resumes) have exceptional profiles
+
+3. Average skill diversity is 0.00% - candidates span 0.0% of skill categories
+
+4. Identified 8 distinct candidate clusters with good separation
+
+5. Education level impacts scores by up to 8.43 points
+
+6. Top performers have 0.8 skills vs -0.3 for others
+

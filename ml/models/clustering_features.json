@@ -1,0 +1,22 @@
+[
+  "Num_Skills",
+  "Experience_Years",
+  "Experience_Level_Encoded",
+  "Education_Level_Encoded",
+  "Skill_Diversity",
+  "Technical_Skills_Count",
+  "Technical_Ratio",
+  "Has_Certification_Encoded",
+  "Has_Leadership_Encoded",
+  "Num_Skills_is_outlier",
+  "Num_Companies_is_outlier",
+  "Num_programming_languages",
+  "Num_web_technologies",
+  "Num_databases",
+  "Num_data_science",
+  "Num_cloud_devops",
+  "Num_mobile",
+  "Num_design",
+  "Num_soft_skills",
+  "Num_other_technical"
+]
