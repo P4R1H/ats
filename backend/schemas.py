@@ -1,7 +1,8 @@
 """Pydantic schemas for request/response validation."""
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import List, Optional
 from datetime import datetime
+import json
 
 
 # User Schemas
@@ -82,6 +83,19 @@ class JobPostingResponse(JobPostingBase):
     created_at: datetime
     application_count: int = 0
 
+    @field_validator('required_skills', 'preferred_skills', mode='before')
+    @classmethod
+    def parse_skills_json(cls, v):
+        """Parse JSON string fields to lists."""
+        if v is None:
+            return []
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return []
+        return v
+
     class Config:
         from_attributes = True
 
@@ -129,6 +143,19 @@ class ApplicationResponse(BaseModel):
 
     status: str
     applied_at: datetime
+
+    @field_validator('extracted_skills', 'matched_skills', 'missing_skills', 'recommendations', mode='before')
+    @classmethod
+    def parse_json_field(cls, v):
+        """Parse JSON string fields to lists."""
+        if v is None:
+            return None
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return None
+        return v
 
     class Config:
         from_attributes = True
