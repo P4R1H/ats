@@ -229,7 +229,7 @@ export default function JobAnalyticsPage() {
       if (!clusterCounts[app.cluster_name]) {
         clusterCounts[app.cluster_name] = {
           count: 0,
-          description: app.cluster_description || 'No description',
+          description: app.cluster_description || '',
           avgScore: 0
         }
       }
@@ -782,7 +782,7 @@ export default function JobAnalyticsPage() {
                           <XAxis dataKey="range" stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                           <YAxis stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                           <Tooltip
-                            contentStyle={{ backgroundColor: 'white', border: '2px solid #fbbf24', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                            contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                           />
                           <ReferenceLine y={q1} label={`Q1: ${q1.toFixed(1)}`} stroke="#3b82f6" strokeDasharray="3 3" />
                           <ReferenceLine y={median} label={`Median: ${median.toFixed(1)}`} stroke="#10b981" strokeDasharray="3 3" />
@@ -817,7 +817,7 @@ export default function JobAnalyticsPage() {
                           <XAxis dataKey="component" stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                           <YAxis domain={[0, 100]} stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                           <Tooltip
-                            contentStyle={{ backgroundColor: 'white', border: '2px solid #a855f7', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                            contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                           />
                           <Bar dataKey="value" fill="url(#percentileGradient)" radius={[8, 8, 0, 0]} label={{ position: 'top', fill: '#6b7280', fontWeight: 600 }} />
                         </BarChart>
@@ -854,7 +854,7 @@ export default function JobAnalyticsPage() {
                           />
                           <Tooltip
                             cursor={{ strokeDasharray: '3 3' }}
-                            contentStyle={{ backgroundColor: 'white', border: '2px solid #3b82f6', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                            contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                           />
                           <Scatter data={scatterData} fill="#3b82f6" opacity={0.7} />
                         </ScatterChart>
@@ -904,7 +904,7 @@ export default function JobAnalyticsPage() {
                             <XAxis type="number" stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                             <YAxis dataKey="skill" type="category" width={120} stroke="#6b7280" style={{ fontSize: '11px', fontWeight: 600 }} />
                             <Tooltip
-                              contentStyle={{ backgroundColor: 'white', border: '2px solid #10b981', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                              contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                             />
                             <Bar dataKey="count" fill="url(#successGradient)" radius={[0, 8, 8, 0]} label={{ position: 'right', fill: '#6b7280', fontWeight: 600 }} />
                           </BarChart>
@@ -936,7 +936,7 @@ export default function JobAnalyticsPage() {
                           <YAxis yAxisId="left" stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                           <YAxis yAxisId="right" orientation="right" stroke="#10b981" style={{ fontSize: '12px', fontWeight: 600 }} />
                           <Tooltip
-                            contentStyle={{ backgroundColor: 'white', border: '2px solid #f59e0b', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                            contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                           />
                           <Legend />
                           <Bar yAxisId="left" dataKey="total" fill="url(#totalGradient)" radius={[8, 8, 0, 0]} name="Total Candidates" />
@@ -969,7 +969,7 @@ export default function JobAnalyticsPage() {
                           <XAxis dataKey="date" stroke="#6b7280" style={{ fontSize: '11px', fontWeight: 600 }} angle={-45} textAnchor="end" height={80} />
                           <YAxis stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                           <Tooltip
-                            contentStyle={{ backgroundColor: 'white', border: '2px solid #8b5cf6', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                            contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                           />
                           <Area type="monotone" dataKey="count" stroke="#8b5cf6" strokeWidth={3} fill="url(#timeGradient)" />
                         </AreaChart>
@@ -1021,7 +1021,7 @@ export default function JobAnalyticsPage() {
                               strokeWidth={2}
                             />
                             <Tooltip
-                              contentStyle={{ backgroundColor: 'white', border: '2px solid #3b82f6', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                              contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                             />
                           </RadarChart>
                         </ResponsiveContainer>
@@ -1054,7 +1054,7 @@ export default function JobAnalyticsPage() {
                             <XAxis type="number" stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
                             <YAxis dataKey="skill" type="category" width={100} stroke="#6b7280" style={{ fontSize: '11px', fontWeight: 600 }} />
                             <Tooltip
-                              contentStyle={{ backgroundColor: 'white', border: '2px solid #f59e0b', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                              contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                             />
                             <Bar dataKey="count" fill="url(#skillGradient)" radius={[0, 8, 8, 0]} label={{ position: 'right', fill: '#6b7280', fontWeight: 600 }} />
                           </BarChart>
@@ -1151,7 +1151,9 @@ export default function JobAnalyticsPage() {
                                   </div>
                                 </div>
                               </div>
-                              <p className="text-sm text-gray-600">{cluster.description}</p>
+                              {cluster.description && (
+                                <p className="text-sm text-gray-600">{cluster.description}</p>
+                              )}
                             </div>
                           ))}
                         </div>

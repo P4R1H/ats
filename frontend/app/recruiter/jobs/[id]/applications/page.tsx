@@ -234,14 +234,14 @@ export default function JobApplicationsPage() {
               placeholder="Search applications..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 h-12 border-2 border-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-xl"
+              className="pl-11 h-12 border border-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
             />
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'score' | 'date')}
-              className="flex-1 md:flex-none px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-medium focus:border-amber-500 focus:ring-amber-500"
+              className="flex-1 md:flex-none px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium focus:border-amber-500 focus:ring-amber-500"
             >
               <option value="score">Sort by Score</option>
               <option value="date">Sort by Date</option>
@@ -288,57 +288,58 @@ export default function JobApplicationsPage() {
                 onClick={() => router.push(`/recruiter/jobs/${jobId}/applications/${app.id}`)}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Application #{app.id}
-                        </h3>
-                        {app.status === 'pending' && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            Pending
-                          </span>
-                        )}
-                        {app.status === 'shortlisted' && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Shortlisted
-                          </span>
-                        )}
-                        {app.status === 'rejected' && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            Rejected
-                          </span>
-                        )}
+                  <div className="flex items-stretch justify-between gap-6">
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            Application #{app.id}
+                          </h3>
+                          {app.status === 'pending' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                              Pending
+                            </span>
+                          )}
+                          {app.status === 'shortlisted' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              Shortlisted
+                            </span>
+                          )}
+                          {app.status === 'rejected' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              Rejected
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-sm text-gray-600 mb-3">
+                          Applied {formatDate(app.applied_at)}
+                        </p>
                       </div>
 
-                      <p className="text-sm text-gray-600 mb-3">
-                        Applied {formatDate(app.applied_at)}
-                      </p>
-
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
                           {app.num_skills || 0} skills
                         </span>
                         {app.cluster_name && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
                             {app.cluster_name}
                           </span>
                         )}
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
                           {formatPercentile(app.overall_percentile || 50)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="ml-6 flex flex-col items-end gap-2">
+                    <div className="flex flex-col items-end justify-between">
                       <div className={`text-3xl font-bold ${getScoreColor(app.final_score || 0)}`}>
                         {app.final_score?.toFixed(0) || 'N/A'}
                       </div>
-                      <div className="text-xs text-gray-500">Score</div>
+                      <div className="text-xs text-gray-500 mb-2">Score</div>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="mt-2"
                         onClick={(e) => {
                           e.stopPropagation()
                           router.push(`/recruiter/jobs/${jobId}/applications/${app.id}`)
@@ -358,20 +359,20 @@ export default function JobApplicationsPage() {
       {/* Generate Applications Dialog */}
       {showGenerateDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md border-2 border-amber-200 shadow-2xl">
-            <CardContent className="p-8">
+          <Card className="w-full max-w-md border border-gray-200 shadow-lg">
+            <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
-                  <Sparkles className="h-6 w-6 text-white" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Sparkles className="h-5 w-5 text-gray-700" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Generate Test Applications</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Generate Test Applications</h2>
               </div>
-              <p className="text-gray-600 mb-6 text-lg">
+              <p className="text-sm text-gray-600 mb-6">
                 How many test applications would you like to generate? (1-50)
               </p>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-semibold text-gray-900 block mb-3">
+                  <label className="text-sm font-medium text-gray-700 block mb-2">
                     Number of Applications
                   </label>
                   <Input
@@ -380,7 +381,7 @@ export default function JobApplicationsPage() {
                     max="50"
                     value={generateCount}
                     onChange={(e) => setGenerateCount(parseInt(e.target.value) || 1)}
-                    className="h-14 text-xl border-2 border-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-xl text-center font-bold"
+                    className="h-12 border border-gray-300 focus:border-amber-500 focus:ring-amber-500 rounded-lg text-center"
                     autoFocus
                   />
                 </div>
@@ -388,18 +389,16 @@ export default function JobApplicationsPage() {
                   <Button
                     variant="outline"
                     onClick={() => setShowGenerateDialog(false)}
-                    className="flex-1 h-12 border-2 border-gray-300 hover:bg-gray-50"
-                    size="lg"
+                    className="flex-1"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleGenerateRandom}
-                    className="flex-1 h-12 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl"
-                    size="lg"
+                    className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
                   >
-                    <Sparkles className="h-5 w-5 mr-2" />
-                    Generate {generateCount}
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate
                   </Button>
                 </div>
               </div>
