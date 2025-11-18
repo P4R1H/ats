@@ -57,6 +57,18 @@ def generate_random_resume_text(job: JobPosting) -> str:
     required_skills = json.loads(job.required_skills) if job.required_skills else []
     preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
 
+    # Parse requirements JSON for hard filters
+    requirements_data = {}
+    if job.requirements:
+        try:
+            requirements_data = json.loads(job.requirements)
+        except json.JSONDecodeError:
+            requirements_data = {}
+
+    job_min_education = requirements_data.get('min_education', 'none')
+    job_certifications_required = requirements_data.get('certifications_required', False)
+    job_leadership_required = requirements_data.get('leadership_required', False)
+
     # Generic skill pool for padding
     generic_skills = [
         'Python', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'SQL', 'MongoDB',
@@ -71,98 +83,134 @@ def generate_random_resume_text(job: JobPosting) -> str:
     names = ['Alex Johnson', 'Maria Garcia', 'James Smith', 'Sarah Williams', 'David Chen',
              'Emma Davis', 'Michael Brown', 'Lisa Anderson', 'Robert Martinez', 'Jennifer Lee']
 
-    educations = ['Bachelor\'s', 'Master\'s', 'PhD', 'Diploma']
+    education_hierarchy = {
+        'none': 0,
+        'diploma': 1,
+        'bachelors': 2,
+        'masters': 3,
+        'phd': 4
+    }
+    education_labels = {
+        0: 'Diploma',
+        1: 'Diploma',
+        2: 'Bachelor\'s',
+        3: 'Master\'s',
+        4: 'PhD'
+    }
+
     certifications = ['AWS Certified', 'Google Cloud Certified', 'Microsoft Certified',
                       'Kubernetes Certified', 'Scrum Master', 'PMP']
 
-    # Determine quality level randomly
+    # Determine quality level with HIGHER chance of meeting requirements
     quality_roll = random.random()
-    if quality_roll < 0.3:  # 30% excellent
+    if quality_roll < 0.50:  # 50% excellent (always meets requirements)
         quality = 'excellent'
-    elif quality_roll < 0.6:  # 30% good
+        meets_requirements = True
+    elif quality_roll < 0.75:  # 25% good (usually meets requirements)
         quality = 'good'
-    elif quality_roll < 0.85:  # 25% mediocre
+        meets_requirements = random.random() < 0.8  # 80% chance
+    elif quality_roll < 0.90:  # 15% mediocre (sometimes meets requirements)
         quality = 'mediocre'
-    else:  # 15% poor
+        meets_requirements = random.random() < 0.4  # 40% chance
+    else:  # 10% poor (rarely meets requirements)
         quality = 'poor'
+        meets_requirements = random.random() < 0.1  # 10% chance
 
-    # Generate experience relative to job requirements
+    # Generate experience - ensure meets minimum if meets_requirements
     min_exp = job.min_experience or 0
-    if quality == 'excellent':
-        # Perfect fit: at minimum to +2 years
-        years_exp = min_exp + random.uniform(0, 2.5)
-    elif quality == 'good':
-        # Slightly off: -1 to +4 years
-        years_exp = min_exp + random.uniform(-1, 4)
-    elif quality == 'mediocre':
-        # Below minimum or way overqualified
-        if random.choice([True, False]):
-            years_exp = min_exp * random.uniform(0.3, 0.8)  # Below min
+    if meets_requirements:
+        # Must meet minimum experience
+        if quality == 'excellent':
+            years_exp = min_exp + random.uniform(0, 2.5)  # Perfect fit
+        elif quality == 'good':
+            years_exp = min_exp + random.uniform(0, 4)  # Good fit
+        else:  # mediocre but still meets
+            years_exp = min_exp + random.uniform(0, 6)  # Meets but may be overqualified
+    else:
+        # Doesn't meet requirements - below minimum
+        if min_exp > 0:
+            years_exp = min_exp * random.uniform(0, 0.9)  # Below minimum
         else:
-            years_exp = min_exp + random.uniform(6, 10)  # Overqualified
-    else:  # poor
-        # Way below minimum
-        years_exp = min_exp * random.uniform(0, 0.5)
+            years_exp = random.uniform(0, 2)
 
     years_exp = max(0, round(years_exp, 1))
 
-    # Generate skills based on quality
+    # Generate skills - if meets_requirements, include ALL required skills
     candidate_skills = []
 
-    if quality == 'excellent':
-        # 80-100% of required, 60-80% of preferred, few extras
-        num_required = int(len(required_skills) * random.uniform(0.8, 1.0))
-        num_preferred = int(len(preferred_skills) * random.uniform(0.6, 0.8))
-        num_extra = random.randint(1, 3)
+    if meets_requirements:
+        # MUST have ALL required skills
+        candidate_skills.extend(required_skills)
 
-        candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
-        if preferred_skills:
+        # Add some preferred skills based on quality
+        if quality == 'excellent' and preferred_skills:
+            num_preferred = int(len(preferred_skills) * random.uniform(0.6, 1.0))
             candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+        elif quality == 'good' and preferred_skills:
+            num_preferred = int(len(preferred_skills) * random.uniform(0.3, 0.6))
+            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+        elif preferred_skills:
+            num_preferred = int(len(preferred_skills) * random.uniform(0, 0.3))
+            if num_preferred > 0:
+                candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+
+        # Add a few random skills
         extra_pool = [s for s in generic_skills if s not in candidate_skills]
-        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+        num_extra = random.randint(1, 4) if quality == 'excellent' else random.randint(2, 6)
+        if extra_pool:
+            candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+    else:
+        # Doesn't meet requirements - missing some required skills
+        if required_skills:
+            # Include 0-90% of required skills (deliberately missing some)
+            num_required = int(len(required_skills) * random.uniform(0, 0.9))
+            if num_required > 0:
+                candidate_skills.extend(random.sample(required_skills, num_required))
 
-    elif quality == 'good':
-        # 50-70% of required, 30-50% of preferred, some extras
-        num_required = int(len(required_skills) * random.uniform(0.5, 0.7))
-        num_preferred = int(len(preferred_skills) * random.uniform(0.3, 0.5))
-        num_extra = random.randint(2, 5)
-
-        candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
-        if preferred_skills:
-            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+        # Add random skills
         extra_pool = [s for s in generic_skills if s not in candidate_skills]
-        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+        num_extra = random.randint(3, 10)
+        if extra_pool:
+            candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
 
-    elif quality == 'mediocre':
-        # 20-40% of required, 10-20% of preferred, lots of random
-        num_required = int(len(required_skills) * random.uniform(0.2, 0.4))
-        num_preferred = int(len(preferred_skills) * random.uniform(0.1, 0.2))
-        num_extra = random.randint(5, 10)
+    # Remove duplicates
+    candidate_skills = list(set(candidate_skills))
 
-        candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
-        if preferred_skills:
-            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
-        extra_pool = [s for s in generic_skills if s not in candidate_skills]
-        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+    # Generate education - ensure meets minimum if meets_requirements
+    min_education_level = education_hierarchy.get(job_min_education, 0)
+    if meets_requirements:
+        # Must meet or exceed minimum education
+        available_levels = [lvl for lvl in range(min_education_level, 5)]
+        if quality == 'excellent':
+            # At minimum or one above
+            education_level = random.choice([min_education_level, min(min_education_level + 1, 4)])
+        else:
+            # Any level at or above minimum
+            education_level = random.choice(available_levels) if available_levels else min_education_level
+    else:
+        # Below minimum education
+        if min_education_level > 0:
+            available_levels = list(range(0, min_education_level))
+            education_level = random.choice(available_levels) if available_levels else 0
+        else:
+            education_level = random.randint(0, 4)
 
-    else:  # poor
-        # 0-20% of required, 0-10% of preferred, mostly random
-        num_required = int(len(required_skills) * random.uniform(0, 0.2))
-        num_preferred = int(len(preferred_skills) * random.uniform(0, 0.1))
-        num_extra = random.randint(3, 8)
+    education = education_labels[education_level]
 
-        if num_required > 0:
-            candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
-        if preferred_skills and num_preferred > 0:
-            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
-        extra_pool = [s for s in generic_skills if s not in candidate_skills + required_skills + preferred_skills]
-        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+    # Generate certifications - ensure meets requirement if needed
+    if meets_requirements and job_certifications_required:
+        has_cert = True  # Must have if required
+    else:
+        has_cert = random.choice([True, False]) if quality in ['excellent', 'good'] else False
+
+    # Generate leadership - ensure meets requirement if needed
+    if meets_requirements and job_leadership_required:
+        has_leadership = True  # Must have if required
+    else:
+        has_leadership = quality in ['excellent', 'good'] and random.choice([True, False])
 
     # Other resume attributes
     name = random.choice(names)
-    education = random.choice(educations)
-    has_cert = random.choice([True, False])
-    has_leadership = quality in ['excellent', 'good'] and random.choice([True, False])
 
     # Determine seniority level based on experience
     if years_exp < 2:
