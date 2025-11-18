@@ -87,12 +87,21 @@ export default function ApplicationDetailPage() {
     )
   }
 
+  // Get job-specific weights or use defaults
+  const weights = {
+    skills: job?.weight_skills || 0.4,
+    experience: job?.weight_experience || 0.3,
+    education: job?.weight_education || 0.2,
+    certifications: job?.weight_certifications || 0.05,
+    leadership: job?.weight_leadership || 0.05
+  }
+
   // Calculate weighted contributions (raw scores are 0-100, multiply by weight percentage)
   const scoreBreakdown = [
-    { label: 'Skills Match', value: (application.skills_score || 0) * 0.4, weight: 40, color: 'text-blue-600', bgColor: 'bg-blue-500' },
-    { label: 'Experience', value: (application.experience_score || 0) * 0.3, weight: 30, color: 'text-green-600', bgColor: 'bg-green-500' },
-    { label: 'Education', value: (application.education_score || 0) * 0.2, weight: 20, color: 'text-purple-600', bgColor: 'bg-purple-500' },
-    { label: 'Bonus Points', value: (application.bonus_score || 0) * 0.1, weight: 10, color: 'text-amber-600', bgColor: 'bg-amber-500' }
+    { label: 'Skills Match', value: (application.skills_score || 0) * weights.skills, weight: weights.skills * 100, color: 'text-blue-600', bgColor: 'bg-blue-500' },
+    { label: 'Experience', value: (application.experience_score || 0) * weights.experience, weight: weights.experience * 100, color: 'text-green-600', bgColor: 'bg-green-500' },
+    { label: 'Education', value: (application.education_score || 0) * weights.education, weight: weights.education * 100, color: 'text-purple-600', bgColor: 'bg-purple-500' },
+    { label: 'Bonus Points', value: (application.bonus_score || 0) * (weights.certifications + weights.leadership), weight: (weights.certifications + weights.leadership) * 100, color: 'text-amber-600', bgColor: 'bg-amber-500' }
   ]
 
   return (
