@@ -81,7 +81,7 @@ export default function RecruiterDashboard() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Recruiter Dashboard</h1>
-          <Button className="gradient-bg text-white" onClick={() => window.alert('Create job feature coming soon!')}>
+          <Button className="gradient-bg text-white" onClick={() => router.push('/recruiter/jobs/create')}>
             <Plus className="h-4 w-4 mr-2" />
             Create Job
           </Button>
@@ -131,7 +131,7 @@ export default function RecruiterDashboard() {
               <div className="text-center py-12">
                 <Briefcase className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground mb-4">No job postings yet</p>
-                <Button className="gradient-bg text-white" onClick={() => window.alert('Create job feature coming soon!')}>
+                <Button className="gradient-bg text-white" onClick={() => router.push('/recruiter/jobs/create')}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Job
                 </Button>
@@ -182,16 +182,9 @@ export default function RecruiterDashboard() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => window.alert('View applications feature coming soon!')}
+                          onClick={() => router.push(`/recruiter/jobs/${job.id}/applications`)}
                         >
                           View Applications
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => window.alert('Edit job feature coming soon!')}
-                        >
-                          Edit
                         </Button>
                       </div>
                     </div>
