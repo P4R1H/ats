@@ -390,6 +390,11 @@ export default function JobsPage() {
                 onClick={() => setSelectedJob(job)}
               >
                 <CardContent className="p-6">
+                  {/* Category Badge */}
+                  <span className="inline-block px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-medium rounded-full mb-3">
+                    {job.category}
+                  </span>
+
                   {/* Title */}
                   <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
                     {job.title}
@@ -401,11 +406,7 @@ export default function JobsPage() {
                   </p>
 
                   {/* Meta info */}
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <Briefcase className="h-3.5 w-3.5" />
-                      <span>{job.category}</span>
-                    </div>
+                  <div className="mb-4">
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Clock className="h-3.5 w-3.5" />
                       <span>Posted {formatDate(job.created_at)}</span>
