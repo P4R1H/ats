@@ -520,6 +520,10 @@ def get_my_applications(
     # Calculate dynamic percentiles for each application
     results = []
     for app in applications:
+        # Get job title for display
+        job = db.query(JobPosting).filter(JobPosting.id == app.job_id).first()
+        job_title = job.title if job else None
+
         # Get all applications for the same job to calculate percentile
         all_applications = db.query(Application).filter(
             Application.job_id == app.job_id
@@ -527,10 +531,11 @@ def get_my_applications(
         all_scores = [a.final_score for a in all_applications if a.final_score is not None]
         dynamic_percentile = calculate_percentile(app.final_score or 0, all_scores)
 
-        # Create response with dynamic percentile
+        # Create response with dynamic percentile and job title
         app_response = ApplicationResponse.model_validate(app)
         app_data = app_response.model_dump()
         app_data['overall_percentile'] = dynamic_percentile
+        app_data['job_title'] = job_title
         results.append(ApplicationResponse(**app_data))
 
     return results

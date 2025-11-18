@@ -9,7 +9,7 @@ import {
   Award, Target, Sparkles, BarChart3, Star
 } from 'lucide-react'
 import { api } from '@/lib/api'
-import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
+import { formatDate, formatPercentile, getScoreColor, stripMarkdown } from '@/lib/utils'
 
 export default function CandidateDashboard() {
   const router = useRouter()
@@ -286,14 +286,11 @@ export default function CandidateDashboard() {
                   onClick={() => router.push('/candidate/jobs')}
                 >
                   <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
-                      <Briefcase className="h-6 w-6 text-white" />
-                    </div>
                     <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors line-clamp-1">
                       {job.title}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                      {job.description}
+                      {stripMarkdown(job.description)}
                     </p>
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <span className="text-xs text-gray-500">{job.category}</span>
