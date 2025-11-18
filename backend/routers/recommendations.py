@@ -126,9 +126,22 @@ def analyze_resume_text(text: str) -> ResumeAnalysis:
     }
 
     detected_skills = []
+
+    # Special handling for skills with special characters (C++, C#, .NET, etc.)
+    special_skills = {
+        "c++": r'\bc\+\+\b',
+        "c#": r'\bc#\b',
+        "asp.net": r'\basp\.net\b',
+    }
+
     for skill in all_skills:
-        # Use word boundaries to avoid partial matches
-        pattern = r'\b' + re.escape(skill) + r'\b'
+        # Use special pattern for skills with special characters
+        if skill in special_skills:
+            pattern = special_skills[skill]
+        else:
+            # Use word boundaries to avoid partial matches
+            pattern = r'\b' + re.escape(skill) + r'\b'
+
         if re.search(pattern, text_lower):
             # Use proper casing from map, or capitalize first letter as fallback
             proper_skill = skill_casing.get(skill, skill.capitalize())
@@ -311,7 +324,6 @@ async def get_job_recommendations(
                 'id': job.id,
                 'title': job.title,
                 'category': job.category,
-                'description': job.description[:200] + '...' if len(job.description) > 200 else job.description,
             },
             match_score=match_score,
             skills_match_percentage=round(skills_match_pct, 1),

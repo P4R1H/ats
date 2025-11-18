@@ -708,18 +708,27 @@ def generate_random_applications(
                 'leadership': job.weight_leadership or 0.05
             }
 
+            # Normalize skills for consistent matching
+            def normalize_skill(skill: str) -> str:
+                """Normalize skill for matching (remove dots, spaces, lowercase)"""
+                return skill.lower().replace('.', '').replace(' ', '').replace('-', '')
+
+            candidate_skills_normalized = [normalize_skill(s) for s in processed_data['extracted_skills']]
+            required_skills_normalized = [normalize_skill(s) for s in required_skills]
+            preferred_skills_normalized = [normalize_skill(s) for s in preferred_skills]
+
             # TWO-STAGE SCORING: Requirements check → Ranking
             scores = calculate_final_score(
                 # Candidate attributes
-                candidate_skills=processed_data['extracted_skills'],
+                candidate_skills=candidate_skills_normalized,
                 candidate_experience=processed_data['experience_years'],
                 candidate_education=processed_data['education_level'],
                 candidate_has_certifications=processed_data['has_certifications'],
                 candidate_has_leadership=processed_data['has_leadership'],
                 candidate_skill_diversity=processed_data['skill_diversity'],
                 # Job requirements (hard filters)
-                job_required_skills=required_skills,
-                job_preferred_skills=preferred_skills,
+                job_required_skills=required_skills_normalized,
+                job_preferred_skills=preferred_skills_normalized,
                 job_min_experience=job.min_experience or 0,
                 job_min_education=job_min_education,
                 job_certifications_required=job_certifications_required,
@@ -744,11 +753,11 @@ def generate_random_applications(
                 skill_diversity=processed_data['skill_diversity']
             )
 
-            # Analyze skill gap
+            # Analyze skill gap (using normalized skills)
             gap_analysis = analyze_skill_gap(
-                candidate_skills=processed_data['extracted_skills'],
-                required_skills=required_skills,
-                preferred_skills=preferred_skills
+                candidate_skills=candidate_skills_normalized,
+                required_skills=required_skills_normalized,
+                preferred_skills=preferred_skills_normalized
             )
 
             # Create application (use recruiter as fake candidate for testing)
