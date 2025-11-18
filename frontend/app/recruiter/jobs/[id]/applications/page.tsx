@@ -124,13 +124,10 @@ export default function JobApplicationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 via-white to-amber-50/30">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="relative w-16 h-16 mx-auto mb-4">
-            <div className="absolute inset-0 border-4 border-amber-200 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-amber-600 rounded-full border-t-transparent animate-spin"></div>
-          </div>
-          <p className="text-sm font-medium text-gray-700">Loading applications...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-gray-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-sm text-gray-600">Loading applications...</p>
         </div>
       </div>
     )
@@ -147,15 +144,15 @@ export default function JobApplicationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-white to-amber-50/30">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-amber-200/50 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <button
             onClick={() => router.push('/')}
             className="flex items-center gap-2 group"
           >
-            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-lg transition-all">
+            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
               <Wheat className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
@@ -163,8 +160,8 @@ export default function JobApplicationsPage() {
             </span>
           </button>
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700">{user?.full_name}</span>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm border-gray-300 hover:border-amber-400 hover:text-amber-600">
+            <span className="text-sm text-gray-600">{user?.full_name}</span>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm">
               Logout
             </Button>
           </div>
@@ -175,112 +172,56 @@ export default function JobApplicationsPage() {
         <Button
           variant="ghost"
           onClick={() => router.push('/recruiter/dashboard')}
-          className="mb-6 text-gray-600 hover:text-amber-600 hover:bg-amber-50"
+          className="mb-6 text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Dashboard
         </Button>
 
         {/* Job Header */}
-        <div className="mb-10">
-          <div className="flex items-start justify-between gap-6 mb-4">
+        <div className="mb-8">
+          <div className="flex items-start justify-between gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg">
-                  <Briefcase className="h-6 w-6 text-white" />
-                </div>
-                <h1 className="text-4xl font-bold text-gray-900">{job?.title}</h1>
-              </div>
-              <p className="text-lg text-gray-600 line-clamp-2 ml-14">{job?.description}</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{job?.title}</h1>
+              <p className="text-gray-600 line-clamp-2">{job?.description}</p>
             </div>
             <Button
               onClick={() => router.push(`/recruiter/jobs/${jobId}/analytics`)}
-              size="lg"
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
             >
-              <BarChart3 className="h-5 w-5 mr-2" />
-              ML Analytics Dashboard
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics
             </Button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-amber-300">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-blue-100 rounded-xl">
-                  <Users className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
-                  <div className="text-xs font-medium text-gray-500 mt-1">Total</div>
-                </div>
-              </div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Applications</div>
-              <div className="text-xs text-gray-500">
-                {stats.pending} pending · {stats.shortlisted} shortlisted
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Applications</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-amber-300">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-amber-100 rounded-xl">
-                  <TrendingUp className="h-6 w-6 text-amber-600" />
-                </div>
-                <div className="text-right">
-                  <div className={`text-3xl font-bold ${getScoreColor(stats.avgScore)}`}>
-                    {stats.avgScore.toFixed(1)}
-                  </div>
-                  <div className="text-xs font-medium text-gray-500 mt-1">/ 100</div>
-                </div>
-              </div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Average Score</div>
-              <div className="text-xs text-gray-500">
-                Across all candidates
-              </div>
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Average Score</div>
+              <div className="text-3xl font-bold text-amber-600">{stats.avgScore.toFixed(1)}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-green-300">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-green-100 rounded-xl">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-green-600">{stats.shortlisted}</div>
-                  <div className="text-xs font-medium text-gray-500 mt-1">Success</div>
-                </div>
-              </div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Shortlisted</div>
-              {stats.total > 0 && (
-                <div className="text-xs text-green-600 font-medium">
-                  {((stats.shortlisted / stats.total) * 100).toFixed(0)}% success rate
-                </div>
-              )}
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Shortlisted</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.shortlisted}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-amber-300">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-amber-100 rounded-xl">
-                  <Clock className="h-6 w-6 text-amber-600" />
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-amber-600">{stats.pending}</div>
-                  <div className="text-xs font-medium text-gray-500 mt-1">Pending</div>
-                </div>
-              </div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Awaiting Review</div>
-              {stats.total > 0 && (
-                <div className="text-xs text-gray-500">
-                  {((stats.pending / stats.total) * 100).toFixed(0)}% unreviewed
-                </div>
-              )}
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Pending</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.pending}</div>
             </CardContent>
           </Card>
         </div>
@@ -306,19 +247,18 @@ export default function JobApplicationsPage() {
               <option value="date">Sort by Date</option>
             </select>
             <Button
-              size="lg"
               onClick={() => setShowGenerateDialog(true)}
               disabled={generating}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg disabled:opacity-50"
+              variant="outline"
             >
               {generating ? (
                 <>
-                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                  <div className="animate-spin h-4 w-4 border-2 border-gray-900 border-t-transparent rounded-full mr-2"></div>
                   Generating...
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-5 w-5 mr-2" />
+                  <Sparkles className="h-4 w-4 mr-2" />
                   Generate Test Data
                 </>
               )}
@@ -328,106 +268,77 @@ export default function JobApplicationsPage() {
 
         {/* Applications List */}
         {filteredApps.length === 0 ? (
-          <Card className="border-2 border-dashed border-gray-300 bg-white/50">
-            <CardContent className="py-20 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8 text-gray-400" />
+          <Card className="border border-gray-200">
+            <CardContent className="py-16 text-center">
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-6 w-6 text-gray-400" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">No applications found</h3>
-              <p className="text-gray-600 text-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No applications found</h3>
+              <p className="text-gray-600">
                 {searchTerm ? 'Try adjusting your search terms' : 'No candidates have applied yet'}
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredApps.map((app) => (
               <Card
                 key={app.id}
-                className="border-2 border-gray-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 cursor-pointer group bg-white"
+                className="border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer group"
                 onClick={() => router.push(`/recruiter/jobs/${jobId}/applications/${app.id}`)}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-6">
-                    {/* Score Display */}
-                    <div className="flex flex-col items-center justify-center min-w-[90px]">
-                      <div className={`text-4xl font-bold ${getScoreColor(app.final_score || 0)} mb-1`}>
-                        {app.final_score?.toFixed(0) || 'N/A'}
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Application #{app.id}
+                        </h3>
+                        {app.status === 'pending' && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            Pending
+                          </span>
+                        )}
+                        {app.status === 'shortlisted' && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Shortlisted
+                          </span>
+                        )}
+                        {app.status === 'rejected' && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            Rejected
+                          </span>
+                        )}
                       </div>
-                      <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Score</div>
-                      <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                        <div
-                          className="bg-gradient-to-r from-amber-500 to-orange-500 h-1.5 rounded-full transition-all duration-500"
-                          style={{ width: `${app.final_score || 0}%` }}
-                        ></div>
-                      </div>
-                    </div>
 
-                    {/* Divider */}
-                    <div className="h-20 w-px bg-gray-200"></div>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Applied {formatDate(app.applied_at)}
+                      </p>
 
-                    {/* Application Details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-lg transition-shadow">
-                            <Briefcase className="h-4 w-4 text-white" />
-                          </div>
-                          <h3 className="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors">
-                            Application #{app.id}
-                          </h3>
+                      <div className="flex items-center gap-6 text-sm">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-gray-700">{app.num_skills || 0} skills</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Clock className="h-4 w-4" />
-                          <span>{formatDate(app.applied_at)}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-3">
                         {app.cluster_name && (
-                          <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-full border border-purple-100">
-                            <Star className="h-3.5 w-3.5 text-purple-600" />
-                            <span className="text-xs font-semibold text-purple-700">{app.cluster_name}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-700">{app.cluster_name}</span>
                           </div>
                         )}
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-full border border-blue-100">
-                          <Award className="h-3.5 w-3.5 text-blue-600" />
-                          <span className="text-xs font-semibold text-blue-700">{app.num_skills || 0} skills</span>
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-100">
-                          <TrendingUp className="h-3.5 w-3.5 text-green-600" />
-                          <span className="text-xs font-semibold text-green-700">{formatPercentile(app.overall_percentile || 50)}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-gray-700">{formatPercentile(app.overall_percentile || 50)}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Divider */}
-                    <div className="h-20 w-px bg-gray-200"></div>
-
-                    {/* Status */}
-                    <div className="flex flex-col items-center gap-2 min-w-[140px]">
-                      {app.status === 'pending' && (
-                        <span className="inline-flex items-center px-4 py-2 bg-amber-100 text-amber-800 rounded-full text-sm font-semibold border-2 border-amber-200">
-                          <Clock className="h-4 w-4 mr-2" />
-                          Pending
-                        </span>
-                      )}
-                      {app.status === 'shortlisted' && (
-                        <span className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold border-2 border-green-200">
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Shortlisted
-                        </span>
-                      )}
-                      {app.status === 'rejected' && (
-                        <span className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold border-2 border-gray-200">
-                          <XCircle className="h-4 w-4 mr-2" />
-                          Rejected
-                        </span>
-                      )}
+                    <div className="ml-6 flex flex-col items-end gap-2">
+                      <div className={`text-3xl font-bold ${getScoreColor(app.final_score || 0)}`}>
+                        {app.final_score?.toFixed(0) || 'N/A'}
+                      </div>
+                      <div className="text-xs text-gray-500">Score</div>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="w-full border-amber-300 text-amber-600 hover:bg-amber-50 hover:border-amber-400"
+                        className="mt-2"
                         onClick={(e) => {
                           e.stopPropagation()
                           router.push(`/recruiter/jobs/${jobId}/applications/${app.id}`)

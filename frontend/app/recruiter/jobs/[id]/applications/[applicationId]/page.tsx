@@ -221,20 +221,20 @@ export default function RecruiterApplicationDetailPage() {
 
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
-                <div className={`text-5xl font-bold mb-2 ${getScoreColor(application.final_score || 0)}`}>
+              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <div className={`text-4xl font-bold mb-2 ${getScoreColor(application.final_score || 0)}`}>
                   {application.final_score?.toFixed(1) || 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Final Score (out of 100)</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
-                <div className="text-5xl font-bold mb-2 text-blue-600">
+              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-4xl font-bold mb-2 text-gray-900">
                   {formatPercentile(application.overall_percentile || 50)}
                 </div>
                 <div className="text-sm text-gray-600">Overall Percentile</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                <div className="text-3xl font-bold mb-2 text-purple-600">
+              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-2xl font-bold mb-2 text-gray-900">
                   {application.cluster_name || 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Talent Cluster</div>
