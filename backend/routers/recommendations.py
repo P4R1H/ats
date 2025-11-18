@@ -19,6 +19,14 @@ import json
 router = APIRouter()
 
 
+def normalize_skill(skill: str) -> str:
+    """
+    Normalize skill name for matching (remove dots, spaces, lowercase)
+    Examples: "Next.js" -> "nextjs", "Node.js" -> "nodejs"
+    """
+    return skill.lower().replace('.', '').replace(' ', '').replace('-', '')
+
+
 class ResumeAnalysis(BaseModel):
     skills: List[str]
     experience_years: int
@@ -73,7 +81,7 @@ def analyze_resume_text(text: str) -> ResumeAnalysis:
 
         # Cloud & DevOps
         "aws", "azure", "gcp", "docker", "kubernetes", "jenkins", "gitlab", "github actions",
-        "terraform", "ansible", "puppet", "chef", "circleci", "travis ci",
+        "terraform", "ansible", "puppet", "chef", "circleci", "travis ci", "git",
 
         # Data Science & ML
         "machine learning", "deep learning", "tensorflow", "pytorch", "keras", "scikit-learn",
@@ -90,12 +98,41 @@ def analyze_resume_text(text: str) -> ResumeAnalysis:
         "agile", "scrum", "project management"
     ]
 
+    # Map of lowercase skill to proper casing for display
+    skill_casing = {
+        "nextjs": "Next.js",
+        "next.js": "Next.js",
+        "nodejs": "Node.js",
+        "node.js": "Node.js",
+        "javascript": "JavaScript",
+        "typescript": "TypeScript",
+        "mongodb": "MongoDB",
+        "postgresql": "PostgreSQL",
+        "mysql": "MySQL",
+        "fastapi": "FastAPI",
+        "tensorflow": "TensorFlow",
+        "pytorch": "PyTorch",
+        "github": "GitHub",
+        "gitlab": "GitLab",
+        "git": "Git",
+        "aws": "AWS",
+        "gcp": "GCP",
+        "ui/ux": "UI/UX",
+        "html": "HTML",
+        "css": "CSS",
+        "c++": "C++",
+        "c#": "C#",
+        "react native": "React Native",
+    }
+
     detected_skills = []
     for skill in all_skills:
         # Use word boundaries to avoid partial matches
         pattern = r'\b' + re.escape(skill) + r'\b'
         if re.search(pattern, text_lower):
-            detected_skills.append(skill.title())
+            # Use proper casing from map, or capitalize first letter as fallback
+            proper_skill = skill_casing.get(skill, skill.capitalize())
+            detected_skills.append(proper_skill)
 
     # Extract experience years
     experience_years = 0
@@ -203,31 +240,37 @@ async def get_job_recommendations(
         job_certs_required = requirements.get('certifications_required', False)
         job_leadership_required = requirements.get('leadership_required', False)
 
-        # Calculate skills match percentage
-        candidate_skills_lower = [s.lower() for s in analysis.skills]
-        required_skills_lower = [s.lower() for s in required_skills]
-        preferred_skills_lower = [s.lower() for s in preferred_skills]
+        # Calculate skills match percentage using normalized skills
+        candidate_skills_normalized = [normalize_skill(s) for s in analysis.skills]
+        required_skills_normalized = [normalize_skill(s) for s in required_skills]
+        preferred_skills_normalized = [normalize_skill(s) for s in preferred_skills]
 
-        total_skills = len(required_skills_lower) + len(preferred_skills_lower)
+        total_skills = len(required_skills_normalized) + len(preferred_skills_normalized)
         if total_skills > 0:
-            matched_required = len([s for s in required_skills_lower if s in candidate_skills_lower])
-            matched_preferred = len([s for s in preferred_skills_lower if s in candidate_skills_lower])
+            matched_required = len([s for s in required_skills_normalized if s in candidate_skills_normalized])
+            matched_preferred = len([s for s in preferred_skills_normalized if s in candidate_skills_normalized])
             skills_match_pct = ((matched_required + matched_preferred) / total_skills) * 100
         else:
             skills_match_pct = 0
 
-        # Find missing skills
-        missing_required = [s for s in required_skills_lower if s not in candidate_skills_lower]
-        missing_preferred = [s for s in preferred_skills_lower if s not in candidate_skills_lower]
+        # Find missing skills (return original casing for display)
+        missing_required = [
+            required_skills[i] for i, s in enumerate(required_skills_normalized)
+            if s not in candidate_skills_normalized
+        ]
+        missing_preferred = [
+            preferred_skills[i] for i, s in enumerate(preferred_skills_normalized)
+            if s not in candidate_skills_normalized
+        ]
 
         # Check if meets requirements using actual scoring function
         meets_reqs, missing_reqs, rejection_reason = check_requirements(
-            candidate_skills=candidate_skills_lower,
+            candidate_skills=candidate_skills_normalized,
             candidate_experience=float(analysis.experience_years),
             candidate_education=analysis.education_level,
             candidate_has_certifications=analysis.has_certifications,
             candidate_has_leadership=analysis.has_leadership,
-            job_required_skills=required_skills_lower,
+            job_required_skills=required_skills_normalized,
             job_min_experience=job.min_experience or 0,
             job_min_education=job_min_education,
             job_certifications_required=job_certs_required,
@@ -236,14 +279,14 @@ async def get_job_recommendations(
 
         # Calculate predicted score using actual scoring function
         score_result = calculate_final_score(
-            candidate_skills=candidate_skills_lower,
+            candidate_skills=candidate_skills_normalized,
             candidate_experience=float(analysis.experience_years),
             candidate_education=analysis.education_level,
             candidate_has_certifications=analysis.has_certifications,
             candidate_has_leadership=analysis.has_leadership,
             candidate_skill_diversity=0.5,  # Default diversity score
-            job_required_skills=required_skills_lower,
-            job_preferred_skills=preferred_skills_lower,
+            job_required_skills=required_skills_normalized,
+            job_preferred_skills=preferred_skills_normalized,
             job_min_experience=job.min_experience or 0,
             job_min_education=job_min_education,
             job_certifications_required=job_certs_required,
