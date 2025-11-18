@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Intelligent ATS - ML-Powered Hiring",
+  title: "Bread ATS",
   description: "Transparent, data-driven recruitment powered by machine learning",
 };
 
