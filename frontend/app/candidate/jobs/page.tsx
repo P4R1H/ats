@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label'
 import { Wheat, Search, Briefcase, Clock, ArrowLeft, Upload, FileText, X, CheckCircle } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate } from '@/lib/utils'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export default function JobsPage() {
   const router = useRouter()
@@ -167,7 +169,11 @@ export default function JobsPage() {
               {/* Job Description */}
               <div className="mb-8">
                 <h2 className="text-lg font-semibold text-gray-900 mb-3">About this role</h2>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{selectedJob.description}</p>
+                <div className="prose prose-gray max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} className="text-gray-700 leading-relaxed">
+                    {selectedJob.description}
+                  </ReactMarkdown>
+                </div>
               </div>
 
               {/* Required Skills */}
