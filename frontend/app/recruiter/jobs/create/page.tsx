@@ -19,16 +19,36 @@ const SKILL_CATEGORIES = {
   'Soft Skills': ['Leadership', 'Communication', 'Problem Solving', 'Team Work', 'Project Management', 'Agile', 'Scrum']
 }
 
-// Smart presets based on experience level and role type
-const WEIGHT_PRESETS = {
-  'Junior - Generalist': { skills: 45, experience: 15, education: 25, certifications: 10, leadership: 5, minExp: 0 },
-  'Junior - Technical Specialist': { skills: 60, experience: 10, education: 20, certifications: 10, leadership: 0, minExp: 0 },
-  'Mid-Level - Generalist': { skills: 40, experience: 30, education: 15, certifications: 10, leadership: 5, minExp: 2 },
-  'Mid-Level - Technical Specialist': { skills: 55, experience: 25, education: 10, certifications: 10, leadership: 0, minExp: 2 },
-  'Senior - Generalist': { skills: 35, experience: 35, education: 10, certifications: 10, leadership: 10, minExp: 5 },
-  'Senior - Technical Specialist': { skills: 50, experience: 30, education: 5, certifications: 10, leadership: 5, minExp: 5 },
-  'Leadership Role': { skills: 25, experience: 30, education: 10, certifications: 5, leadership: 30, minExp: 5 },
-  'Expert/Architect': { skills: 40, experience: 40, education: 5, certifications: 5, leadership: 10, minExp: 8 },
+// Flatten all skills into a single sorted array for dropdowns
+const ALL_SKILLS = Object.values(SKILL_CATEGORIES).flat().sort()
+
+// Component-specific presets - helps users understand what each slider does
+const COMPONENT_PRESETS = {
+  skills: {
+    'Specialist (High)': 60,
+    'Balanced': 40,
+    'Generalist (Low)': 25,
+  },
+  experience: {
+    'Entry Level': 15,
+    'Mid Level': 30,
+    'Senior Level': 40,
+  },
+  education: {
+    'BTech/Bachelor (Low)': 10,
+    'MTech/Master (Medium)': 20,
+    'PhD (High)': 30,
+  },
+  certifications: {
+    'Not Important': 0,
+    'Somewhat Important': 5,
+    'Very Important': 15,
+  },
+  leadership: {
+    'Individual Contributor': 0,
+    'Team Lead': 10,
+    'Manager/Director': 25,
+  },
 }
 
 export default function CreateJobPage() {
@@ -51,31 +71,27 @@ export default function CreateJobPage() {
     leadership: 5
   })
 
-  const [selectedPreset, setSelectedPreset] = useState<string>('')
-  const [showCustomWeights, setShowCustomWeights] = useState(false)
-
+  const [componentPresets, setComponentPresets] = useState<{[key: string]: string}>({
+    skills: '',
+    experience: '',
+    education: '',
+    certifications: '',
+    leadership: '',
+  })
   const [currentSkill, setCurrentSkill] = useState('')
   const [currentPreferredSkill, setCurrentPreferredSkill] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handlePresetSelect = (preset: string) => {
-    setSelectedPreset(preset)
-    const presetWeights = WEIGHT_PRESETS[preset as keyof typeof WEIGHT_PRESETS]
-    setWeights({
-      skills: presetWeights.skills,
-      experience: presetWeights.experience,
-      education: presetWeights.education,
-      certifications: presetWeights.certifications,
-      leadership: presetWeights.leadership
-    })
-    setFormData({ ...formData, min_experience: presetWeights.minExp })
-    setShowCustomWeights(false)
+  const handleComponentPresetSelect = (component: keyof typeof weights, preset: string) => {
+    const value = COMPONENT_PRESETS[component][preset as keyof typeof COMPONENT_PRESETS[typeof component]]
+    setWeights({ ...weights, [component]: value })
+    setComponentPresets({ ...componentPresets, [component]: preset })
   }
 
   const handleWeightChange = (key: keyof typeof weights, value: number) => {
     setWeights({ ...weights, [key]: value })
-    setSelectedPreset('') // Clear preset when manually changing
+    setComponentPresets({ ...componentPresets, [key]: '' }) // Clear component preset when manually changing
   }
 
   const totalWeight = Object.values(weights).reduce((sum, val) => sum + val, 0)
@@ -288,91 +304,73 @@ export default function CreateJobPage() {
                 </div>
               </div>
 
-              {/* Smart Presets */}
+              {/* Component-Specific Presets & Scoring Weights */}
               <div className="space-y-4 p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-200">
                 <div className="flex items-center gap-2 mb-4">
                   <Sparkles className="h-5 w-5 text-purple-600" />
-                  <h3 className="text-sm font-semibold text-gray-900">Smart Scoring Presets</h3>
+                  <h3 className="text-sm font-semibold text-gray-900">Scoring Weights Configuration</h3>
                 </div>
                 <p className="text-xs text-gray-600 mb-4">
-                  Choose a preset based on experience level and role type for optimized ML scoring
+                  Choose presets for each component or use sliders for granular control. Must sum to 100%.
                 </p>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.keys(WEIGHT_PRESETS).map((preset) => (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => handlePresetSelect(preset)}
-                      className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                        selectedPreset === preset
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                          : 'bg-white border border-purple-200 text-gray-700 hover:border-purple-300 hover:shadow-sm'
-                      }`}
-                    >
-                      {preset}
-                    </button>
+                <div className="flex items-center justify-between mb-4 p-3 bg-white rounded-lg border border-purple-200">
+                  <span className="text-sm font-medium text-gray-900">Total Weight</span>
+                  <span className={`text-xl font-bold ${totalWeight === 100 ? 'text-green-600' : 'text-red-600'}`}>
+                    {totalWeight}%
+                  </span>
+                </div>
+
+                  {[
+                    { key: 'skills' as const, label: 'Skills Match', description: '70% required + 20% preferred + 10% diversity' },
+                    { key: 'experience' as const, label: 'Experience', description: 'Job-relative scoring (perfect fit at min +0-2 years)' },
+                    { key: 'education' as const, label: 'Education', description: 'PhD (100) > Masters (85) > Bachelors (70)' },
+                    { key: 'certifications' as const, label: 'Certifications', description: 'Binary bonus for having certifications' },
+                    { key: 'leadership' as const, label: 'Leadership', description: 'Binary bonus for leadership experience' }
+                  ].map(({ key, label, description }) => (
+                    <div key={key} className="p-4 bg-white rounded-lg border border-purple-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <span className="text-sm font-semibold text-gray-900">{label}</span>
+                          <p className="text-xs text-gray-600 mt-0.5">{description}</p>
+                        </div>
+                        <span className="text-lg font-bold text-purple-600 min-w-[50px] text-right">
+                          {weights[key]}%
+                        </span>
+                      </div>
+
+                      {/* Preset Buttons */}
+                      <div className="flex gap-2 mb-3 flex-wrap">
+                        {Object.entries(COMPONENT_PRESETS[key]).map(([presetName, presetValue]) => (
+                          <button
+                            key={presetName}
+                            type="button"
+                            onClick={() => handleComponentPresetSelect(key, presetName)}
+                            className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${
+                              componentPresets[key] === presetName
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                          >
+                            {presetName}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Slider */}
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="5"
+                        value={weights[key]}
+                        onChange={(e) => handleWeightChange(key, parseInt(e.target.value))}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                      />
+                    </div>
                   ))}
                 </div>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCustomWeights(!showCustomWeights)}
-                  className="w-full mt-4 border-purple-300 text-purple-700 hover:bg-purple-50"
-                >
-                  {showCustomWeights ? 'Hide' : 'Show'} Custom Weight Sliders
-                </Button>
               </div>
-
-              {/* Scoring Weights */}
-              {showCustomWeights && (
-                <div className="space-y-4 p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900">Custom Scoring Weights</h3>
-                      <p className="text-xs text-gray-600 mt-1">
-                        Manually adjust scoring weights (must sum to 100%)
-                      </p>
-                    </div>
-                    <div className={`text-lg font-bold ${totalWeight === 100 ? 'text-green-600' : 'text-red-600'}`}>
-                      {totalWeight}%
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {[
-                      { key: 'skills' as const, label: 'Skills Match', description: 'Weight for matching required/preferred skills' },
-                      { key: 'experience' as const, label: 'Experience', description: 'Weight for years of experience (job-relative)' },
-                      { key: 'education' as const, label: 'Education', description: 'Weight for education level' },
-                      { key: 'certifications' as const, label: 'Certifications', description: 'Weight for having certifications' },
-                      { key: 'leadership' as const, label: 'Leadership', description: 'Weight for leadership experience' }
-                    ].map(({ key, label, description }) => (
-                      <div key={key}>
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <span className="text-sm font-medium text-gray-900">{label}</span>
-                            <p className="text-xs text-gray-600">{description}</p>
-                          </div>
-                          <span className="text-sm font-bold text-amber-600 w-12 text-right">
-                            {weights[key]}%
-                          </span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          step="5"
-                          value={weights[key]}
-                          onChange={(e) => handleWeightChange(key, parseInt(e.target.value))}
-                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Skills Section - Simplified */}
               <div className="space-y-6">
@@ -486,36 +484,32 @@ export default function CreateJobPage() {
                             const isAdded = isRequired || isPreferred
 
                             return (
-                              <div key={skill} className="inline-flex items-center gap-1">
+                              <div key={skill} className="inline-flex items-center shadow-sm rounded overflow-hidden">
                                 <button
                                   type="button"
                                   onClick={() => handleQuickAddSkill(skill, 'required')}
-                                  disabled={isAdded}
-                                  className={`px-2 py-1 text-xs rounded-l transition-colors ${
+                                  disabled={isRequired}
+                                  className={`px-3 py-1.5 text-xs font-medium transition-all border-r border-gray-300 ${
                                     isRequired
-                                      ? 'bg-blue-200 text-blue-900'
-                                      : isAdded
-                                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                      : 'bg-gray-100 text-gray-700 hover:bg-blue-100'
-                                  }`}
-                                  title="Add as required"
+                                      ? 'bg-blue-600 text-white shadow-inner'
+                                      : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                  title="Add as required skill"
                                 >
                                   {skill}
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => handleQuickAddSkill(skill, 'preferred')}
-                                  disabled={isAdded}
-                                  className={`px-1.5 py-1 text-xs rounded-r border-l border-gray-300 transition-colors ${
+                                  disabled={isPreferred}
+                                  className={`px-2 py-1.5 text-xs font-medium transition-all ${
                                     isPreferred
-                                      ? 'bg-purple-200 text-purple-900'
-                                      : isAdded
-                                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                      : 'bg-gray-100 text-gray-700 hover:bg-purple-100'
-                                  }`}
-                                  title="Add as preferred"
+                                      ? 'bg-purple-600 text-white shadow-inner'
+                                      : 'bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700'
+                                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                  title="Add as preferred skill"
                                 >
-                                  +
+                                  <Plus className="h-3 w-3" />
                                 </button>
                               </div>
                             )

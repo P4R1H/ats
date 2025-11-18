@@ -28,6 +28,11 @@ export default function MethodologyPage() {
   const [activeSection, setActiveSection] = useState('overview')
   const [animatedScore, setAnimatedScore] = useState(0)
 
+  // Set page title
+  useState(() => {
+    document.title = 'ML Methodology - Bread ATS'
+  })
+
   // Animate score on mount
   useState(() => {
     const interval = setInterval(() => {
@@ -149,12 +154,12 @@ export default function MethodologyPage() {
                 <CardContent className="p-8">
                   <div className="flex items-start gap-4">
                     <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg">
-                      <Brain className="h-6 w-6 text-white" />
+                      <Wheat className="h-6 w-6 text-white" />
                     </div>
                     <div className="flex-1">
                       <h2 className="text-2xl font-bold text-gray-900 mb-3">What is Bread ATS?</h2>
                       <p className="text-gray-700 leading-relaxed mb-4">
-                        Bread is an intelligent Applicant Tracking System that uses advanced machine learning
+                        Bread ATS is an intelligent Applicant Tracking System that uses advanced machine learning
                         techniques to objectively evaluate candidates and match them with job opportunities.
                         Our system combines natural language processing, unsupervised learning, and statistical
                         validation to create fair, transparent, and effective hiring decisions.
