@@ -306,7 +306,8 @@ export default function JobApplicationsPage() {
             {filteredApps.map((app) => (
               <Card
                 key={app.id}
-                className="border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+                className="border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+                onClick={() => router.push(`/recruiter/jobs/${jobId}/applications/${app.id}`)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-6">
@@ -394,7 +395,10 @@ export default function JobApplicationsPage() {
                         {app.status !== 'shortlisted' && (
                           <Button
                             size="sm"
-                            onClick={() => handleUpdateStatus(app.id, 'shortlisted')}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleUpdateStatus(app.id, 'shortlisted')
+                            }}
                             className="bg-green-600 hover:bg-green-700 text-white text-xs"
                           >
                             <CheckCircle className="h-3 w-3 mr-1" />
@@ -405,7 +409,10 @@ export default function JobApplicationsPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleUpdateStatus(app.id, 'rejected')}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleUpdateStatus(app.id, 'rejected')
+                            }}
                             className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs"
                           >
                             <XCircle className="h-3 w-3 mr-1" />
