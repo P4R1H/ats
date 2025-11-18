@@ -473,8 +473,8 @@ export default function HomePage() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
         </div>
 
-        <div className="relative max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+        <div className="relative max-w-4xl mx-auto text-center pb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent pb-2">
             Ready to Rise?
           </h2>
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
@@ -501,7 +501,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative bg-amber-50">
+      <footer className="relative bg-amber-50 border-t border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             {/* Brand Column */}

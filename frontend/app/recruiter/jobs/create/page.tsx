@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Slider } from '@/components/ui/slider'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Wheat,
@@ -441,15 +442,13 @@ export default function CreateJobPage() {
                       </div>
                       <span className="text-2xl font-bold text-gray-900">{weights[key]}%</span>
                     </div>
-                    <input
-                      id={`weight_${key}`}
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="5"
-                      value={weights[key]}
-                      onChange={(e) => handleWeightChange(key, parseInt(e.target.value))}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    <Slider
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={[weights[key]]}
+                      onValueChange={(vals) => handleWeightChange(key, vals[0])}
+                      className="py-1"
                     />
                   </div>
                 ))}

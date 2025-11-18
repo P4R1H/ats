@@ -24,8 +24,8 @@ def extract_skills_from_text(resume_text: str) -> Tuple[List[str], dict]:
     # Special patterns for skills with special characters
     # Word boundaries \b don't work with special chars like + and #
     special_patterns = {
-        'c++': r'\bc\+\+\b',
-        'c#': r'\bc#\b',
+        'c++': r'\bc\+\+(?!\w)',
+        'c#': r'\bc#(?!\w)',
         'asp.net': r'\basp\.net\b',
         '.net': r'\.net\b',
     }

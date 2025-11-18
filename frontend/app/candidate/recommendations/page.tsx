@@ -248,25 +248,25 @@ export default function JobRecommendationsPage() {
                 </div>
 
                 <div className="grid md:grid-cols-4 gap-4">
-                  <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
+                  <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-100 h-full flex flex-col justify-center">
                     <div className="text-3xl font-bold text-blue-700 mb-1">
                       {resumeAnalysis.skills.length}
                     </div>
                     <div className="text-sm text-gray-600">Skills Found</div>
                   </div>
-                  <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
+                  <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100 h-full flex flex-col justify-center">
                     <div className="text-3xl font-bold text-green-700 mb-1">
                       {resumeAnalysis.experience_years}
                     </div>
                     <div className="text-sm text-gray-600">Years Experience</div>
                   </div>
-                  <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                  <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-100 h-full flex flex-col justify-center">
                     <div className="text-xl font-semibold text-purple-700 mb-1">
                       {resumeAnalysis.education_level}
                     </div>
                     <div className="text-sm text-gray-600">Education</div>
                   </div>
-                  <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-100">
+                  <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-100 h-full flex flex-col justify-center">
                     <div className="text-lg font-semibold text-amber-700 mb-1">
                       {resumeAnalysis.has_certifications ? 'Yes' : 'No'} / {resumeAnalysis.has_leadership ? 'Yes' : 'No'}
                     </div>
@@ -299,130 +299,128 @@ export default function JobRecommendationsPage() {
 
             {/* Recommendations */}
             {recommendations.length > 0 && (
-              <Card className="border border-gray-200">
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
                     Recommended Jobs ({recommendations.length})
                   </h2>
-                  <p className="text-sm text-gray-600 mb-6">
+                  <p className="text-gray-600">
                     Jobs ranked by your predicted performance and skills match
                   </p>
+                </div>
 
-                  <div className="space-y-4">
-                    {recommendations.map((rec, idx) => (
-                      <div
-                        key={rec.job.id}
-                        className="p-6 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <div className="mb-3">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {recommendations.map((rec, idx) => (
+                    <Card key={rec.job.id} className="border border-gray-200 hover:shadow-md transition-shadow h-full flex flex-col">
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h3 className="text-lg font-bold text-gray-900 line-clamp-1" title={rec.job.title}>
                                 {rec.job.title}
                               </h3>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-gray-600 font-medium">
                                 {rec.job.category}
                               </p>
                             </div>
+                            <div className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                              rec.predicted_percentile >= 80 ? 'bg-green-100 text-green-800' :
+                              rec.predicted_percentile >= 60 ? 'bg-amber-100 text-amber-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {formatPercentile(rec.predicted_percentile)} Match
+                            </div>
+                          </div>
 
-                            <div className="grid md:grid-cols-3 gap-3 mb-4">
-                              <div className="flex items-center gap-2">
-                                <Award className="h-4 w-4 text-gray-600" />
-                                <div>
-                                  <div className="text-xs text-gray-600">Predicted Percentile</div>
-                                  <div className={`text-sm font-semibold ${getMatchColor(rec.predicted_percentile)}`}>
-                                    {formatPercentile(rec.predicted_percentile)}
-                                  </div>
-                                </div>
+                          <div className="grid grid-cols-2 gap-3 mb-6">
+                            <div className="p-3 bg-gray-50 rounded-lg">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Target className="h-4 w-4 text-gray-500" />
+                                <span className="text-xs text-gray-500 font-medium">Skills Match</span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <Target className="h-4 w-4 text-gray-600" />
-                                <div>
-                                  <div className="text-xs text-gray-600">Skills Match</div>
-                                  <div className={`text-sm font-semibold ${getMatchColor(rec.skills_match_percentage)}`}>
-                                    {rec.skills_match_percentage}%
-                                  </div>
-                                </div>
+                              <div className={`text-lg font-bold ${getMatchColor(rec.skills_match_percentage)}`}>
+                                {rec.skills_match_percentage}%
                               </div>
-                              <div className="flex items-center gap-2">
+                            </div>
+                            <div className="p-3 bg-gray-50 rounded-lg">
+                              <div className="flex items-center gap-2 mb-1">
                                 {rec.meets_requirements ? (
                                   <CheckCircle className="h-4 w-4 text-green-600" />
                                 ) : (
-                                  <XCircle className="h-4 w-4 text-gray-600" />
+                                  <XCircle className="h-4 w-4 text-red-600" />
                                 )}
-                                <div>
-                                  <div className="text-xs text-gray-600">Requirements</div>
-                                  <div className={`text-sm font-semibold ${rec.meets_requirements ? 'text-green-700' : 'text-gray-700'}`}>
-                                    {rec.meets_requirements ? 'Met' : 'Not Met'}
-                                  </div>
-                                </div>
+                                <span className="text-xs text-gray-500 font-medium">Requirements</span>
+                              </div>
+                              <div className={`text-lg font-bold ${rec.meets_requirements ? 'text-green-700' : 'text-red-700'}`}>
+                                {rec.meets_requirements ? 'Met' : 'Not Met'}
                               </div>
                             </div>
-
-                            {(rec.missing_required_skills.length > 0 || rec.missing_preferred_skills.length > 0) && (
-                              <div className="space-y-2">
-                                {rec.missing_required_skills.length > 0 && (
-                                  <div>
-                                    <div className="text-xs text-gray-600 mb-1">
-                                      Missing Required Skills ({rec.missing_required_skills.length}):
-                                    </div>
-                                    <div className="flex flex-wrap gap-1">
-                                      {rec.missing_required_skills.slice(0, 5).map((skill, sidx) => (
-                                        <span
-                                          key={sidx}
-                                          className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded text-xs"
-                                        >
-                                          {skill}
-                                        </span>
-                                      ))}
-                                      {rec.missing_required_skills.length > 5 && (
-                                        <span className="px-2 py-0.5 bg-gray-300 text-gray-700 rounded text-xs">
-                                          +{rec.missing_required_skills.length - 5}
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-                                {rec.missing_preferred_skills.length > 0 && (
-                                  <div>
-                                    <div className="text-xs text-gray-600 mb-1">
-                                      Missing Preferred Skills ({rec.missing_preferred_skills.length}):
-                                    </div>
-                                    <div className="flex flex-wrap gap-1">
-                                      {rec.missing_preferred_skills.slice(0, 5).map((skill, sidx) => (
-                                        <span
-                                          key={sidx}
-                                          className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
-                                        >
-                                          {skill}
-                                        </span>
-                                      ))}
-                                      {rec.missing_preferred_skills.length > 5 && (
-                                        <span className="px-2 py-0.5 bg-gray-200 text-gray-600 rounded text-xs">
-                                          +{rec.missing_preferred_skills.length - 5}
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            )}
                           </div>
 
-                          <Button
-                            onClick={() => router.push(`/candidate/jobs#${rec.job.id}`)}
-                            variant="outline"
-                            className="ml-4"
-                          >
-                            View Job
-                            <ArrowRight className="h-4 w-4 ml-2" />
-                          </Button>
+                          {(rec.missing_required_skills.length > 0 || rec.missing_preferred_skills.length > 0) && (
+                            <div className="space-y-3 mb-6">
+                              {rec.missing_required_skills.length > 0 && (
+                                <div>
+                                  <div className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
+                                    <XCircle className="h-3 w-3" />
+                                    Missing Required Skills
+                                  </div>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {rec.missing_required_skills.slice(0, 3).map((skill, sidx) => (
+                                      <span
+                                        key={sidx}
+                                        className="px-2 py-1 bg-red-50 text-red-700 rounded text-xs font-medium border border-red-100"
+                                      >
+                                        {skill}
+                                      </span>
+                                    ))}
+                                    {rec.missing_required_skills.length > 3 && (
+                                      <span className="px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs font-medium border border-gray-200">
+                                        +{rec.missing_required_skills.length - 3}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              {rec.missing_preferred_skills.length > 0 && (
+                                <div>
+                                  <div className="text-xs font-semibold text-amber-600 mb-2 flex items-center gap-1">
+                                    <Lightbulb className="h-3 w-3" />
+                                    Missing Preferred Skills
+                                  </div>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {rec.missing_preferred_skills.slice(0, 3).map((skill, sidx) => (
+                                      <span
+                                        key={sidx}
+                                        className="px-2 py-1 bg-amber-50 text-amber-700 rounded text-xs font-medium border border-amber-100"
+                                      >
+                                        {skill}
+                                      </span>
+                                    ))}
+                                    {rec.missing_preferred_skills.length > 3 && (
+                                      <span className="px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs font-medium border border-gray-200">
+                                        +{rec.missing_preferred_skills.length - 3}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+
+                        <Button
+                          onClick={() => router.push(`/candidate/jobs#${rec.job.id}`)}
+                          className="w-full mt-auto group"
+                        >
+                          View Job Details
+                          <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             )}
 
             {recommendations.length === 0 && (
