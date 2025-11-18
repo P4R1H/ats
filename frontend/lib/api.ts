@@ -202,6 +202,42 @@ class APIClient {
       method: 'POST',
     })
   }
+
+  // Resume analysis endpoints
+  async analyzeResume(resumeFile: File) {
+    // Always load fresh token from localStorage
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('token')
+    }
+
+    const formData = new FormData()
+    formData.append('resume_file', resumeFile)
+
+    const headers: HeadersInit = {}
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`
+    }
+
+    const response = await fetch(`${this.baseURL}/api/recommendations/analyze-resume`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'An error occurred' }))
+      throw new Error(error.detail || `HTTP ${response.status}`)
+    }
+
+    return response.json()
+  }
+
+  async getJobRecommendations(analysis: any) {
+    return this.request('/api/recommendations/jobs', {
+      method: 'POST',
+      body: JSON.stringify(analysis),
+    })
+  }
 }
 
 export const api = new APIClient(API_BASE_URL)

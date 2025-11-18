@@ -100,7 +100,7 @@ export default function CandidateDashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* Page Header */}
-        <div className="mb-12">
+        <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome back, {user?.full_name?.split(' ')[0] || 'there'}
           </h1>
@@ -108,6 +108,49 @@ export default function CandidateDashboard() {
             Track your applications and discover new opportunities
           </p>
         </div>
+
+        {/* Job Recommendations CTA */}
+        <Card className="border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 mb-8">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg">
+                  <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Get Personalized Job Recommendations
+                  </h3>
+                  <p className="text-sm text-gray-700 mb-3">
+                    Upload your resume to discover jobs where you're predicted to rank in the top percentiles.
+                    We'll analyze your skills and match you with positions you're most likely to succeed in.
+                  </p>
+                  <div className="flex items-center gap-4 text-sm text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-amber-600" />
+                      <span>AI-powered matching</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-amber-600" />
+                      <span>Top percentile predictions</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-amber-600" />
+                      <span>Skills gap analysis</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Button
+                onClick={() => router.push('/candidate/recommendations')}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Get Recommendations
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">

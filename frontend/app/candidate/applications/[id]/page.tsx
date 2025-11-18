@@ -339,18 +339,54 @@ export default function ApplicationDetailPage() {
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="font-medium text-gray-900 mb-1 text-sm">✓ Stage 1: Requirements</div>
-                    <p className="text-sm text-gray-600">
-                      You meet all minimum education, experience, skills, and qualifications.
+                <div className="space-y-2">
+                  <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-medium text-gray-900 text-sm">✓ Stage 1.1: Required Skills</div>
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      All required technical skills verified
                     </p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="font-medium text-gray-900 mb-1 text-sm">→ Stage 2: Ranking</div>
-                    <p className="text-sm text-gray-600">
-                      Your score of {application.final_score?.toFixed(1) || 0}/100 ranks you at the{' '}
-                      {formatPercentile(application.overall_percentile || 50)} among qualified candidates.
+
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-medium text-gray-900 text-sm">✓ Stage 1.2: Experience</div>
+                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Meets minimum experience requirement
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-medium text-gray-900 text-sm">✓ Stage 1.3: Education</div>
+                      <CheckCircle className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Education level meets minimum requirement
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-medium text-gray-900 text-sm">→ Stage 2: Preferred Skills</div>
+                      <TrendingUp className="h-4 w-4 text-amber-600" />
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Scored on nice-to-have skills beyond requirements
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-medium text-gray-900 text-sm">→ Stage 3: Final Ranking</div>
+                      <Award className="h-4 w-4 text-gray-700" />
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Score: {application.final_score?.toFixed(1) || 0}/100 • Percentile: {formatPercentile(application.overall_percentile || 50)}
                     </p>
                   </div>
                 </div>
