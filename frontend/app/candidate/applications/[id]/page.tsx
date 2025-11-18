@@ -104,6 +104,38 @@ export default function ApplicationDetailPage() {
     { label: 'Bonus Points', value: (application.bonus_score || 0) * (weights.certifications + weights.leadership), weight: (weights.certifications + weights.leadership) * 100, color: 'text-amber-600', bgColor: 'bg-amber-500' }
   ]
 
+  // Skills Gap Analysis
+  const requiredSkills = job?.required_skills ? JSON.parse(job.required_skills) : []
+  const preferredSkills = job?.preferred_skills ? JSON.parse(job.preferred_skills) : []
+  const candidateSkills = application.extracted_skills || []
+
+  const missingRequired = requiredSkills.filter((skill: string) =>
+    !candidateSkills.some((cs: string) => cs.toLowerCase() === skill.toLowerCase())
+  )
+  const missingPreferred = preferredSkills.filter((skill: string) =>
+    !candidateSkills.some((cs: string) => cs.toLowerCase() === skill.toLowerCase())
+  )
+
+  // Calculate potential score improvement
+  const currentSkillsScore = application.skills_score || 0
+  const totalRequiredSkills = requiredSkills.length
+  const matchedRequired = totalRequiredSkills - missingRequired.length
+  const potentialRequiredImprovement = totalRequiredSkills > 0
+    ? (missingRequired.length / totalRequiredSkills) * 70 // 70 points max for required
+    : 0
+
+  const totalPreferredSkills = preferredSkills.length
+  const potentialPreferredImprovement = totalPreferredSkills > 0
+    ? (missingPreferred.length / totalPreferredSkills) * 20 // 20 points max for preferred
+    : 0
+
+  const potentialSkillsScoreImprovement = potentialRequiredImprovement + potentialPreferredImprovement
+  const potentialFinalScoreImprovement = potentialSkillsScoreImprovement * weights.skills
+
+  const matchPercentage = totalRequiredSkills > 0
+    ? ((matchedRequired / totalRequiredSkills) * 100).toFixed(0)
+    : 100
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -196,6 +228,141 @@ export default function ApplicationDetailPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Skills Gap Analysis - Full Width */}
+        {(missingRequired.length > 0 || missingPreferred.length > 0) && (
+          <Card className="border border-gray-200 mb-8 bg-gradient-to-br from-blue-50 to-cyan-50">
+            <CardContent className="p-8">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lightbulb className="h-6 w-6 text-blue-600" />
+                    <h2 className="text-2xl font-bold text-gray-900">Skills Gap Analysis</h2>
+                  </div>
+                  <p className="text-gray-700">
+                    Personalized insights to help you improve your candidacy for this role
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-white rounded-xl border border-blue-200 shadow-sm">
+                  <div className="text-3xl font-bold text-blue-600 mb-1">
+                    +{potentialFinalScoreImprovement.toFixed(1)}
+                  </div>
+                  <div className="text-xs text-gray-600">Potential Score Gain</div>
+                </div>
+              </div>
+
+              {/* Match Progress */}
+              <div className="mb-6 p-6 bg-white rounded-xl border border-blue-200">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Required Skills Match</h3>
+                    <p className="text-sm text-gray-600">
+                      You have {matchedRequired} out of {totalRequiredSkills} required skills
+                    </p>
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600">{matchPercentage}%</div>
+                </div>
+                <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
+                    style={{ width: `${matchPercentage}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Missing Required Skills */}
+                {missingRequired.length > 0 && (
+                  <div className="p-6 bg-white rounded-xl border border-red-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <XCircle className="h-5 w-5 text-red-600" />
+                      <h3 className="font-semibold text-gray-900">Missing Required Skills</h3>
+                      <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-medium">
+                        High Priority
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Adding these skills could increase your score by up to{' '}
+                      <strong className="text-red-600">+{potentialRequiredImprovement.toFixed(1)} points</strong>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {missingRequired.map((skill: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 bg-red-100 text-red-900 rounded-md text-sm font-medium border border-red-200"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Missing Preferred Skills */}
+                {missingPreferred.length > 0 && (
+                  <div className="p-6 bg-white rounded-xl border border-amber-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Target className="h-5 w-5 text-amber-600" />
+                      <h3 className="font-semibold text-gray-900">Missing Preferred Skills</h3>
+                      <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                        Nice to Have
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Adding these skills could increase your score by up to{' '}
+                      <strong className="text-amber-600">+{potentialPreferredImprovement.toFixed(1)} points</strong>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {missingPreferred.map((skill: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 bg-amber-100 text-amber-900 rounded-md text-sm font-medium border border-amber-200"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Items */}
+              <div className="mt-6 p-6 bg-white rounded-xl border border-green-200">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Recommended Actions</h3>
+                    <ul className="space-y-2 text-sm text-gray-700">
+                      {missingRequired.length > 0 && (
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-600 font-bold mt-0.5">•</span>
+                          <span>
+                            <strong>Priority:</strong> Focus on acquiring the {missingRequired.length} missing required skill{missingRequired.length > 1 ? 's' : ''} first,
+                            as they have the highest impact on your score
+                          </span>
+                        </li>
+                      )}
+                      {missingPreferred.length > 0 && missingRequired.length === 0 && (
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-600 font-bold mt-0.5">•</span>
+                          <span>
+                            Consider learning the {missingPreferred.length} preferred skill{missingPreferred.length > 1 ? 's' : ''} to further strengthen your profile
+                          </span>
+                        </li>
+                      )}
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 font-bold mt-0.5">•</span>
+                        <span>
+                          Update your resume to highlight these new skills once acquired for future applications
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
           {/* Score Breakdown */}
