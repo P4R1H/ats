@@ -105,8 +105,12 @@ export default function ApplicationDetailPage() {
   ]
 
   // Skills Gap Analysis
-  const requiredSkills = job?.required_skills ? JSON.parse(job.required_skills) : []
-  const preferredSkills = job?.preferred_skills ? JSON.parse(job.preferred_skills) : []
+  const requiredSkills = job?.required_skills
+    ? job.required_skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : []
+  const preferredSkills = job?.preferred_skills
+    ? job.preferred_skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : []
   const candidateSkills = application.extracted_skills || []
 
   const missingRequired = requiredSkills.filter((skill: string) =>
