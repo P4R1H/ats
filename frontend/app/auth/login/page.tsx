@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Wheat, ArrowRight, Sparkles } from 'lucide-react'
+import { Wheat, ArrowRight } from 'lucide-react'
 import { api } from '@/lib/api'
 
 export default function LoginPage() {
@@ -38,40 +38,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 bread-pattern">
-      <div className="w-full max-w-md space-y-8 animate-scale-in">
-        <div className="text-center space-y-4">
-          <Link href="/" className="inline-flex items-center space-x-3">
-            <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
-              <Wheat className="h-8 w-8 text-white" />
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center space-y-2">
+          <Link href="/" className="inline-flex items-center gap-2 group">
+            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+              <Wheat className="h-6 w-6 text-white" />
             </div>
-            <span className="text-3xl font-bold gradient-text">Bread</span>
+            <span className="text-2xl font-bold text-gray-900">Bread</span>
           </Link>
-          <div className="flex justify-center">
-            <div className="inline-flex items-center space-x-2 bg-amber-100 px-4 py-2 rounded-full text-sm font-medium text-amber-900">
-              <Sparkles className="h-4 w-4" />
-              <span>Welcome back to the bakery!</span>
-            </div>
-          </div>
         </div>
 
-        <Card className="shadow-2xl border-2 border-amber-200/50 warm-glow">
-          <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-3xl font-bold text-center">Sign In</CardTitle>
-            <CardDescription className="text-center text-base">
+        <Card className="border border-gray-200">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+            <CardDescription>
               Enter your credentials to access your dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="bg-red-50 border-2 border-red-200 text-red-700 p-4 rounded-xl text-sm animate-slide-in">
+                <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm">
                   {error}
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-base font-medium">Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -79,12 +73,11 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-12 text-base border-2 focus:border-amber-400"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-base font-medium">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -92,28 +85,27 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 text-base border-2 focus:border-amber-400"
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full h-12 gradient-bg text-white text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
                 disabled={loading}
               >
                 {loading ? 'Signing in...' : (
                   <>
                     Sign In
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                <Link href="/auth/register" className="text-amber-600 hover:text-amber-700 font-semibold hover:underline">
+                <Link href="/auth/register" className="text-amber-600 hover:text-amber-700 font-medium hover:underline">
                   Create one
                 </Link>
               </p>
@@ -122,7 +114,7 @@ export default function LoginPage() {
         </Card>
 
         <div className="text-center">
-          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center">
+          <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
             ← Back to Home
           </Link>
         </div>
