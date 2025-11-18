@@ -184,57 +184,58 @@ export default function CandidateDashboard() {
                   onClick={() => router.push(`/candidate/applications/${app.id}`)}
                 >
                   <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            Job #{app.job_id}
-                          </h3>
-                          {app.status === 'pending' && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                              Pending
-                            </span>
-                          )}
-                          {app.status === 'shortlisted' && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Shortlisted
-                            </span>
-                          )}
-                          {app.status === 'rejected' && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                              Not Selected
-                            </span>
-                          )}
+                    <div className="flex items-stretch justify-between gap-6">
+                      <div className="flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              Job #{app.job_id}
+                            </h3>
+                            {app.status === 'pending' && (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                Pending
+                              </span>
+                            )}
+                            {app.status === 'shortlisted' && (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Shortlisted
+                              </span>
+                            )}
+                            {app.status === 'rejected' && (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                Not Selected
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="text-sm text-gray-600 mb-3">
+                            Applied {formatDate(app.applied_at)}
+                          </p>
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-3">
-                          Applied {formatDate(app.applied_at)}
-                        </p>
-
                         <div className="flex items-center gap-2 text-sm">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
                             {app.num_skills || 0} skills
                           </span>
                           {app.cluster_name && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
                               {app.cluster_name}
                             </span>
                           )}
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
+                            {formatPercentile(app.overall_percentile || 50)}
+                          </span>
                         </div>
                       </div>
 
-                      <div className="ml-6 flex flex-col items-end gap-2">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                          {formatPercentile(app.overall_percentile || 50)}
-                        </span>
+                      <div className="flex flex-col items-end justify-between">
                         <div className={`text-3xl font-bold ${getScoreColor(app.final_score || 0)}`}>
                           {app.final_score?.toFixed(0) || 'N/A'}
                         </div>
-                        <div className="text-xs text-gray-500">Score</div>
+                        <div className="text-xs text-gray-500 mb-2">Score</div>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="mt-2"
                           onClick={(e) => {
                             e.stopPropagation()
                             router.push(`/candidate/applications/${app.id}`)
