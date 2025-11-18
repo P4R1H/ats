@@ -169,8 +169,8 @@ export default function JobsPage() {
               {/* Job Description */}
               <div className="mb-8">
                 <h2 className="text-lg font-semibold text-gray-900 mb-3">About this role</h2>
-                <div className="prose prose-gray max-w-none">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} className="text-gray-700 leading-relaxed">
+                <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {selectedJob.description}
                   </ReactMarkdown>
                 </div>
