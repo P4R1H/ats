@@ -297,7 +297,7 @@ export default function CandidateDashboard() {
                       {applications.some(app => app.job_id === job.id) ? (
                         <Button
                           disabled
-                          className="bg-gray-100 text-gray-500 cursor-not-allowed"
+                          className="bg-amber-50 text-amber-600 cursor-not-allowed opacity-60"
                           size="sm"
                         >
                           Applied
