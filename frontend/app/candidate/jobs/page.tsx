@@ -441,7 +441,7 @@ export default function JobsPage() {
                   {applications.some(app => app.job_id === job.id) ? (
                     <Button
                       disabled
-                      className="w-full bg-gray-100 text-gray-500 cursor-not-allowed"
+                      className="w-full bg-amber-50 text-amber-600 cursor-not-allowed opacity-60"
                     >
                       Applied
                     </Button>
