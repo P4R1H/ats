@@ -321,45 +321,45 @@ export default function ApplicationDetailPage() {
           </Card>
         )}
 
-        {application.meets_requirements !== false && (
-          <Card className="border border-gray-200 mb-6">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    You Met All Minimum Requirements!
-                  </h2>
-                  <p className="text-gray-700 mb-4">
-                    Congratulations! Your application passed Stage 1 (Requirements Check).
-                    You now compete with other qualified candidates in Stage 2 (Scoring & Ranking).
-                  </p>
-                  <div className="grid md:grid-cols-2 gap-4 text-sm">
-                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="font-semibold text-gray-900 mb-2">✓ Stage 1: Requirements</div>
-                      <p className="text-gray-600">
-                        You meet all minimum education, experience, skills, and qualifications.
-                      </p>
-                    </div>
-                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="font-semibold text-gray-900 mb-2">→ Stage 2: Ranking</div>
-                      <p className="text-gray-600">
-                        Your score of {application.final_score?.toFixed(1) || 0}/100 ranks you at the{' '}
-                        {formatPercentile(application.overall_percentile || 50)} among qualified candidates.
-                      </p>
-                    </div>
+        {/* Requirements & Skills Gap - Side by Side */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-6">
+          {application.meets_requirements !== false && (
+            <Card className="border border-gray-200">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                      You Met All Requirements!
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Passed Stage 1 (Requirements Check)
+                    </p>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                <div className="space-y-3">
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="font-medium text-gray-900 mb-1 text-sm">✓ Stage 1: Requirements</div>
+                    <p className="text-sm text-gray-600">
+                      You meet all minimum education, experience, skills, and qualifications.
+                    </p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="font-medium text-gray-900 mb-1 text-sm">→ Stage 2: Ranking</div>
+                    <p className="text-sm text-gray-600">
+                      Your score of {application.final_score?.toFixed(1) || 0}/100 ranks you at the{' '}
+                      {formatPercentile(application.overall_percentile || 50)} among qualified candidates.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-        {/* Skills Gap Analysis - Full Width */}
-        {(missingRequired.length > 0 || missingPreferred.length > 0) && (
-          <Card className="border border-gray-200 mb-6">
+          {(missingRequired.length > 0 || missingPreferred.length > 0) && (
+            <Card className="border border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-6">
                 <div>
@@ -503,7 +503,8 @@ export default function ApplicationDetailPage() {
               </div>
             </CardContent>
           </Card>
-        )}
+          )}
+        </div>
 
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
           {/* Score Breakdown */}
