@@ -38,11 +38,27 @@ def parse_json_field(value):
     return value
 
 
-def generate_random_resume_text(job_title: str, job_category: str) -> str:
-    """Generate a random but realistic resume text."""
+def generate_random_resume_text(job: JobPosting) -> str:
+    """
+    Generate a random but realistic resume text tailored to the job.
+
+    This function creates test resumes with varying quality levels that
+    match (or don't match) the job's requirements realistically.
+
+    Args:
+        job: JobPosting object with requirements
+
+    Returns:
+        Resume text string
+    """
     import random
 
-    skills_pool = [
+    # Parse job requirements
+    required_skills = json.loads(job.required_skills) if job.required_skills else []
+    preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
+
+    # Generic skill pool for padding
+    generic_skills = [
         'Python', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'SQL', 'MongoDB',
         'Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'Git', 'CI/CD', 'Agile',
         'Machine Learning', 'Data Analysis', 'REST APIs', 'Microservices',
@@ -55,17 +71,106 @@ def generate_random_resume_text(job_title: str, job_category: str) -> str:
     names = ['Alex Johnson', 'Maria Garcia', 'James Smith', 'Sarah Williams', 'David Chen',
              'Emma Davis', 'Michael Brown', 'Lisa Anderson', 'Robert Martinez', 'Jennifer Lee']
 
-    educations = ['Bachelor\'s', 'Master\'s', 'PhD']
+    educations = ['Bachelor\'s', 'Master\'s', 'PhD', 'Diploma']
     certifications = ['AWS Certified', 'Google Cloud Certified', 'Microsoft Certified',
                       'Kubernetes Certified', 'Scrum Master', 'PMP']
 
+    # Determine quality level randomly
+    quality_roll = random.random()
+    if quality_roll < 0.3:  # 30% excellent
+        quality = 'excellent'
+    elif quality_roll < 0.6:  # 30% good
+        quality = 'good'
+    elif quality_roll < 0.85:  # 25% mediocre
+        quality = 'mediocre'
+    else:  # 15% poor
+        quality = 'poor'
+
+    # Generate experience relative to job requirements
+    min_exp = job.min_experience or 0
+    if quality == 'excellent':
+        # Perfect fit: at minimum to +2 years
+        years_exp = min_exp + random.uniform(0, 2.5)
+    elif quality == 'good':
+        # Slightly off: -1 to +4 years
+        years_exp = min_exp + random.uniform(-1, 4)
+    elif quality == 'mediocre':
+        # Below minimum or way overqualified
+        if random.choice([True, False]):
+            years_exp = min_exp * random.uniform(0.3, 0.8)  # Below min
+        else:
+            years_exp = min_exp + random.uniform(6, 10)  # Overqualified
+    else:  # poor
+        # Way below minimum
+        years_exp = min_exp * random.uniform(0, 0.5)
+
+    years_exp = max(0, round(years_exp, 1))
+
+    # Generate skills based on quality
+    candidate_skills = []
+
+    if quality == 'excellent':
+        # 80-100% of required, 60-80% of preferred, few extras
+        num_required = int(len(required_skills) * random.uniform(0.8, 1.0))
+        num_preferred = int(len(preferred_skills) * random.uniform(0.6, 0.8))
+        num_extra = random.randint(1, 3)
+
+        candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
+        if preferred_skills:
+            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+        extra_pool = [s for s in generic_skills if s not in candidate_skills]
+        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+
+    elif quality == 'good':
+        # 50-70% of required, 30-50% of preferred, some extras
+        num_required = int(len(required_skills) * random.uniform(0.5, 0.7))
+        num_preferred = int(len(preferred_skills) * random.uniform(0.3, 0.5))
+        num_extra = random.randint(2, 5)
+
+        candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
+        if preferred_skills:
+            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+        extra_pool = [s for s in generic_skills if s not in candidate_skills]
+        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+
+    elif quality == 'mediocre':
+        # 20-40% of required, 10-20% of preferred, lots of random
+        num_required = int(len(required_skills) * random.uniform(0.2, 0.4))
+        num_preferred = int(len(preferred_skills) * random.uniform(0.1, 0.2))
+        num_extra = random.randint(5, 10)
+
+        candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
+        if preferred_skills:
+            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+        extra_pool = [s for s in generic_skills if s not in candidate_skills]
+        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+
+    else:  # poor
+        # 0-20% of required, 0-10% of preferred, mostly random
+        num_required = int(len(required_skills) * random.uniform(0, 0.2))
+        num_preferred = int(len(preferred_skills) * random.uniform(0, 0.1))
+        num_extra = random.randint(3, 8)
+
+        if num_required > 0:
+            candidate_skills.extend(random.sample(required_skills, min(num_required, len(required_skills))))
+        if preferred_skills and num_preferred > 0:
+            candidate_skills.extend(random.sample(preferred_skills, min(num_preferred, len(preferred_skills))))
+        extra_pool = [s for s in generic_skills if s not in candidate_skills + required_skills + preferred_skills]
+        candidate_skills.extend(random.sample(extra_pool, min(num_extra, len(extra_pool))))
+
+    # Other resume attributes
     name = random.choice(names)
     education = random.choice(educations)
-    years_exp = random.randint(2, 10)
-    num_skills = random.randint(5, 15)
-    selected_skills = random.sample(skills_pool, num_skills)
     has_cert = random.choice([True, False])
-    has_leadership = random.choice([True, False])
+    has_leadership = quality in ['excellent', 'good'] and random.choice([True, False])
+
+    # Determine seniority level based on experience
+    if years_exp < 2:
+        level = 'Junior'
+    elif years_exp < 5:
+        level = ''
+    else:
+        level = 'Senior'
 
     certification_section = ""
     if has_cert:
@@ -73,25 +178,25 @@ def generate_random_resume_text(job_title: str, job_category: str) -> str:
 
     resume_text = f"""
 {name}
-Senior {job_title}
+{level + ' ' if level else ''}{job.title}
 
 PROFESSIONAL SUMMARY
-Experienced {job_title} with {years_exp} years of expertise in {job_category}.
-Proven track record of delivering high-quality solutions and leading successful projects.
+{f"Experienced {job.title} with {years_exp} years of expertise in {job.category}." if years_exp >= 2 else f"{job.title} with {years_exp} year{'s' if years_exp != 1 else ''} of experience in {job.category}."}
+{'Proven track record of delivering high-quality solutions and leading successful projects.' if years_exp >= 3 else 'Eager to learn and contribute to impactful projects.'}
 
 SKILLS
-{', '.join(selected_skills)}
+{', '.join(candidate_skills)}
 
 EXPERIENCE
-Senior {job_title} | Tech Company Inc. | {years_exp-2} years
-- Led development of scalable applications
+{level + ' ' if level and years_exp >= 2 else ''}{job.title} | Tech Company Inc. | {max(1, int(years_exp * 0.6))} year{'s' if int(years_exp * 0.6) != 1 else ''}
+- {'Led development of scalable applications' if years_exp >= 5 else 'Developed and maintained production applications'}
 - Collaborated with cross-functional teams
-- Implemented best practices and code reviews
+- {'Implemented best practices and code reviews' if years_exp >= 3 else 'Participated in code reviews and testing'}
 {'- Managed team of 5 developers' if has_leadership else ''}
 
-{job_title} | Previous Company | 2 years
-- Developed and maintained production systems
-- Optimized performance and scalability
+{f"{job.title} | Previous Company | {max(1, int(years_exp * 0.4))} year{'s' if int(years_exp * 0.4) != 1 else ''}" if years_exp >= 2 else "Intern | Previous Company | 1 year"}
+- {'Developed and maintained production systems' if years_exp >= 2 else 'Assisted in development of features'}
+- {'Optimized performance and scalability' if years_exp >= 2 else 'Learned development best practices'}
 - Participated in agile development process
 
 EDUCATION
@@ -159,7 +264,11 @@ async def submit_application(
         # Process resume with ML
         processed_data = process_resume(resume_text)
 
-        # Calculate scores
+        # Parse job requirements
+        required_skills = json.loads(job.required_skills) if job.required_skills else []
+        preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
+
+        # Calculate scores using job-specific requirements
         weights = {
             "skills": job.weight_skills,
             "experience": job.weight_experience,
@@ -169,9 +278,12 @@ async def submit_application(
         }
 
         scores = calculate_final_score(
-            num_skills=processed_data['num_skills'],
+            candidate_skills=processed_data['extracted_skills'],
+            required_skills=required_skills,
+            preferred_skills=preferred_skills,
             skill_diversity=processed_data['skill_diversity'],
             experience_years=processed_data['experience_years'],
+            min_experience=job.min_experience or 0,
             education_level=processed_data['education_level'],
             has_certifications=processed_data['has_certifications'],
             has_leadership=processed_data['has_leadership'],
@@ -464,13 +576,17 @@ def generate_random_applications(
 
     try:
         for i in range(count):
-            # Generate random resume text
-            resume_text = generate_random_resume_text(job.title, job.category)
+            # Generate random resume text tailored to job
+            resume_text = generate_random_resume_text(job)
 
             # Process resume with ML
             processed_data = process_resume(resume_text)
 
-            # Calculate scores
+            # Parse job requirements
+            required_skills = json.loads(job.required_skills) if job.required_skills else []
+            preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
+
+            # Calculate scores using job-specific requirements
             weights = {
                 'skills': job.weight_skills or 0.4,
                 'experience': job.weight_experience or 0.3,
@@ -480,9 +596,12 @@ def generate_random_applications(
             }
 
             scores = calculate_final_score(
-                num_skills=processed_data['num_skills'],
+                candidate_skills=processed_data['extracted_skills'],
+                required_skills=required_skills,
+                preferred_skills=preferred_skills,
                 skill_diversity=processed_data['skill_diversity'],
                 experience_years=processed_data['experience_years'],
+                min_experience=job.min_experience or 0,
                 education_level=processed_data['education_level'],
                 has_certifications=processed_data['has_certifications'],
                 has_leadership=processed_data['has_leadership'],
@@ -506,8 +625,6 @@ def generate_random_applications(
             )
 
             # Analyze skill gap
-            required_skills = json.loads(job.required_skills) if job.required_skills else []
-            preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
             gap_analysis = analyze_skill_gap(
                 candidate_skills=processed_data['extracted_skills'],
                 required_skills=required_skills,
