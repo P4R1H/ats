@@ -26,6 +26,18 @@ UPLOAD_DIR = Path("uploads/resumes")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def parse_json_field(value):
+    """Helper to parse JSON string fields."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return None
+    return value
+
+
 @router.post("", response_model=ApplicationResponse, status_code=status.HTTP_201_CREATED)
 async def submit_application(
     job_id: int = Form(...),
@@ -229,14 +241,17 @@ def get_application_details(
                 detail="You don't have permission to view this application"
             )
 
-    # Build detailed response
-    response = ApplicationDetailResponse.model_validate(application)
-    response.candidate_name = candidate.full_name
-    response.candidate_email = candidate.email
-    response.job_title = job.title
-    response.job_category = job.category
+    # Build detailed response with all fields
+    response_data = {
+        **ApplicationResponse.model_validate(application).model_dump(),
+        "candidate_name": candidate.full_name,
+        "candidate_email": candidate.email,
+        "job_title": job.title,
+        "job_category": job.category,
+        "resume_text": application.resume_text
+    }
 
-    return response
+    return ApplicationDetailResponse(**response_data)
 
 
 @router.get("/job/{job_id}", response_model=List[ApplicationDetailResponse])
@@ -271,13 +286,17 @@ def get_applications_for_job(
     for app in applications:
         candidate = db.query(User).filter(User.id == app.candidate_id).first()
 
-        response = ApplicationDetailResponse.model_validate(app)
-        response.candidate_name = candidate.full_name
-        response.candidate_email = candidate.email
-        response.job_title = job.title
-        response.job_category = job.category
+        # Build response with all fields properly
+        response_data = {
+            **ApplicationResponse.model_validate(app).model_dump(),
+            "candidate_name": candidate.full_name,
+            "candidate_email": candidate.email,
+            "job_title": job.title,
+            "job_category": job.category,
+            "resume_text": app.resume_text
+        }
 
-        results.append(response)
+        results.append(ApplicationDetailResponse(**response_data))
 
     return results
 
