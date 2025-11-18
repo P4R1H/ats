@@ -338,37 +338,139 @@ export default function ApplicationDetailPage() {
                 )}
               </div>
 
-              {/* Action Items */}
-              <div className="mt-6 p-6 bg-white rounded-xl border border-green-200">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Recommended Actions</h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      {missingRequired.length > 0 && (
-                        <li className="flex items-start gap-2">
-                          <span className="text-blue-600 font-bold mt-0.5">•</span>
-                          <span>
-                            <strong>Priority:</strong> Focus on acquiring the {missingRequired.length} missing required skill{missingRequired.length > 1 ? 's' : ''} first,
-                            as they have the highest impact on your score
+              {/* Enhanced Recommended Actions */}
+              <div className="mt-6 space-y-4">
+                {/* Learning Path */}
+                <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                  <div className="flex items-start gap-3 mb-4">
+                    <Lightbulb className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-bold text-gray-900 mb-1">Personalized Learning Path</h3>
+                      <p className="text-sm text-gray-700">
+                        Based on your current skill set and this role's requirements
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {missingRequired.length > 0 && (
+                      <div className="bg-white rounded-lg p-4 border-l-4 border-red-500">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                              🎯 High Priority ({missingRequired.length} skill{missingRequired.length > 1 ? 's' : ''})
+                            </h4>
+                            <p className="text-xs text-gray-600">
+                              Required skills - Worth up to +{potentialRequiredImprovement.toFixed(1)} points
+                            </p>
+                          </div>
+                          <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium">
+                            Required
                           </span>
-                        </li>
-                      )}
-                      {missingPreferred.length > 0 && missingRequired.length === 0 && (
-                        <li className="flex items-start gap-2">
-                          <span className="text-blue-600 font-bold mt-0.5">•</span>
-                          <span>
-                            Consider learning the {missingPreferred.length} preferred skill{missingPreferred.length > 1 ? 's' : ''} to further strengthen your profile
+                        </div>
+                        <div className="space-y-2">
+                          {missingRequired.slice(0, 3).map((skill: string, idx: number) => (
+                            <div key={idx} className="flex items-center justify-between text-sm">
+                              <span className="font-medium text-gray-800">{idx + 1}. {skill}</span>
+                              <span className="text-xs text-gray-500">2-4 weeks</span>
+                            </div>
+                          ))}
+                          {missingRequired.length > 3 && (
+                            <p className="text-xs text-gray-500 italic">
+                              + {missingRequired.length - 3} more skill{missingRequired.length - 3 > 1 ? 's' : ''}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {missingPreferred.length > 0 && (
+                      <div className="bg-white rounded-lg p-4 border-l-4 border-amber-500">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                              ⭐ Medium Priority ({missingPreferred.length} skill{missingPreferred.length > 1 ? 's' : ''})
+                            </h4>
+                            <p className="text-xs text-gray-600">
+                              Preferred skills - Worth up to +{potentialPreferredImprovement.toFixed(1)} points
+                            </p>
+                          </div>
+                          <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-medium">
+                            Preferred
                           </span>
-                        </li>
-                      )}
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 font-bold mt-0.5">•</span>
-                        <span>
-                          Update your resume to highlight these new skills once acquired for future applications
-                        </span>
-                      </li>
-                    </ul>
+                        </div>
+                        <div className="space-y-2">
+                          {missingPreferred.slice(0, 3).map((skill: string, idx: number) => (
+                            <div key={idx} className="flex items-center justify-between text-sm">
+                              <span className="font-medium text-gray-800">{idx + 1}. {skill}</span>
+                              <span className="text-xs text-gray-500">1-3 weeks</span>
+                            </div>
+                          ))}
+                          {missingPreferred.length > 3 && (
+                            <p className="text-xs text-gray-500 italic">
+                              + {missingPreferred.length - 3} more skill{missingPreferred.length - 3 > 1 ? 's' : ''}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Steps */}
+                <div className="p-6 bg-white rounded-xl border border-blue-200">
+                  <div className="flex items-start gap-3 mb-4">
+                    <CheckCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-bold text-gray-900 mb-1">Next Steps</h3>
+                      <p className="text-sm text-gray-700">
+                        Actionable steps to improve your candidacy
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {missingRequired.length > 0 && (
+                      <>
+                        <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                          <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                            1
+                          </div>
+                          <div className="text-sm text-gray-800">
+                            <strong>Learn required skills:</strong> Start with {missingRequired[0]}
+                            {missingRequired.length > 1 && ` and ${missingRequired[1]}`}.
+                            Use free resources like freeCodeCamp, Codecademy, or YouTube tutorials.
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                          <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                            2
+                          </div>
+                          <div className="text-sm text-gray-800">
+                            <strong>Build projects:</strong> Create 1-2 small projects demonstrating each skill.
+                            This proves practical knowledge beyond just listing the skill.
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                        {missingRequired.length > 0 ? '3' : '1'}
+                      </div>
+                      <div className="text-sm text-gray-800">
+                        <strong>Update your resume:</strong> Add new skills to a dedicated "Skills" section.
+                        Include them in project descriptions to show context and application.
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                        {missingRequired.length > 0 ? '4' : '2'}
+                      </div>
+                      <div className="text-sm text-gray-800">
+                        <strong>Reapply when ready:</strong> Once you've acquired {missingRequired.length > 0 ? 'the required' : 'additional'} skills,
+                        submit a new application. Your score could increase by <strong className="text-green-600">+{potentialFinalScoreImprovement.toFixed(1)} points</strong>!
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
