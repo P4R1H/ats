@@ -87,11 +87,12 @@ export default function ApplicationDetailPage() {
     )
   }
 
+  // Calculate weighted contributions (raw scores are 0-100, multiply by weight percentage)
   const scoreBreakdown = [
-    { label: 'Skills Match', value: application.skills_score || 0, weight: 40, color: 'text-blue-600', bgColor: 'bg-blue-500' },
-    { label: 'Experience', value: application.experience_score || 0, weight: 30, color: 'text-green-600', bgColor: 'bg-green-500' },
-    { label: 'Education', value: application.education_score || 0, weight: 20, color: 'text-purple-600', bgColor: 'bg-purple-500' },
-    { label: 'Bonus Points', value: application.bonus_score || 0, weight: 10, color: 'text-amber-600', bgColor: 'bg-amber-500' }
+    { label: 'Skills Match', value: (application.skills_score || 0) * 0.4, weight: 40, color: 'text-blue-600', bgColor: 'bg-blue-500' },
+    { label: 'Experience', value: (application.experience_score || 0) * 0.3, weight: 30, color: 'text-green-600', bgColor: 'bg-green-500' },
+    { label: 'Education', value: (application.education_score || 0) * 0.2, weight: 20, color: 'text-purple-600', bgColor: 'bg-purple-500' },
+    { label: 'Bonus Points', value: (application.bonus_score || 0) * 0.1, weight: 10, color: 'text-amber-600', bgColor: 'bg-amber-500' }
   ]
 
   return (

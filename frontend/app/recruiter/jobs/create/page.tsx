@@ -30,10 +30,24 @@ export default function CreateJobPage() {
     preferred_skills: [] as string[]
   })
 
+  const [weights, setWeights] = useState({
+    skills: 40,
+    experience: 30,
+    education: 20,
+    certifications: 5,
+    leadership: 5
+  })
+
   const [currentSkill, setCurrentSkill] = useState('')
   const [currentPreferredSkill, setCurrentPreferredSkill] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const handleWeightChange = (key: keyof typeof weights, value: number) => {
+    setWeights({ ...weights, [key]: value })
+  }
+
+  const totalWeight = Object.values(weights).reduce((sum, val) => sum + val, 0)
 
   const handleAddSkill = (type: 'required' | 'preferred') => {
     const skill = type === 'required' ? currentSkill : currentPreferredSkill
@@ -87,6 +101,11 @@ export default function CreateJobPage() {
       return
     }
 
+    if (totalWeight !== 100) {
+      setError(`Scoring weights must sum to 100% (currently ${totalWeight}%)`)
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -98,12 +117,12 @@ export default function CreateJobPage() {
         preferred_skills: formData.preferred_skills,
         min_experience: 0,
         education_level: null,
-        // Default weight values (must sum to 1.0)
-        weight_skills: 0.40,
-        weight_experience: 0.30,
-        weight_education: 0.20,
-        weight_certifications: 0.05,
-        weight_leadership: 0.05
+        // Convert percentages to decimals (0-1)
+        weight_skills: weights.skills / 100,
+        weight_experience: weights.experience / 100,
+        weight_education: weights.education / 100,
+        weight_certifications: weights.certifications / 100,
+        weight_leadership: weights.leadership / 100
       })
 
       router.push('/recruiter/dashboard')
@@ -216,6 +235,103 @@ export default function CreateJobPage() {
                 <p className="text-xs text-gray-500">
                   Supports markdown formatting (headings, lists, bold, italic, etc.)
                 </p>
+              </div>
+
+              {/* Scoring Weights */}
+              <div className="space-y-4 p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900">Scoring Weights</h3>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Customize how candidate applications are scored (must sum to 100%)
+                    </p>
+                  </div>
+                  <div className={`text-lg font-bold ${totalWeight === 100 ? 'text-green-600' : 'text-red-600'}`}>
+                    {totalWeight}%
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Skills Weight */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium text-gray-900">Skills Match</Label>
+                      <span className="text-sm font-bold text-blue-600">{weights.skills}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={weights.skills}
+                      onChange={(e) => handleWeightChange('skills', parseInt(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    />
+                  </div>
+
+                  {/* Experience Weight */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium text-gray-900">Experience</Label>
+                      <span className="text-sm font-bold text-green-600">{weights.experience}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={weights.experience}
+                      onChange={(e) => handleWeightChange('experience', parseInt(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
+                    />
+                  </div>
+
+                  {/* Education Weight */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium text-gray-900">Education</Label>
+                      <span className="text-sm font-bold text-purple-600">{weights.education}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={weights.education}
+                      onChange={(e) => handleWeightChange('education', parseInt(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                    />
+                  </div>
+
+                  {/* Certifications Weight */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium text-gray-900">Certifications</Label>
+                      <span className="text-sm font-bold text-amber-600">{weights.certifications}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={weights.certifications}
+                      onChange={(e) => handleWeightChange('certifications', parseInt(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+                    />
+                  </div>
+
+                  {/* Leadership Weight */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium text-gray-900">Leadership</Label>
+                      <span className="text-sm font-bold text-orange-600">{weights.leadership}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={weights.leadership}
+                      onChange={(e) => handleWeightChange('leadership', parseInt(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-600"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Required Skills */}
