@@ -6,25 +6,16 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List, Dict, Any
-import PyPDF2
-import io
-import re
+import json
 
 from database import get_db
 from auth import get_current_user
 from models import User, JobPosting, Application
 from ml_integration.scoring import check_requirements, calculate_final_score
-import json
+from ml_integration.resume_parser import extract_text_from_file
+from ml_integration.extract_skills import process_resume
 
 router = APIRouter()
-
-
-def normalize_skill(skill: str) -> str:
-    """
-    Normalize skill name for matching (remove dots, spaces, lowercase)
-    Examples: "Next.js" -> "nextjs", "Node.js" -> "nodejs"
-    """
-    return skill.lower().replace('.', '').replace(' ', '').replace('-', '')
 
 
 class ResumeAnalysis(BaseModel):
@@ -46,150 +37,6 @@ class JobRecommendation(BaseModel):
     potential_score: float
 
 
-def extract_text_from_pdf(pdf_file: bytes) -> str:
-    """Extract text from PDF file"""
-    try:
-        pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file))
-        text = ""
-        for page in pdf_reader.pages:
-            text += page.extract_text()
-        return text
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to parse PDF: {str(e)}")
-
-
-def analyze_resume_text(text: str) -> ResumeAnalysis:
-    """
-    Analyze resume text to extract skills, experience, and qualifications
-    """
-    text_lower = text.lower()
-
-    # Common skill keywords (comprehensive list)
-    all_skills = [
-        # Programming Languages
-        "python", "javascript", "typescript", "java", "c++", "c#", "ruby", "go", "rust",
-        "php", "swift", "kotlin", "scala", "r", "matlab", "perl", "shell", "bash",
-
-        # Web Technologies
-        "react", "angular", "vue", "nextjs", "next.js", "node.js", "nodejs", "express",
-        "django", "flask", "fastapi", "spring", "asp.net", "laravel", "rails",
-        "html", "css", "sass", "less", "tailwind", "bootstrap", "jquery",
-
-        # Databases
-        "sql", "mysql", "postgresql", "mongodb", "redis", "elasticsearch", "cassandra",
-        "oracle", "sql server", "sqlite", "dynamodb", "neo4j", "firebase",
-
-        # Cloud & DevOps
-        "aws", "azure", "gcp", "docker", "kubernetes", "jenkins", "gitlab", "github actions",
-        "terraform", "ansible", "puppet", "chef", "circleci", "travis ci", "git",
-
-        # Data Science & ML
-        "machine learning", "deep learning", "tensorflow", "pytorch", "keras", "scikit-learn",
-        "pandas", "numpy", "data analysis", "statistics", "nlp", "computer vision",
-
-        # Mobile
-        "ios", "android", "react native", "flutter", "xamarin", "swift", "kotlin",
-
-        # Design
-        "ui/ux", "figma", "sketch", "adobe xd", "photoshop", "illustrator",
-
-        # Soft Skills
-        "leadership", "management", "communication", "teamwork", "problem solving",
-        "agile", "scrum", "project management"
-    ]
-
-    # Map of lowercase skill to proper casing for display
-    skill_casing = {
-        "nextjs": "Next.js",
-        "next.js": "Next.js",
-        "nodejs": "Node.js",
-        "node.js": "Node.js",
-        "javascript": "JavaScript",
-        "typescript": "TypeScript",
-        "mongodb": "MongoDB",
-        "postgresql": "PostgreSQL",
-        "mysql": "MySQL",
-        "fastapi": "FastAPI",
-        "tensorflow": "TensorFlow",
-        "pytorch": "PyTorch",
-        "github": "GitHub",
-        "gitlab": "GitLab",
-        "git": "Git",
-        "aws": "AWS",
-        "gcp": "GCP",
-        "ui/ux": "UI/UX",
-        "html": "HTML",
-        "css": "CSS",
-        "c++": "C++",
-        "c#": "C#",
-        "react native": "React Native",
-    }
-
-    detected_skills = []
-
-    # Special handling for skills with special characters (C++, C#, .NET, etc.)
-    special_skills = {
-        "c++": r'\bc\+\+\b',
-        "c#": r'\bc#\b',
-        "asp.net": r'\basp\.net\b',
-    }
-
-    for skill in all_skills:
-        # Use special pattern for skills with special characters
-        if skill in special_skills:
-            pattern = special_skills[skill]
-        else:
-            # Use word boundaries to avoid partial matches
-            pattern = r'\b' + re.escape(skill) + r'\b'
-
-        if re.search(pattern, text_lower):
-            # Use proper casing from map, or capitalize first letter as fallback
-            proper_skill = skill_casing.get(skill, skill.capitalize())
-            detected_skills.append(proper_skill)
-
-    # Extract experience years
-    experience_years = 0
-    experience_patterns = [
-        r'(\d+)\+?\s*years?\s+(?:of\s+)?experience',
-        r'experience[:\s]+(\d+)\+?\s*years?',
-        r'(\d+)\+?\s*yrs?\s+(?:of\s+)?experience',
-    ]
-    for pattern in experience_patterns:
-        match = re.search(pattern, text_lower)
-        if match:
-            experience_years = max(experience_years, int(match.group(1)))
-
-    # Detect education level
-    education_level = "High School"
-    if re.search(r'\b(phd|ph\.d|doctorate|doctoral)\b', text_lower):
-        education_level = "PhD"
-    elif re.search(r'\b(master|m\.s\.|m\.a\.|mba|msc)\b', text_lower):
-        education_level = "Master's"
-    elif re.search(r'\b(bachelor|b\.s\.|b\.a\.|bsc|undergraduate)\b', text_lower):
-        education_level = "Bachelor's"
-    elif re.search(r'\b(associate|a\.a\.|a\.s\.)\b', text_lower):
-        education_level = "Associate"
-
-    # Detect certifications and leadership
-    has_certifications = bool(re.search(
-        r'\b(certifications?|certified|certificates?|aws\s+(?:certified|cloud\s+practitioner)|azure\s+certified|pmp|cissp|kaggle|postman\s+api)\b',
-        text_lower
-    ))
-
-    has_leadership = bool(re.search(
-        r'\b(lead|led|leader|manager|managed|director|head\s+of|team\s+lead|supervisor|coordinated?|leadership)\b',
-        text_lower
-    ))
-
-    return ResumeAnalysis(
-        skills=detected_skills,
-        experience_years=experience_years,
-        education_level=education_level,
-        has_certifications=has_certifications,
-        has_leadership=has_leadership
-    )
-
-
 @router.post("/analyze-resume", response_model=ResumeAnalysis)
 async def analyze_resume(
     resume_file: UploadFile = File(...),
@@ -205,11 +52,20 @@ async def analyze_resume(
     # Read file
     contents = await resume_file.read()
 
-    # Extract text from PDF
-    text = extract_text_from_pdf(contents)
+    # Extract text from PDF using the shared function
+    text = extract_text_from_file(contents, resume_file.filename)
 
-    # Analyze text
-    analysis = analyze_resume_text(text)
+    # Use the same process_resume function as the application flow
+    processed = process_resume(text)
+
+    # Convert to ResumeAnalysis format
+    analysis = ResumeAnalysis(
+        skills=processed['extracted_skills'],
+        experience_years=int(processed['experience_years']),
+        education_level=processed['education_level'],
+        has_certifications=processed['has_certifications'],
+        has_leadership=processed['has_leadership']
+    )
 
     return analysis
 
@@ -253,37 +109,37 @@ async def get_job_recommendations(
         job_certs_required = requirements.get('certifications_required', False)
         job_leadership_required = requirements.get('leadership_required', False)
 
-        # Calculate skills match percentage using normalized skills
-        candidate_skills_normalized = [normalize_skill(s) for s in analysis.skills]
-        required_skills_normalized = [normalize_skill(s) for s in required_skills]
-        preferred_skills_normalized = [normalize_skill(s) for s in preferred_skills]
+        # Calculate skills match percentage using simple lowercase comparison (same as application flow)
+        candidate_skills_lower = [s.lower() for s in analysis.skills]
+        required_skills_lower = [s.lower() for s in required_skills]
+        preferred_skills_lower = [s.lower() for s in preferred_skills]
 
-        total_skills = len(required_skills_normalized) + len(preferred_skills_normalized)
+        total_skills = len(required_skills) + len(preferred_skills)
         if total_skills > 0:
-            matched_required = len([s for s in required_skills_normalized if s in candidate_skills_normalized])
-            matched_preferred = len([s for s in preferred_skills_normalized if s in candidate_skills_normalized])
+            matched_required = len([s for s in required_skills_lower if s in candidate_skills_lower])
+            matched_preferred = len([s for s in preferred_skills_lower if s in candidate_skills_lower])
             skills_match_pct = ((matched_required + matched_preferred) / total_skills) * 100
         else:
             skills_match_pct = 0
 
         # Find missing skills (return original casing for display)
         missing_required = [
-            required_skills[i] for i, s in enumerate(required_skills_normalized)
-            if s not in candidate_skills_normalized
+            required_skills[i] for i, s in enumerate(required_skills_lower)
+            if s not in candidate_skills_lower
         ]
         missing_preferred = [
-            preferred_skills[i] for i, s in enumerate(preferred_skills_normalized)
-            if s not in candidate_skills_normalized
+            preferred_skills[i] for i, s in enumerate(preferred_skills_lower)
+            if s not in candidate_skills_lower
         ]
 
         # Check if meets requirements using actual scoring function
         meets_reqs, missing_reqs, rejection_reason = check_requirements(
-            candidate_skills=candidate_skills_normalized,
+            candidate_skills=analysis.skills,  # Use original casing
             candidate_experience=float(analysis.experience_years),
             candidate_education=analysis.education_level,
             candidate_has_certifications=analysis.has_certifications,
             candidate_has_leadership=analysis.has_leadership,
-            job_required_skills=required_skills_normalized,
+            job_required_skills=required_skills,
             job_min_experience=job.min_experience or 0,
             job_min_education=job_min_education,
             job_certifications_required=job_certs_required,
@@ -292,14 +148,14 @@ async def get_job_recommendations(
 
         # Calculate predicted score using actual scoring function
         score_result = calculate_final_score(
-            candidate_skills=candidate_skills_normalized,
+            candidate_skills=analysis.skills,  # Use original casing
             candidate_experience=float(analysis.experience_years),
             candidate_education=analysis.education_level,
             candidate_has_certifications=analysis.has_certifications,
             candidate_has_leadership=analysis.has_leadership,
             candidate_skill_diversity=0.5,  # Default diversity score
-            job_required_skills=required_skills_normalized,
-            job_preferred_skills=preferred_skills_normalized,
+            job_required_skills=required_skills,
+            job_preferred_skills=preferred_skills,
             job_min_experience=job.min_experience or 0,
             job_min_education=job_min_education,
             job_certifications_required=job_certs_required,
