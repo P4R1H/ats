@@ -14,6 +14,8 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     role: str = Field(..., pattern="^(candidate|recruiter)$")
+    company_name: Optional[str] = None  # Required for recruiters
+    company_logo: Optional[str] = None  # Optional logo URL for recruiters
 
 
 class UserLogin(BaseModel):
@@ -24,6 +26,8 @@ class UserLogin(BaseModel):
 class UserResponse(UserBase):
     id: int
     role: str
+    company_name: Optional[str] = None
+    company_logo: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -76,6 +80,8 @@ class JobPostingUpdate(BaseModel):
 class JobPostingResponse(JobPostingBase):
     id: int
     recruiter_id: int
+    company_name: Optional[str] = None  # Company name from recruiter
+    company_logo: Optional[str] = None  # Company logo from recruiter
     status: str
     requirements: Optional[str] = None
     weight_skills: float

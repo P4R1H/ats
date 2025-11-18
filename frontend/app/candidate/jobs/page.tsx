@@ -159,7 +159,26 @@ export default function JobsPage() {
             <CardContent className="p-8">
               {/* Job Header */}
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">{selectedJob.title}</h1>
+                <div className="flex items-start justify-between mb-3">
+                  <h1 className="text-3xl font-bold text-gray-900 flex-1">{selectedJob.title}</h1>
+                  {selectedJob.company_name && (
+                    <div className="flex items-center gap-3 ml-4">
+                      {selectedJob.company_logo && (
+                        <img
+                          src={selectedJob.company_logo}
+                          alt={selectedJob.company_name}
+                          className="h-12 w-12 rounded object-contain"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none'
+                          }}
+                        />
+                      )}
+                      <span className="text-base text-gray-600 font-medium">
+                        {selectedJob.company_name}
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-1.5">
                     <Briefcase className="h-4 w-4" />
@@ -393,10 +412,29 @@ export default function JobsPage() {
                 onClick={() => setSelectedJob(job)}
               >
                 <CardContent className="p-6">
-                  {/* Title */}
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
-                    {job.title}
-                  </h3>
+                  {/* Title with Company */}
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-xl font-semibold text-gray-900 group-hover:text-amber-600 transition-colors flex-1 line-clamp-1">
+                      {job.title}
+                    </h3>
+                    {job.company_name && (
+                      <div className="flex items-center gap-2 ml-3">
+                        {job.company_logo && (
+                          <img
+                            src={job.company_logo}
+                            alt={job.company_name}
+                            className="h-8 w-8 rounded object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                            }}
+                          />
+                        )}
+                        <span className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                          {job.company_name}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Description */}
                   <p className="text-sm text-gray-600 mb-4 line-clamp-3">
