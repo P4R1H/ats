@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Wheat, Briefcase, Users, Plus, ArrowRight, TrendingUp, Clock } from 'lucide-react'
 import { api } from '@/lib/api'
-import { formatDate } from '@/lib/utils'
+import { formatDate, stripMarkdown } from '@/lib/utils'
 
 export default function RecruiterDashboard() {
   const router = useRouter()
@@ -192,7 +192,7 @@ export default function RecruiterDashboard() {
                         </div>
 
                         <p className="text-sm text-gray-600 mb-3 line-clamp-1">
-                          {job.description}
+                          {stripMarkdown(job.description)}
                         </p>
 
                         <div className="flex items-center gap-6 text-sm">
