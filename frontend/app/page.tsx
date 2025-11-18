@@ -11,10 +11,10 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
       {/* Floating Island Navbar */}
-      <header className="sticky top-0 z-50 py-4">
+      <header className="sticky top-0 z-50 py-2">
         <div className="container mx-auto px-4">
           <div className="floating-island bg-white/90 backdrop-blur-md border border-amber-100">
-            <div className="px-6 py-3 flex justify-between items-center">
+            <div className="px-6 py-2 flex justify-between items-center">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
                   <Wheat className="h-5 w-5 text-white" />
@@ -39,8 +39,8 @@ export default function HomePage() {
 
       {/* Hero Section with Enhanced Background */}
       <section className="hero-bg relative">
-        <div className="container mx-auto px-4 pt-16 pb-20 text-center relative z-10">
-          <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+        <div className="container mx-auto px-4 pt-8 pb-12 text-center relative z-10">
+          <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
             <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-orange-700 shadow-sm border border-orange-200">
               <Sparkles className="h-4 w-4" />
               <span>Fresh from the oven: ML-Powered Hiring</span>
@@ -78,7 +78,7 @@ export default function HomePage() {
               </Button>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-8 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-4 text-sm text-gray-600">
               <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-full">
                 <Shield className="h-4 w-4 text-green-600" />
                 <span>100% Transparent</span>

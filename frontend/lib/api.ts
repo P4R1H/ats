@@ -88,6 +88,10 @@ class APIClient {
     return this.request(`/api/jobs/${id}`)
   }
 
+  async getJob(id: string) {
+    return this.request(`/api/jobs/${id}`)
+  }
+
   async createJob(data: any) {
     return this.request('/api/jobs', {
       method: 'POST',
@@ -141,7 +145,33 @@ class APIClient {
     return this.request(`/api/applications/${id}`)
   }
 
-  async getApplicationsForJob(jobId: number) {
+  async getApplication(id: string) {
+    return this.request(`/api/applications/${id}`)
+  }
+
+  async applyToJob(jobId: number, formData: FormData) {
+    const headers: HeadersInit = {}
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`
+    }
+
+    formData.append('job_id', jobId.toString())
+
+    const response = await fetch(`${this.baseURL}/api/applications`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'An error occurred' }))
+      throw new Error(error.detail || `HTTP ${response.status}`)
+    }
+
+    return response.json()
+  }
+
+  async getApplicationsForJob(jobId: string) {
     return this.request(`/api/applications/job/${jobId}`)
   }
 
