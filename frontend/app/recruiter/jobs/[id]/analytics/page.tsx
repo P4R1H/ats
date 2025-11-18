@@ -1123,20 +1123,15 @@ export default function JobAnalyticsPage() {
                       {clusterData.length === 0 ? (
                         <p className="text-center text-gray-500 py-12">No cluster data available</p>
                       ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           {clusterData.map((cluster, idx) => (
                             <div
                               key={idx}
-                              className="p-5 rounded-xl border-2 transition-all duration-300 hover:shadow-lg"
-                              style={{ borderColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] + '40', backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] + '08' }}
+                              className="p-5 rounded-lg border border-gray-200 bg-gray-50 hover:shadow-sm transition-shadow"
                             >
-                              <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                  <div
-                                    className="w-4 h-4 rounded-full"
-                                    style={{ backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] }}
-                                  />
-                                  <h4 className="font-bold text-gray-900 text-lg">{cluster.name}</h4>
+                                  <h4 className="font-semibold text-gray-900">{cluster.name}</h4>
                                 </div>
                                 <div className="flex items-center gap-4">
                                   <div className="text-right">
@@ -1145,14 +1140,14 @@ export default function JobAnalyticsPage() {
                                   </div>
                                   <div className="text-right">
                                     <p className="text-xs text-gray-600">Avg Score</p>
-                                    <p className="text-lg font-bold" style={{ color: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] }}>
+                                    <p className="text-lg font-bold text-gray-900">
                                       {cluster.avgScore}
                                     </p>
                                   </div>
                                 </div>
                               </div>
                               {cluster.description && (
-                                <p className="text-sm text-gray-600">{cluster.description}</p>
+                                <p className="text-sm text-gray-600 mt-3 pt-3 border-t border-gray-200">{cluster.description}</p>
                               )}
                             </div>
                           ))}

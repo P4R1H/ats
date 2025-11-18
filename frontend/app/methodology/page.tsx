@@ -1210,11 +1210,49 @@ export default function MethodologyPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg">
+                  <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
                     <p className="text-sm text-gray-900">
-                      <strong className="text-amber-900">💡 Customizable:</strong> Recruiters can adjust these weights
+                      <strong>💡 Customizable:</strong> Recruiters can adjust these weights
                       when creating job postings. Weights must sum to 100%.
                     </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-gray-200">
+                <CardContent className="p-8">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Final Score Calculation</h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    The final score is a weighted combination of all component scores (for candidates who passed Stage 1).
+                  </p>
+
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+                    <h3 className="font-semibold text-gray-900 mb-3">Weighted Sum Formula</h3>
+                    <div className="bg-white p-4 rounded border border-gray-300 font-mono text-sm mb-4">
+                      <p className="text-gray-900"><strong>final_score = </strong></p>
+                      <p className="ml-4 text-gray-800">(skills_score × w_skills) +</p>
+                      <p className="ml-4 text-gray-800">(experience_score × w_experience) +</p>
+                      <p className="ml-4 text-gray-800">(education_score × w_education) +</p>
+                      <p className="ml-4 text-gray-800">(cert_score × w_cert) +</p>
+                      <p className="ml-4 text-gray-800">(leadership_score × w_leadership)</p>
+                    </div>
+                    <div className="bg-white p-4 rounded border border-gray-300 text-sm space-y-1">
+                      <p className="text-gray-900 font-semibold mb-2">Default Weights (customizable per job):</p>
+                      <p className="text-gray-700">• w_skills = 0.40 (40%)</p>
+                      <p className="text-gray-700">• w_experience = 0.30 (30%)</p>
+                      <p className="text-gray-700">• w_education = 0.20 (20%)</p>
+                      <p className="text-gray-700">• w_cert = 0.05 (5%)</p>
+                      <p className="text-gray-700">• w_leadership = 0.05 (5%)</p>
+                      <p className="text-gray-600 text-xs mt-3 pt-3 border-t border-gray-200">All weights must sum to 1.0 (100%)</p>
+                    </div>
+                    <div className="mt-4 p-3 bg-gray-100 rounded border border-gray-200">
+                      <p className="text-sm text-gray-800">
+                        <strong>Example:</strong> If skills_score=85, experience_score=70, education_score=75, cert_score=50, leadership_score=50:
+                      </p>
+                      <p className="text-sm text-gray-700 mt-1 font-mono">
+                        final_score = (85×0.4) + (70×0.3) + (75×0.2) + (50×0.05) + (50×0.05) = <strong className="text-gray-900">74.5</strong>
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -1300,8 +1338,8 @@ export default function MethodologyPage() {
               <Card className="border border-gray-200">
                 <CardContent className="p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">Real-World Example: Two-Stage System in Action</h2>
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-lg border border-blue-200 mb-4">
-                    <div className="mb-4 p-3 bg-white rounded border border-blue-200">
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-4">
+                    <div className="mb-4 p-3 bg-white rounded border border-gray-200">
                       <h4 className="font-semibold text-sm text-gray-900 mb-2">Job: Senior Full-Stack Developer</h4>
                       <p className="text-xs text-gray-700"><strong>Stage 1 Requirements (Must Have ALL):</strong></p>
                       <p className="text-xs text-gray-700 ml-3">• Min Experience: 3 years</p>
@@ -1314,7 +1352,7 @@ export default function MethodologyPage() {
 
                     <div className="grid md:grid-cols-3 gap-4">
                       {/* Candidate A - Perfect Fit */}
-                      <div className="p-4 bg-white rounded border-2 border-green-300">
+                      <div className="p-4 bg-white rounded border border-gray-300">
                         <h3 className="font-semibold text-green-900 mb-2 text-sm">Candidate A: Perfect Fit</h3>
                         <div className="mb-3 p-2 bg-green-50 rounded border border-green-200">
                           <p className="text-xs font-semibold text-green-900">✓ Stage 1: PASSED</p>
@@ -1332,7 +1370,7 @@ export default function MethodologyPage() {
                       </div>
 
                       {/* Candidate B - Rejected */}
-                      <div className="p-4 bg-white rounded border-2 border-red-300">
+                      <div className="p-4 bg-white rounded border border-gray-300">
                         <h3 className="font-semibold text-red-900 mb-2 text-sm">Candidate B: Missing Req</h3>
                         <div className="mb-3 p-2 bg-red-50 rounded border border-red-200">
                           <p className="text-xs font-semibold text-red-900">✗ Stage 1: REJECTED</p>
@@ -1350,7 +1388,7 @@ export default function MethodologyPage() {
                       </div>
 
                       {/* Candidate C - Overqualified */}
-                      <div className="p-4 bg-white rounded border-2 border-amber-300">
+                      <div className="p-4 bg-white rounded border border-gray-300">
                         <h3 className="font-semibold text-amber-900 mb-2 text-sm">Candidate C: Overqualified</h3>
                         <div className="mb-3 p-2 bg-green-50 rounded border border-green-200">
                           <p className="text-xs font-semibold text-green-900">✓ Stage 1: PASSED</p>
@@ -1369,7 +1407,7 @@ export default function MethodologyPage() {
                     </div>
                   </div>
 
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-2">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
                     <p className="text-sm text-amber-900">
                       <strong>Key Insights from Two-Stage System:</strong>
                     </p>
