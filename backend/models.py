@@ -36,6 +36,11 @@ class JobPosting(Base):
     education_level = Column(String)
     status = Column(String, default="active")  # 'active' or 'closed'
 
+    # Requirements (hard filters) - JSON storing additional requirements
+    # Format: { "min_education": "bachelors"|"masters"|"phd"|"none",
+    #           "certifications_required": bool, "leadership_required": bool }
+    requirements = Column(Text)  # JSON object
+
     # Recruiter customization (weights for scoring)
     weight_skills = Column(Float, default=0.40)
     weight_experience = Column(Float, default=0.30)

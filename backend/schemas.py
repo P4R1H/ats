@@ -48,6 +48,7 @@ class JobPostingBase(BaseModel):
 
 
 class JobPostingCreate(JobPostingBase):
+    requirements: Optional[str] = None  # JSON string for additional requirements
     weight_skills: float = 0.40
     weight_experience: float = 0.30
     weight_education: float = 0.20
@@ -63,6 +64,7 @@ class JobPostingUpdate(BaseModel):
     preferred_skills: Optional[List[str]] = None
     min_experience: Optional[int] = None
     education_level: Optional[str] = None
+    requirements: Optional[str] = None
     status: Optional[str] = None
     weight_skills: Optional[float] = None
     weight_experience: Optional[float] = None
@@ -75,6 +77,7 @@ class JobPostingResponse(JobPostingBase):
     id: int
     recruiter_id: int
     status: str
+    requirements: Optional[str] = None
     weight_skills: float
     weight_experience: float
     weight_education: float
