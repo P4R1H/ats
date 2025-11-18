@@ -47,6 +47,7 @@ def create_job_posting(
         preferred_skills=json.dumps(job_data.preferred_skills),
         min_experience=job_data.min_experience,
         education_level=job_data.education_level,
+        requirements=job_data.requirements,  # Store requirements JSON
         weight_skills=job_data.weight_skills,
         weight_experience=job_data.weight_experience,
         weight_education=job_data.weight_education,
