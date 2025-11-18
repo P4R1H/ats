@@ -533,7 +533,7 @@ export default function JobAnalyticsPage() {
             {/* ==================== KEY METRICS ==================== */}
             <section>
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                <Card className="h-full border border-gray-200 hover:shadow-md transition-shadow">
                   <CardContent className="pt-6">
                     <div className="text-sm font-medium text-gray-600 mb-1">Total Apps</div>
                     <span className="text-3xl font-bold text-gray-900">
@@ -542,7 +542,7 @@ export default function JobAnalyticsPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                <Card className="h-full border border-gray-200 hover:shadow-md transition-shadow">
                   <CardContent className="pt-6">
                     <div className="text-sm font-medium text-gray-600 mb-1">Qualified</div>
                     <div className="flex items-baseline gap-2">
@@ -552,7 +552,7 @@ export default function JobAnalyticsPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                <Card className="h-full border border-gray-200 hover:shadow-md transition-shadow">
                   <CardContent className="pt-6">
                     <div className="text-sm font-medium text-gray-600 mb-1">Avg Score</div>
                     <span className="text-3xl font-bold text-amber-600">
@@ -561,14 +561,14 @@ export default function JobAnalyticsPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                <Card className="h-full border border-gray-200 hover:shadow-md transition-shadow">
                   <CardContent className="pt-6">
                     <div className="text-sm font-medium text-gray-600 mb-1">Shortlisted</div>
                     <span className="text-3xl font-bold text-gray-900">{statusCounts.shortlisted}</span>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                <Card className="h-full border border-gray-200 hover:shadow-md transition-shadow">
                   <CardContent className="pt-6">
                     <div className="text-sm font-medium text-gray-600 mb-1">Clusters</div>
                     <span className="text-3xl font-bold text-gray-900">{Object.keys(clusterCounts).length}</span>
@@ -594,7 +594,7 @@ export default function JobAnalyticsPage() {
                   {insights.map((insight, idx) => {
                     const Icon = insight.icon
                     return (
-                      <Card key={idx} className="border border-gray-200 hover:shadow-md transition-shadow">
+                      <Card key={idx} className="h-full border border-gray-200 hover:shadow-md transition-shadow">
                         <CardContent className="p-6">
                           <div className="flex items-center gap-2 mb-3">
                             <Icon className="h-5 w-5 text-gray-600" />
@@ -625,7 +625,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.overview && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Requirements Effectiveness */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Gauge className="h-6 w-6 text-amber-600" />
@@ -702,7 +702,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Rejection Reasons */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Filter className="h-6 w-6 text-red-600" />
@@ -763,7 +763,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.distributions && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Talent Pool Quality */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <TrendingUp className="h-6 w-6 text-blue-600" />
@@ -798,7 +798,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Component Percentiles */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Gauge className="h-6 w-6 text-purple-600" />
@@ -826,7 +826,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Experience vs Score Scatter */}
-                  <Card className="border border-gray-200 lg:col-span-2">
+                  <Card className="h-full border border-gray-200 lg:col-span-2">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Activity className="h-6 w-6 text-blue-600" />
@@ -880,7 +880,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.patterns && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Skills in Shortlisted Candidates */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Award className="h-6 w-6 text-green-600" />
@@ -902,7 +902,7 @@ export default function JobAnalyticsPage() {
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                             <XAxis type="number" stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
-                            <YAxis dataKey="skill" type="category" width={120} stroke="#6b7280" style={{ fontSize: '11px', fontWeight: 600 }} />
+                            <YAxis dataKey="skill" type="category" width={150} stroke="#6b7280" style={{ fontSize: '11px', fontWeight: 600 }} />
                             <Tooltip
                               contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                             />
@@ -914,7 +914,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Experience Success Rate */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <TrendingUp className="h-6 w-6 text-amber-600" />
@@ -948,7 +948,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Time Series */}
-                  <Card className="border border-gray-200 lg:col-span-2">
+                  <Card className="h-full border border-gray-200 lg:col-span-2">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Calendar className="h-6 w-6 text-purple-600" />
@@ -995,7 +995,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.skills && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Skills by Category Radar */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Network className="h-6 w-6 text-blue-600" />
@@ -1030,7 +1030,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Top Skills Bar */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Sparkles className="h-6 w-6 text-amber-600" />
@@ -1052,7 +1052,7 @@ export default function JobAnalyticsPage() {
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                             <XAxis type="number" stroke="#6b7280" style={{ fontSize: '12px', fontWeight: 600 }} />
-                            <YAxis dataKey="skill" type="category" width={100} stroke="#6b7280" style={{ fontSize: '11px', fontWeight: 600 }} />
+                            <YAxis dataKey="skill" type="category" width={150} stroke="#6b7280" style={{ fontSize: '11px', fontWeight: 600 }} />
                             <Tooltip
                               contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                             />
@@ -1081,7 +1081,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.clusters && (
                 <div className="grid lg:grid-cols-3 gap-6">
                   {/* Cluster Distribution Pie */}
-                  <Card className="border border-gray-200">
+                  <Card className="h-full border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <PieChart className="h-6 w-6 text-pink-600" />
@@ -1114,7 +1114,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Cluster Details */}
-                  <Card className="border border-gray-200 lg:col-span-2">
+                  <Card className="h-full border border-gray-200 lg:col-span-2">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Award className="h-6 w-6 text-purple-600" />
@@ -1176,7 +1176,7 @@ export default function JobAnalyticsPage() {
                       const strength = absValue > 0.7 ? 'Strong' : absValue > 0.4 ? 'Moderate' : 'Weak'
                       const colorClass = absValue > 0.7 ? 'from-green-500 to-emerald-600' : absValue > 0.4 ? 'from-amber-500 to-orange-500' : 'from-gray-400 to-gray-500'
                       return (
-                        <div key={idx} className="p-5 bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 shadow-md hover:shadow-lg transition-all duration-300">
+                        <div key={idx} className="h-full p-5 bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 shadow-md hover:shadow-lg transition-all duration-300">
                           <p className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">{corr.x} × {corr.y}</p>
                           <p className={`text-3xl font-bold bg-gradient-to-r ${colorClass} bg-clip-text text-transparent mb-1`}>
                             {corr.value.toFixed(2)}
