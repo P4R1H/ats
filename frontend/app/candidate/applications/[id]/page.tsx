@@ -246,7 +246,7 @@ export default function ApplicationDetailPage() {
                 <div className="text-sm text-gray-600">Overall Percentile</div>
               </div>
               <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-100">
-                <div className="text-xl font-semibold mb-2 text-purple-700">
+                <div className="text-2xl font-bold mb-2 text-purple-700 leading-tight">
                   {application.cluster_name || 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Talent Cluster</div>
