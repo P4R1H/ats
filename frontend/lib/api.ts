@@ -197,8 +197,8 @@ class APIClient {
     })
   }
 
-  async generateRandomApplication(jobId: number) {
-    return this.request(`/api/applications/job/${jobId}/generate-random`, {
+  async generateRandomApplication(jobId: number, count: number = 1) {
+    return this.request(`/api/applications/job/${jobId}/generate-random?count=${count}`, {
       method: 'POST',
     })
   }
