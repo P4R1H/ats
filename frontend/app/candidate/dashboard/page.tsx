@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Wheat, FileText, TrendingUp, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { Wheat, FileText, TrendingUp, Clock, CheckCircle, XCircle, ArrowRight, Briefcase } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
 
@@ -46,31 +46,44 @@ export default function CandidateDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Loading...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-gray-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-sm text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
     )
   }
 
+  const pendingCount = applications.filter(a => a.status === 'pending').length
+  const shortlistedCount = applications.filter(a => a.status === 'shortlisted').length
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-              <Wheat className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Header - Minimal and Clean */}
+      <header className="border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2 group"
+          >
+            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+              <Wheat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold gradient-text">Bread</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.full_name}
+            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+              Bread
             </span>
-            <Button variant="outline" onClick={handleLogout}>
+          </button>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">
+              {user?.full_name}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="text-sm"
+            >
               Logout
             </Button>
           </div>
@@ -78,159 +91,200 @@ export default function CandidateDashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Candidate Dashboard</h1>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Page Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Welcome back, {user?.full_name?.split(' ')[0] || 'there'}
+          </h1>
+          <p className="text-gray-600">
+            Track your applications and discover new opportunities
+          </p>
+        </div>
 
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Total Applications</CardDescription>
-              <CardTitle className="text-3xl">{applications.length}</CardTitle>
-            </CardHeader>
+        {/* Stats Cards - Minimal Design */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Total Applications</div>
+              <div className="text-3xl font-bold text-gray-900">{applications.length}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Pending Review</CardDescription>
-              <CardTitle className="text-3xl">
-                {applications.filter(a => a.status === 'pending').length}
-              </CardTitle>
-            </CardHeader>
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Pending Review</div>
+              <div className="text-3xl font-bold text-amber-600">{pendingCount}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Shortlisted</CardDescription>
-              <CardTitle className="text-3xl text-green-600">
-                {applications.filter(a => a.status === 'shortlisted').length}
-              </CardTitle>
-            </CardHeader>
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Shortlisted</div>
+              <div className="text-3xl font-bold text-green-600">{shortlistedCount}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Available Jobs</CardDescription>
-              <CardTitle className="text-3xl">{jobs.length}</CardTitle>
-            </CardHeader>
+          <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+            <CardContent className="pt-6">
+              <div className="text-sm font-medium text-gray-600 mb-1">Open Positions</div>
+              <div className="text-3xl font-bold text-gray-900">{jobs.length}</div>
+            </CardContent>
           </Card>
         </div>
 
-        {/* My Applications */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>My Applications</CardTitle>
-            <CardDescription>Track your application progress</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {applications.length === 0 ? (
-              <div className="text-center py-12">
-                <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No applications yet</p>
-                <Button className="gradient-bg text-white" onClick={() => router.push('/candidate/jobs')}>
+        {/* My Applications Section */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">My Applications</h2>
+            {applications.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/candidate/jobs')}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                View all jobs
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+          </div>
+
+          {applications.length === 0 ? (
+            <Card className="border border-gray-200">
+              <CardContent className="py-16 text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="h-6 w-6 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No applications yet</h3>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  Start your journey by browsing our open positions and applying to roles that match your skills.
+                </p>
+                <Button
+                  onClick={() => router.push('/candidate/jobs')}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                >
                   Browse Jobs
                 </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {applications.map((app) => (
-                  <div
-                    key={app.id}
-                    className="border rounded-lg p-4 hover:bg-accent/50 cursor-pointer transition-colors"
-                    onClick={() => router.push(`/candidate/applications/${app.id}`)}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-semibold text-lg">Job #{app.job_id}</h3>
-                        <p className="text-sm text-muted-foreground">
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {applications.map((app) => (
+                <Card
+                  key={app.id}
+                  className="border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer group"
+                  onClick={() => router.push(`/candidate/applications/${app.id}`)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">
+                            Job #{app.job_id}
+                          </h3>
+                          {app.status === 'pending' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                              <Clock className="w-3 h-3 mr-1" />
+                              Pending
+                            </span>
+                          )}
+                          {app.status === 'shortlisted' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              Shortlisted
+                            </span>
+                          )}
+                          {app.status === 'rejected' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              <XCircle className="w-3 h-3 mr-1" />
+                              Not selected
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-sm text-gray-600 mb-3">
                           Applied {formatDate(app.applied_at)}
                         </p>
-                      </div>
-                      <div className="text-right">
-                        <div className={`text-2xl font-bold ${getScoreColor(app.final_score || 0)}`}>
-                          {app.final_score?.toFixed(1) || 'N/A'}/100
+
+                        <div className="flex items-center gap-6 text-sm">
+                          <div className="flex items-center gap-1.5">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="text-gray-700">{app.num_skills || 0} skills matched</span>
+                          </div>
+                          {app.cluster_name && (
+                            <div className="flex items-center gap-1.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                              <span className="text-gray-700">{app.cluster_name}</span>
+                            </div>
+                          )}
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                      </div>
+
+                      <div className="text-right ml-6">
+                        <div className={`text-3xl font-bold mb-1 ${getScoreColor(app.final_score || 0)}`}>
+                          {app.final_score?.toFixed(1) || 'N/A'}
+                        </div>
+                        <div className="text-xs text-gray-500 mb-1">out of 100</div>
+                        <div className="text-sm font-medium text-gray-700">
                           {formatPercentile(app.overall_percentile || 50)}
-                        </p>
+                        </div>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4 text-sm">
-                        <span className="flex items-center">
-                          <CheckCircle className="h-4 w-4 mr-1 text-green-600" />
-                          {app.num_skills || 0} skills
-                        </span>
-                        <span>
-                          Cluster: {app.cluster_name || 'Not assigned'}
-                        </span>
-                      </div>
+        {/* Quick Browse Jobs */}
+        {jobs.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Open Positions</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/candidate/jobs')}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                View all
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
 
-                      <div className="flex items-center space-x-2">
-                        {app.status === 'pending' && (
-                          <span className="flex items-center text-yellow-600">
-                            <Clock className="h-4 w-4 mr-1" />
-                            Pending
-                          </span>
-                        )}
-                        {app.status === 'shortlisted' && (
-                          <span className="flex items-center text-green-600">
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Shortlisted
-                          </span>
-                        )}
-                        {app.status === 'rejected' && (
-                          <span className="flex items-center text-red-600">
-                            <XCircle className="h-4 w-4 mr-1" />
-                            Rejected
-                          </span>
-                        )}
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {jobs.slice(0, 6).map((job) => (
+                <Card
+                  key={job.id}
+                  className="border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all group cursor-pointer"
+                  onClick={() => router.push('/candidate/jobs')}
+                >
+                  <CardContent className="p-6">
+                    <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
+                      <Briefcase className="h-5 w-5 text-white" />
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Available Jobs */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Available Jobs</CardTitle>
-            <CardDescription>Browse and apply to open positions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {jobs.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                No jobs available at the moment
-              </p>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-4">
-                {jobs.slice(0, 6).map((job) => (
-                  <div
-                    key={job.id}
-                    className="border rounded-lg p-4 hover:bg-accent/50 transition-colors"
-                  >
-                    <h3 className="font-semibold text-lg mb-2">{job.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
+                      {job.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                       {job.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-primary">
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                         {job.category}
                       </span>
-                      <Button size="sm" onClick={() => window.alert('Apply feature coming soon!')}>
-                        Apply
-                      </Button>
+                      <span className="text-xs text-gray-500">
+                        Apply →
+                      </span>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )

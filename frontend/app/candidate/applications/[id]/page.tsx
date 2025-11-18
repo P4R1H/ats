@@ -3,20 +3,18 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Wheat,
   ArrowLeft,
   TrendingUp,
-  Target,
   Award,
-  BookOpen,
-  Briefcase,
+  Target,
   Lightbulb,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Users
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
@@ -64,10 +62,10 @@ export default function ApplicationDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="animate-spin h-12 w-12 border-4 border-amber-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Loading application...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-gray-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-sm text-gray-600">Loading application...</p>
         </div>
       </div>
     )
@@ -75,10 +73,11 @@ export default function ApplicationDetailPage() {
 
   if (!application) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-        <Card className="max-w-md">
-          <CardContent className="text-center py-12">
-            <p className="text-muted-foreground mb-4">Application not found</p>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <Card className="border border-gray-200 max-w-md">
+          <CardContent className="py-16 text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Application not found</h3>
+            <p className="text-gray-600 mb-6">This application may have been removed.</p>
             <Button onClick={() => router.push('/candidate/dashboard')}>
               Back to Dashboard
             </Button>
@@ -89,58 +88,62 @@ export default function ApplicationDetailPage() {
   }
 
   const scoreBreakdown = [
-    { label: 'Skills Match', value: application.skills_score || 0, weight: 40, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-    { label: 'Experience', value: application.experience_score || 0, weight: 30, color: 'text-green-600', bgColor: 'bg-green-100' },
-    { label: 'Education', value: application.education_score || 0, weight: 20, color: 'text-purple-600', bgColor: 'bg-purple-100' },
-    { label: 'Bonus Points', value: application.bonus_score || 0, weight: 10, color: 'text-amber-600', bgColor: 'bg-amber-100' }
+    { label: 'Skills Match', value: application.skills_score || 0, weight: 40, color: 'text-blue-600', bgColor: 'bg-blue-500' },
+    { label: 'Experience', value: application.experience_score || 0, weight: 30, color: 'text-green-600', bgColor: 'bg-green-500' },
+    { label: 'Education', value: application.education_score || 0, weight: 20, color: 'text-purple-600', bgColor: 'bg-purple-500' },
+    { label: 'Bonus Points', value: application.bonus_score || 0, weight: 10, color: 'text-amber-600', bgColor: 'bg-amber-500' }
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-      <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-              <Wheat className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2 group"
+          >
+            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+              <Wheat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold gradient-text">Bread</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.full_name}
+            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+              Bread
             </span>
-            <Button variant="outline" onClick={handleLogout}>
+          </button>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">{user?.full_name}</span>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm">
               Logout
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-12">
         <Button
           variant="ghost"
           onClick={() => router.push('/candidate/dashboard')}
-          className="mb-6"
+          className="mb-6 text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Dashboard
         </Button>
 
         {/* Header Card */}
-        <Card className="mb-8 shadow-2xl border-2 border-amber-200/50 warm-glow">
-          <CardHeader>
-            <div className="flex items-start justify-between">
+        <Card className="border border-gray-200 shadow-sm mb-8">
+          <CardContent className="p-8">
+            <div className="flex items-start justify-between mb-6">
               <div>
-                <CardTitle className="text-3xl font-bold mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {job?.title || `Job #${application.job_id}`}
-                </CardTitle>
-                <CardDescription className="text-base">
+                </h1>
+                <p className="text-gray-600">
                   Applied {formatDate(application.applied_at)}
-                </CardDescription>
+                </p>
               </div>
-              <div className="text-right">
+              <div>
                 {application.status === 'pending' && (
-                  <span className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full font-medium">
+                  <span className="inline-flex items-center px-4 py-2 bg-amber-100 text-amber-800 rounded-full font-medium">
                     <Clock className="h-4 w-4 mr-2" />
                     Pending Review
                   </span>
@@ -152,33 +155,33 @@ export default function ApplicationDetailPage() {
                   </span>
                 )}
                 {application.status === 'rejected' && (
-                  <span className="inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-full font-medium">
+                  <span className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded-full font-medium">
                     <XCircle className="h-4 w-4 mr-2" />
                     Not Selected
                   </span>
                 )}
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl">
+
+            {/* Key Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
                 <div className={`text-5xl font-bold mb-2 ${getScoreColor(application.final_score || 0)}`}>
                   {application.final_score?.toFixed(1) || 'N/A'}
                 </div>
-                <div className="text-sm text-muted-foreground">Final Score (out of 100)</div>
+                <div className="text-sm text-gray-600">Final Score (out of 100)</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl">
+              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                 <div className="text-5xl font-bold mb-2 text-blue-600">
                   {formatPercentile(application.overall_percentile || 50)}
                 </div>
-                <div className="text-sm text-muted-foreground">Overall Percentile</div>
+                <div className="text-sm text-gray-600">Overall Percentile</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
-                <div className="text-5xl font-bold mb-2 text-purple-600">
+              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                <div className="text-3xl font-bold mb-2 text-purple-600">
                   {application.cluster_name || 'N/A'}
                 </div>
-                <div className="text-sm text-muted-foreground">Talent Cluster</div>
+                <div className="text-sm text-gray-600">Talent Cluster</div>
               </div>
             </div>
           </CardContent>
@@ -186,202 +189,204 @@ export default function ApplicationDetailPage() {
 
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
           {/* Score Breakdown */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center space-x-2">
+          <Card className="border border-gray-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-6">
                 <TrendingUp className="h-5 w-5 text-amber-600" />
-                <CardTitle>Score Breakdown</CardTitle>
+                <h2 className="text-xl font-semibold text-gray-900">Score Breakdown</h2>
               </div>
-              <CardDescription>
+              <p className="text-sm text-gray-600 mb-6">
                 Transparent breakdown of your application score
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {scoreBreakdown.map((item, idx) => (
-                <div key={idx} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{item.label}</span>
-                    <span className={`${item.color} font-bold`}>
-                      {item.value.toFixed(1)} / {item.weight}
+              </p>
+              <div className="space-y-5">
+                {scoreBreakdown.map((item, idx) => (
+                  <div key={idx}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-900">{item.label}</span>
+                      <span className={`text-sm font-bold ${item.color}`}>
+                        {item.value.toFixed(1)} / {item.weight}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full ${item.bgColor} transition-all duration-500`}
+                        style={{ width: `${(item.value / item.weight) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between font-semibold">
+                    <span className="text-gray-900">Total Score</span>
+                    <span className={getScoreColor(application.final_score || 0)}>
+                      {application.final_score?.toFixed(1) || 0} / 100
                     </span>
                   </div>
-                  <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className={`absolute h-full ${item.bgColor} transition-all duration-500`}
-                      style={{ width: `${(item.value / item.weight) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-              <div className="pt-4 border-t">
-                <div className="flex items-center justify-between font-semibold">
-                  <span>Total Score</span>
-                  <span className={getScoreColor(application.final_score || 0)}>
-                    {application.final_score?.toFixed(1) || 0} / 100
-                  </span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Percentile Rankings */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center space-x-2">
+          <Card className="border border-gray-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-6">
                 <Award className="h-5 w-5 text-amber-600" />
-                <CardTitle>Percentile Rankings</CardTitle>
+                <h2 className="text-xl font-semibold text-gray-900">Percentile Rankings</h2>
               </div>
-              <CardDescription>
+              <p className="text-sm text-gray-600 mb-6">
                 How you compare to other candidates
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
-                <div className="text-sm text-muted-foreground mb-1">Overall Percentile</div>
-                <div className="text-3xl font-bold text-green-600">
+              </p>
+              <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100 mb-6">
+                <div className="text-sm text-gray-600 mb-2">Overall Percentile</div>
+                <div className="text-4xl font-bold text-green-600 mb-3">
                   {formatPercentile(application.overall_percentile || 50)}
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-sm text-gray-700">
                   You scored higher than {application.overall_percentile?.toFixed(0) || 50}% of applicants
                 </p>
               </div>
-
-              {application.skills_percentile !== undefined && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Skills Percentile</span>
-                    <span className="font-bold text-blue-600">
-                      {formatPercentile(application.skills_percentile)}
-                    </span>
+              <div className="space-y-4">
+                {application.skills_percentile !== undefined && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-700">Skills Percentile</span>
+                      <span className="text-sm font-bold text-blue-600">
+                        {formatPercentile(application.skills_percentile)}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-blue-500 transition-all duration-500"
+                        style={{ width: `${application.skills_percentile}%` }}
+                      />
+                    </div>
                   </div>
-                  <Progress value={application.skills_percentile} className="h-2" />
-                </div>
-              )}
-
-              {application.experience_percentile !== undefined && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Experience Percentile</span>
-                    <span className="font-bold text-green-600">
-                      {formatPercentile(application.experience_percentile)}
-                    </span>
+                )}
+                {application.experience_percentile !== undefined && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-700">Experience Percentile</span>
+                      <span className="text-sm font-bold text-green-600">
+                        {formatPercentile(application.experience_percentile)}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-green-500 transition-all duration-500"
+                        style={{ width: `${application.experience_percentile}%` }}
+                      />
+                    </div>
                   </div>
-                  <Progress value={application.experience_percentile} className="h-2" />
-                </div>
-              )}
-
-              {application.education_percentile !== undefined && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Education Percentile</span>
-                    <span className="font-bold text-purple-600">
-                      {formatPercentile(application.education_percentile)}
-                    </span>
-                  </div>
-                  <Progress value={application.education_percentile} className="h-2" />
-                </div>
-              )}
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Skills Analysis */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center space-x-2">
+          <Card className="border border-gray-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-6">
                 <Target className="h-5 w-5 text-amber-600" />
-                <CardTitle>Skills Analysis</CardTitle>
+                <h2 className="text-xl font-semibold text-gray-900">Skills Analysis</h2>
               </div>
-              <CardDescription>
+              <p className="text-sm text-gray-600 mb-6">
                 Skills extracted from your resume and matched to job requirements
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {application.matched_skills && application.matched_skills.length > 0 && (
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <h3 className="font-semibold">Matched Skills ({application.matched_skills.length})</h3>
+              </p>
+              <div className="space-y-6">
+                {application.matched_skills && application.matched_skills.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <h3 className="font-semibold text-gray-900">
+                        Matched Skills ({application.matched_skills.length})
+                      </h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {application.matched_skills.map((skill: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 bg-green-100 text-green-900 rounded-md text-sm font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {application.matched_skills.map((skill: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-green-100 text-green-900 rounded-full text-sm font-medium"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+                )}
 
-              {application.extracted_skills && application.extracted_skills.length > 0 && (
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Award className="h-5 w-5 text-blue-600" />
-                    <h3 className="font-semibold">All Extracted Skills ({application.extracted_skills.length})</h3>
+                {application.extracted_skills && application.extracted_skills.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Award className="h-5 w-5 text-blue-600" />
+                      <h3 className="font-semibold text-gray-900">
+                        All Extracted Skills ({application.extracted_skills.length})
+                      </h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {application.extracted_skills.map((skill: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 bg-blue-100 text-blue-900 rounded-md text-sm"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {application.extracted_skills.map((skill: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-sm"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+                )}
 
-              {application.missing_skills && application.missing_skills.length > 0 && (
-                <div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <XCircle className="h-5 w-5 text-orange-600" />
-                    <h3 className="font-semibold">Missing Skills ({application.missing_skills.length})</h3>
+                {application.missing_skills && application.missing_skills.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <XCircle className="h-5 w-5 text-orange-600" />
+                      <h3 className="font-semibold text-gray-900">
+                        Missing Skills ({application.missing_skills.length})
+                      </h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {application.missing_skills.map((skill: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 bg-orange-100 text-orange-900 rounded-md text-sm"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {application.missing_skills.map((skill: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-orange-100 text-orange-900 rounded-full text-sm"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </CardContent>
           </Card>
 
           {/* Recommendations */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center space-x-2">
+          <Card className="border border-gray-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-6">
                 <Lightbulb className="h-5 w-5 text-amber-600" />
-                <CardTitle>Recommendations</CardTitle>
+                <h2 className="text-xl font-semibold text-gray-900">Recommendations</h2>
               </div>
-              <CardDescription>
+              <p className="text-sm text-gray-600 mb-6">
                 Personalized suggestions to improve your profile
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
               {application.recommendations && application.recommendations.length > 0 ? (
                 <ul className="space-y-3">
                   {application.recommendations.map((rec: string, idx: number) => (
-                    <li key={idx} className="flex items-start space-x-3 p-3 bg-amber-50 rounded-lg">
+                    <li key={idx} className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-100">
                       <Lightbulb className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">{rec}</span>
+                      <span className="text-sm text-gray-900">{rec}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <div className="text-center py-8">
-                  <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">
+                <div className="text-center py-12">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="h-6 w-6 text-green-600" />
+                  </div>
+                  <p className="text-sm text-gray-700 font-medium">
                     Great job! You have a strong profile for this position.
                   </p>
                 </div>
