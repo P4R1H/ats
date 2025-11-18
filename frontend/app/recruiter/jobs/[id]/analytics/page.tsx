@@ -48,6 +48,7 @@ export default function JobAnalyticsPage() {
   const [job, setJob] = useState<any>(null)
   const [applications, setApplications] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showOnlyQualified, setShowOnlyQualified] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -89,13 +90,59 @@ export default function JobAnalyticsPage() {
     )
   }
 
+  // TWO-STAGE SCORING: Requirements filtering
+  const allApplications = applications
+  const qualifiedApplications = applications.filter(app => app.meets_requirements !== false)
+  const rejectedApplications = applications.filter(app => app.meets_requirements === false)
+
+  // Filter based on toggle
+  const displayedApplications = showOnlyQualified ? qualifiedApplications : allApplications
+
   // Calculate analytics
-  const totalApplications = applications.length
-  const avgScore = applications.length > 0
-    ? (applications.reduce((sum, app) => sum + (app.final_score || 0), 0) / applications.length).toFixed(1)
+  const totalApplications = allApplications.length
+  const qualifiedCount = qualifiedApplications.length
+  const rejectedCount = rejectedApplications.length
+  const qualificationRate = totalApplications > 0
+    ? ((qualifiedCount / totalApplications) * 100).toFixed(0)
     : 0
 
-  // Score distribution for bar chart
+  const avgScore = displayedApplications.length > 0
+    ? (displayedApplications.reduce((sum, app) => sum + (app.final_score || 0), 0) / displayedApplications.length).toFixed(1)
+    : 0
+
+  // Rejection reasons analysis (from Stage 1 requirements check)
+  const rejectionReasonCounts: Record<string, number> = {}
+  rejectedApplications.forEach(app => {
+    if (app.missing_requirements && Array.isArray(app.missing_requirements)) {
+      app.missing_requirements.forEach((reason: string) => {
+        // Extract category from reason (e.g., "Missing required skills: Python" → "Skills")
+        if (reason.toLowerCase().includes('skill')) {
+          rejectionReasonCounts['Missing Required Skills'] = (rejectionReasonCounts['Missing Required Skills'] || 0) + 1
+        } else if (reason.toLowerCase().includes('experience')) {
+          rejectionReasonCounts['Insufficient Experience'] = (rejectionReasonCounts['Insufficient Experience'] || 0) + 1
+        } else if (reason.toLowerCase().includes('education')) {
+          rejectionReasonCounts['Education Below Minimum'] = (rejectionReasonCounts['Education Below Minimum'] || 0) + 1
+        } else if (reason.toLowerCase().includes('certification')) {
+          rejectionReasonCounts['Missing Certifications'] = (rejectionReasonCounts['Missing Certifications'] || 0) + 1
+        } else if (reason.toLowerCase().includes('leadership')) {
+          rejectionReasonCounts['Missing Leadership'] = (rejectionReasonCounts['Missing Leadership'] || 0) + 1
+        }
+      })
+    }
+  })
+  const rejectionData = Object.entries(rejectionReasonCounts).map(([name, value]) => ({ name, value }))
+  const REJECTION_COLORS = ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16']
+
+  // Funnel data: Total → Met Requirements → Top 25%
+  const top25PercentileThreshold = 75 // Top 25% = >= 75th percentile
+  const top25Count = qualifiedApplications.filter(app => (app.overall_percentile || 0) >= top25PercentileThreshold).length
+  const funnelData = [
+    { stage: 'Total Applications', count: totalApplications, fill: '#3b82f6' },
+    { stage: 'Met Requirements', count: qualifiedCount, fill: '#10b981' },
+    { stage: 'Top 25%', count: top25Count, fill: '#8b5cf6' }
+  ]
+
+  // Score distribution for bar chart (use displayed apps)
   const scoreBuckets = [
     { range: '0-20', count: 0, min: 0, max: 20 },
     { range: '20-40', count: 0, min: 20, max: 40 },
@@ -103,7 +150,7 @@ export default function JobAnalyticsPage() {
     { range: '60-80', count: 0, min: 60, max: 80 },
     { range: '80-100', count: 0, min: 80, max: 100 }
   ]
-  applications.forEach(app => {
+  displayedApplications.forEach(app => {
     const score = app.final_score || 0
     if (score < 20) scoreBuckets[0].count++
     else if (score < 40) scoreBuckets[1].count++
@@ -112,9 +159,9 @@ export default function JobAnalyticsPage() {
     else scoreBuckets[4].count++
   })
 
-  // Cluster distribution for pie chart
+  // Cluster distribution for pie chart (use displayed apps)
   const clusterCounts: Record<string, number> = {}
-  applications.forEach(app => {
+  displayedApplications.forEach(app => {
     if (app.cluster_name) {
       clusterCounts[app.cluster_name] = (clusterCounts[app.cluster_name] || 0) + 1
     }
@@ -122,23 +169,23 @@ export default function JobAnalyticsPage() {
   const clusterData = Object.entries(clusterCounts).map(([name, value]) => ({ name, value }))
   const CLUSTER_COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6']
 
-  // Status distribution
+  // Status distribution (use displayed apps)
   const statusCounts = {
-    pending: applications.filter(app => app.status === 'pending').length,
-    shortlisted: applications.filter(app => app.status === 'shortlisted').length,
-    rejected: applications.filter(app => app.status === 'rejected').length
+    pending: displayedApplications.filter(app => app.status === 'pending').length,
+    shortlisted: displayedApplications.filter(app => app.status === 'shortlisted').length,
+    rejected: displayedApplications.filter(app => app.status === 'rejected').length
   }
 
-  // Experience vs Score scatter data
-  const scatterData = applications.map(app => ({
+  // Experience vs Score scatter data (use displayed apps)
+  const scatterData = displayedApplications.map(app => ({
     experience: app.experience_years || 0,
     score: app.final_score || 0,
     cluster: app.cluster_name || 'Unknown'
   }))
 
-  // Skills frequency
+  // Skills frequency (use displayed apps)
   const skillFrequency: Record<string, number> = {}
-  applications.forEach(app => {
+  displayedApplications.forEach(app => {
     if (app.extracted_skills && Array.isArray(app.extracted_skills)) {
       app.extracted_skills.forEach((skill: string) => {
         skillFrequency[skill] = (skillFrequency[skill] || 0) + 1
@@ -150,18 +197,18 @@ export default function JobAnalyticsPage() {
     .slice(0, 10)
     .map(([skill, count]) => ({ skill, count }))
 
-  // Component breakdown - average scores
-  const avgSkillsScore = applications.length > 0
-    ? applications.reduce((sum, app) => sum + (app.skills_score || 0), 0) / applications.length
+  // Component breakdown - average scores (use displayed apps)
+  const avgSkillsScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.skills_score || 0), 0) / displayedApplications.length
     : 0
-  const avgExpScore = applications.length > 0
-    ? applications.reduce((sum, app) => sum + (app.experience_score || 0), 0) / applications.length
+  const avgExpScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.experience_score || 0), 0) / displayedApplications.length
     : 0
-  const avgEduScore = applications.length > 0
-    ? applications.reduce((sum, app) => sum + (app.education_score || 0), 0) / applications.length
+  const avgEduScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.education_score || 0), 0) / displayedApplications.length
     : 0
-  const avgBonusScore = applications.length > 0
-    ? applications.reduce((sum, app) => sum + (app.bonus_score || 0), 0) / applications.length
+  const avgBonusScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.bonus_score || 0), 0) / displayedApplications.length
     : 0
 
   const componentData = [
@@ -186,10 +233,10 @@ export default function JobAnalyticsPage() {
     return den === 0 ? 0 : num / den
   }
 
-  const skillsScores = applications.map(a => a.skills_score || 0)
-  const expScores = applications.map(a => a.experience_score || 0)
-  const eduScores = applications.map(a => a.education_score || 0)
-  const finalScores = applications.map(a => a.final_score || 0)
+  const skillsScores = displayedApplications.map(a => a.skills_score || 0)
+  const expScores = displayedApplications.map(a => a.experience_score || 0)
+  const eduScores = displayedApplications.map(a => a.education_score || 0)
+  const finalScores = displayedApplications.map(a => a.final_score || 0)
 
   const correlations = {
     'Skills-Final': calculateCorrelation(skillsScores, finalScores),
@@ -236,9 +283,36 @@ export default function JobAnalyticsPage() {
             </Button>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">ML Analytics Dashboard</h1>
             <p className="text-lg text-gray-600">
-              {job?.title} • Data Science-Powered Insights
+              {job?.title} • Two-Stage Scoring System
             </p>
           </div>
+          {totalApplications > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600">View:</span>
+              <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+                <button
+                  onClick={() => setShowOnlyQualified(false)}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                    !showOnlyQualified
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  All ({totalApplications})
+                </button>
+                <button
+                  onClick={() => setShowOnlyQualified(true)}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                    showOnlyQualified
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Qualified Only ({qualifiedCount})
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {applications.length === 0 ? (
@@ -256,21 +330,32 @@ export default function JobAnalyticsPage() {
         ) : (
           <>
             {/* Key Metrics */}
-            <div className="grid grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-5 gap-4 mb-8">
               <Card className="border border-gray-200">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-1">
                     <Users className="h-4 w-4 text-blue-600" />
-                    <span className="text-xs text-gray-600">Applications</span>
+                    <span className="text-xs text-gray-600">Total Apps</span>
                   </div>
                   <span className="text-3xl font-bold text-gray-900">{totalApplications}</span>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-gray-200 bg-gradient-to-br from-green-50 to-emerald-50">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Target className="h-4 w-4 text-green-600" />
+                    <span className="text-xs text-gray-600">Met Requirements</span>
+                  </div>
+                  <span className="text-3xl font-bold text-green-700">{qualifiedCount}</span>
+                  <span className="text-xs text-green-600">({qualificationRate}%)</span>
                 </CardContent>
               </Card>
 
               <Card className="border border-gray-200">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-1">
-                    <TrendingUp className="h-4 w-4 text-green-600" />
+                    <TrendingUp className="h-4 w-4 text-purple-600" />
                     <span className="text-xs text-gray-600">Avg Score</span>
                   </div>
                   <span className="text-3xl font-bold text-gray-900">{avgScore}</span>
@@ -290,10 +375,98 @@ export default function JobAnalyticsPage() {
               <Card className="border border-gray-200">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-1">
-                    <Target className="h-4 w-4 text-purple-600" />
+                    <PieChart className="h-4 w-4 text-pink-600" />
                     <span className="text-xs text-gray-600">Clusters</span>
                   </div>
                   <span className="text-3xl font-bold text-gray-900">{Object.keys(clusterCounts).length}</span>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Two-Stage Scoring: Funnel + Rejection Reasons */}
+            <div className="grid lg:grid-cols-2 gap-6 mb-8">
+              {/* Candidate Funnel */}
+              <Card className="border border-gray-200 bg-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Activity className="h-5 w-5 text-blue-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Two-Stage Filter</h2>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Stage 1: Requirements filter • Stage 2: Ranking qualified candidates
+                  </p>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={funnelData} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis type="number" stroke="#6b7280" />
+                      <YAxis dataKey="stage" type="category" width={140} stroke="#6b7280" />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const pct = ((payload[0].value as number / totalApplications) * 100).toFixed(0)
+                            return (
+                              <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
+                                <p className="text-xs font-medium text-gray-900">{payload[0].payload.stage}</p>
+                                <p className="text-xs font-semibold" style={{ color: payload[0].payload.fill }}>
+                                  {payload[0].value} candidates ({pct}%)
+                                </p>
+                              </div>
+                            )
+                          }
+                          return null
+                        }}
+                      />
+                      <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                        {funnelData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Rejection Reasons Pie Chart */}
+              <Card className="border border-gray-200 bg-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Target className="h-5 w-5 text-red-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Rejection Reasons</h2>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Why candidates failed Stage 1 requirements check ({rejectedCount} rejected)
+                  </p>
+                  {rejectionData.length === 0 ? (
+                    <div className="flex items-center justify-center h-[250px]">
+                      <div className="text-center">
+                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Target className="h-6 w-6 text-green-600" />
+                        </div>
+                        <p className="text-sm text-gray-600 font-medium">All candidates met requirements!</p>
+                        <p className="text-xs text-gray-500 mt-1">No rejections to analyze</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={250}>
+                      <RechartsPie>
+                        <Pie
+                          data={rejectionData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name.split(' ').slice(-1)[0]} (${(percent * 100).toFixed(0)}%)`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {rejectionData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={REJECTION_COLORS[index % REJECTION_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </RechartsPie>
+                    </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -306,7 +479,7 @@ export default function JobAnalyticsPage() {
                   <h2 className="text-lg font-semibold text-gray-900">Experience vs ML Score</h2>
                 </div>
                 <p className="text-sm text-gray-600 mb-4">
-                  Visualizing our job-relative scoring curve • Candidates near min_experience ({job?.min_experience || 0} years) score highest
+                  Job-relative scoring • Candidates near min_experience ({job?.min_experience || 0} years) score highest
                 </p>
                 <ResponsiveContainer width="100%" height={300}>
                   <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -495,8 +668,8 @@ export default function JobAnalyticsPage() {
                 </div>
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <p className="text-sm text-blue-900">
-                    <strong>Interpretation:</strong> Correlation values range from -1 to 1. Values closer to 1 or -1 indicate stronger relationships.
-                    Our job-relative scoring system ensures skills match (not just total experience) drives final scores.
+                    <strong>Two-Stage System:</strong> Correlation analysis only includes candidates who passed Stage 1 (requirements check).
+                    Our job-relative scoring in Stage 2 ensures skills match and fit for the role (not just raw experience) drives final rankings.
                   </p>
                 </div>
               </CardContent>
