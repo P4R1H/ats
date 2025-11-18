@@ -111,6 +111,7 @@ class ApplicationCreate(BaseModel):
 class ApplicationResponse(BaseModel):
     id: int
     job_id: int
+    job_title: Optional[str] = None  # Job title for display
     candidate_id: int
     resume_file_path: str
 

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Wheat, Search, Briefcase, Clock, ArrowLeft, Upload, FileText, X, CheckCircle } from 'lucide-react'
 import { api } from '@/lib/api'
-import { formatDate } from '@/lib/utils'
+import { formatDate, stripMarkdown } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -390,11 +390,6 @@ export default function JobsPage() {
                 onClick={() => setSelectedJob(job)}
               >
                 <CardContent className="p-6">
-                  {/* Icon */}
-                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
-                    <Briefcase className="h-6 w-6 text-white" />
-                  </div>
-
                   {/* Title */}
                   <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
                     {job.title}
@@ -402,7 +397,7 @@ export default function JobsPage() {
 
                   {/* Description */}
                   <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                    {job.description}
+                    {stripMarkdown(job.description)}
                   </p>
 
                   {/* Meta info */}
