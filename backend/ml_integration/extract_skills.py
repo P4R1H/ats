@@ -22,12 +22,15 @@ def extract_skills_from_text(resume_text: str) -> Tuple[List[str], dict]:
     all_skills = get_all_skills()
 
     # Special patterns for skills with special characters
-    # Word boundaries \b don't work with special chars like + and #
+    # Word boundaries \b don't work well with special chars like +, #, and .
     special_patterns = {
         'c++': r'\bc\+\+(?!\w)',
         'c#': r'\bc#(?!\w)',
         'asp.net': r'\basp\.net\b',
         '.net': r'\.net\b',
+        'next.js': r'\bnext\.js\b',
+        'node.js': r'\bnode\.js\b',
+        'vue.js': r'\bvue\.js\b',
     }
 
     # Extract skills using case-insensitive matching
@@ -102,14 +105,21 @@ def extract_education_level(resume_text: str) -> str:
     """
     resume_lower = resume_text.lower()
 
-    # Check for different education levels
-    if 'phd' in resume_lower or 'ph.d' in resume_lower or 'doctorate' in resume_lower:
+    # Check for different education levels with comprehensive patterns
+    if 'phd' in resume_lower or 'ph.d' in resume_lower or 'doctorate' in resume_lower or 'doctoral' in resume_lower:
         return "PhD"
-    elif "master's" in resume_lower or 'masters' in resume_lower or 'm.s.' in resume_lower or 'msc' in resume_lower:
+    elif ("master's" in resume_lower or 'masters' in resume_lower or 'm.s.' in resume_lower or
+          'msc' in resume_lower or 'm.sc' in resume_lower or 'mba' in resume_lower or
+          'master of' in resume_lower or 'm.tech' in resume_lower):
         return "Master's"
-    elif "bachelor's" in resume_lower or 'bachelors' in resume_lower or 'b.s.' in resume_lower or 'bsc' in resume_lower or 'b.tech' in resume_lower:
+    elif ("bachelor's" in resume_lower or 'bachelors' in resume_lower or
+          'b.s.' in resume_lower or 'bsc' in resume_lower or 'b.sc' in resume_lower or
+          'b.tech' in resume_lower or 'b.e.' in resume_lower or
+          'bachelor of technology' in resume_lower or 'bachelor of science' in resume_lower or
+          'bachelor of arts' in resume_lower or 'bachelor of engineering' in resume_lower or
+          'bachelor of computer' in resume_lower or 'undergraduate' in resume_lower):
         return "Bachelor's"
-    elif 'diploma' in resume_lower:
+    elif 'diploma' in resume_lower or 'associate' in resume_lower:
         return "Diploma"
     else:
         return "Not Specified"
