@@ -3,91 +3,100 @@
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Wheat, TrendingUp, Target, Users, BarChart3, Award, Sparkles, Shield, Zap } from 'lucide-react'
+import { Wheat, TrendingUp, Target, Users, BarChart3, Award, Sparkles, Shield, Zap, Layers } from 'lucide-react'
 
 export default function HomePage() {
   const router = useRouter()
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-      <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-              <Wheat className="h-6 w-6 text-white" />
+      {/* Floating Island Navbar */}
+      <header className="sticky top-0 z-50 py-4">
+        <div className="container mx-auto px-4">
+          <div className="floating-island bg-white/90 backdrop-blur-md border border-amber-100">
+            <div className="px-6 py-3 flex justify-between items-center">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+                  <Wheat className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-2xl font-bold gradient-text">Bread</span>
+              </div>
+              <div className="space-x-3">
+                <Button variant="ghost" onClick={() => router.push('/auth/login')}>
+                  Sign In
+                </Button>
+                <Button
+                  className="gradient-bg text-white shadow-md hover:shadow-lg transition-shadow"
+                  onClick={() => router.push('/auth/register')}
+                >
+                  Get Started
+                </Button>
+              </div>
             </div>
-            <span className="text-2xl font-bold gradient-text">Bread</span>
-          </div>
-          <div className="space-x-3">
-            <Button variant="ghost" onClick={() => router.push('/auth/login')}>
-              Sign In
-            </Button>
-            <Button
-              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-shadow"
-              onClick={() => router.push('/auth/register')}
-            >
-              Get Started
-            </Button>
           </div>
         </div>
       </header>
 
-      <section className="container mx-auto px-4 pt-20 pb-16 text-center">
-        <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
-          <div className="inline-flex items-center space-x-2 bg-amber-100 px-4 py-2 rounded-full text-sm font-medium text-amber-900">
-            <Sparkles className="h-4 w-4" />
-            <span>Fresh from the oven: ML-Powered Hiring</span>
-          </div>
-
-          <h1 className="text-6xl md:text-7xl font-bold leading-tight">
-            Rise to the{' '}
-            <span className="gradient-text">Top</span>
-            <br />
-            with Data-Driven Hiring
-          </h1>
-
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Bread turns hiring from guesswork into a science. Get transparent scores, percentile rankings,
-            and actionable insights powered by machine learning.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button
-              size="lg"
-              className="gradient-bg text-white text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all hover-lift"
-              onClick={() => router.push('/auth/register?role=candidate')}
-            >
-              <Users className="mr-2 h-5 w-5" />
-              I'm Looking for Work
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-6 border-2 border-amber-500 hover:bg-amber-50"
-              onClick={() => router.push('/auth/register?role=recruiter')}
-            >
-              <Wheat className="mr-2 h-5 w-5" />
-              I'm Hiring Talent
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-center gap-8 pt-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-green-600" />
-              <span>100% Transparent</span>
+      {/* Hero Section with Enhanced Background */}
+      <section className="hero-bg relative">
+        <div className="container mx-auto px-4 pt-16 pb-20 text-center relative z-10">
+          <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+            <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-orange-700 shadow-sm border border-orange-200">
+              <Sparkles className="h-4 w-4" />
+              <span>Fresh from the oven: ML-Powered Hiring</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-amber-600" />
-              <span>AI-Powered</span>
+
+            <h1 className="text-6xl md:text-7xl font-bold leading-tight">
+              Rise to the{' '}
+              <span className="gradient-text">Top</span>
+              <br />
+              with Data-Driven Hiring
+            </h1>
+
+            <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+              Bread turns hiring from guesswork into a science. Get transparent scores, percentile rankings,
+              and actionable insights powered by machine learning.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Button
+                size="lg"
+                className="gradient-bg text-white text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all hover-lift"
+                onClick={() => router.push('/auth/register?role=candidate')}
+              >
+                <Users className="mr-2 h-5 w-5" />
+                I'm Looking for Work
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-lg px-8 py-6 border-2 border-orange-400 hover:bg-orange-50 bg-white/80 backdrop-blur-sm"
+                onClick={() => router.push('/auth/register?role=recruiter')}
+              >
+                <Wheat className="mr-2 h-5 w-5" />
+                I'm Hiring Talent
+              </Button>
             </div>
-            <div className="flex items-center gap-2">
-              <Award className="h-4 w-4 text-blue-600" />
-              <span>Data-Driven</span>
+
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-8 text-sm text-gray-600">
+              <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-full">
+                <Shield className="h-4 w-4 text-green-600" />
+                <span>100% Transparent</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-full">
+                <Zap className="h-4 w-4 text-orange-600" />
+                <span>AI-Powered</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-full">
+                <Award className="h-4 w-4 text-blue-600" />
+                <span>Data-Driven</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Why Choose Bread */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -99,9 +108,9 @@ export default function HomePage() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <Card className="hover-lift border-2 hover:border-amber-300 transition-all">
+          <Card className="hover-lift border-2 hover:border-orange-300 transition-all bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 w-fit rounded-xl mb-4">
+              <div className="p-3 bg-gradient-to-br from-orange-500 to-red-600 w-fit rounded-xl mb-4">
                 <TrendingUp className="h-8 w-8 text-white" />
               </div>
               <CardTitle className="text-2xl">Percentile Rankings</CardTitle>
@@ -112,7 +121,7 @@ export default function HomePage() {
             </CardHeader>
           </Card>
 
-          <Card className="hover-lift border-2 hover:border-amber-300 transition-all">
+          <Card className="hover-lift border-2 hover:border-orange-300 transition-all bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 w-fit rounded-xl mb-4">
                 <Target className="h-8 w-8 text-white" />
@@ -125,7 +134,7 @@ export default function HomePage() {
             </CardHeader>
           </Card>
 
-          <Card className="hover-lift border-2 hover:border-amber-300 transition-all">
+          <Card className="hover-lift border-2 hover:border-orange-300 transition-all bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 w-fit rounded-xl mb-4">
                 <BarChart3 className="h-8 w-8 text-white" />
@@ -138,7 +147,7 @@ export default function HomePage() {
             </CardHeader>
           </Card>
 
-          <Card className="hover-lift border-2 hover:border-amber-300 transition-all">
+          <Card className="hover-lift border-2 hover:border-orange-300 transition-all bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 w-fit rounded-xl mb-4">
                 <Users className="h-8 w-8 text-white" />
@@ -151,7 +160,7 @@ export default function HomePage() {
             </CardHeader>
           </Card>
 
-          <Card className="hover-lift border-2 hover:border-amber-300 transition-all">
+          <Card className="hover-lift border-2 hover:border-orange-300 transition-all bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <div className="p-3 bg-gradient-to-br from-amber-500 to-yellow-600 w-fit rounded-xl mb-4">
                 <Wheat className="h-8 w-8 text-white" />
@@ -164,7 +173,7 @@ export default function HomePage() {
             </CardHeader>
           </Card>
 
-          <Card className="hover-lift border-2 hover:border-amber-300 transition-all">
+          <Card className="hover-lift border-2 hover:border-orange-300 transition-all bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <div className="p-3 bg-gradient-to-br from-red-500 to-orange-600 w-fit rounded-xl mb-4">
                 <Award className="h-8 w-8 text-white" />
@@ -179,40 +188,63 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Stats Section - Card Based */}
       <section className="container mx-auto px-4 py-16">
-        <div className="gradient-bg rounded-3xl p-12 shadow-2xl">
-          <div className="grid md:grid-cols-3 gap-8 text-center text-white">
-            <div className="space-y-2">
-              <div className="text-6xl font-bold">150+</div>
-              <div className="text-xl opacity-95">Skills We Track</div>
-              <div className="text-sm opacity-75">Across 9 categories</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-6xl font-bold">8</div>
-              <div className="text-xl opacity-95">Smart Clusters</div>
-              <div className="text-sm opacity-75">ML-powered grouping</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-6xl font-bold">100%</div>
-              <div className="text-xl opacity-95">Transparency</div>
-              <div className="text-sm opacity-75">Every score explained</div>
-            </div>
-          </div>
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50 hover-lift">
+            <CardHeader className="text-center pb-6">
+              <div className="flex justify-center mb-3">
+                <div className="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl">
+                  <Layers className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <div className="text-6xl font-bold gradient-text mb-2">150+</div>
+              <CardTitle className="text-xl mb-1">Skills We Track</CardTitle>
+              <CardDescription>Across 9 categories</CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50 hover-lift">
+            <CardHeader className="text-center pb-6">
+              <div className="flex justify-center mb-3">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <div className="text-6xl font-bold gradient-text mb-2">8</div>
+              <CardTitle className="text-xl mb-1">Smart Clusters</CardTitle>
+              <CardDescription>ML-powered grouping</CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50 hover-lift">
+            <CardHeader className="text-center pb-6">
+              <div className="flex justify-center mb-3">
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <div className="text-6xl font-bold gradient-text mb-2">100%</div>
+              <CardTitle className="text-xl mb-1">Transparency</CardTitle>
+              <CardDescription>Every score explained</CardDescription>
+            </CardHeader>
+          </Card>
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <div className="max-w-3xl mx-auto space-y-8 bread-pattern rounded-3xl p-12">
+        <div className="max-w-3xl mx-auto space-y-8 bg-white/60 backdrop-blur-sm rounded-3xl p-12 border-2 border-orange-200">
           <h2 className="text-4xl md:text-5xl font-bold">
             Ready to Rise?
           </h2>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-gray-700">
             Join Bread and experience hiring that's fresh, fair, and actually helpful.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button
               size="lg"
-              className="gradient-bg text-white text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all"
+              className="gradient-bg text-white text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
               onClick={() => router.push('/auth/register')}
             >
               Create Free Account
@@ -220,7 +252,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-6 border-2 border-amber-500"
+              className="text-lg px-8 py-6 border-2 border-orange-400 bg-white hover:bg-orange-50"
               onClick={() => router.push('/auth/login')}
             >
               Sign In
@@ -229,10 +261,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="border-t bg-white/80 backdrop-blur-md mt-20">
         <div className="container mx-auto px-4 py-8 text-center space-y-2">
           <div className="flex items-center justify-center space-x-2 text-lg font-semibold">
-            <Wheat className="h-5 w-5 text-amber-600" />
+            <Wheat className="h-5 w-5 text-orange-600" />
             <span>Bread</span>
           </div>
           <p className="text-muted-foreground">
