@@ -146,7 +146,7 @@ export default function RegisterPage() {
                     <Input
                       id="company_logo"
                       type="url"
-                      placeholder="https://example.com/logo.png"
+                      placeholder="https://ex.com/l.png"
                       value={formData.company_logo}
                       onChange={(e) => setFormData({ ...formData, company_logo: e.target.value })}
                       className="h-10 text-sm border-2 focus:border-amber-400"
