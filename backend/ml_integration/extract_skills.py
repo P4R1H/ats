@@ -23,14 +23,15 @@ def extract_skills_from_text(resume_text: str) -> Tuple[List[str], dict]:
 
     # Special patterns for skills with special characters
     # Word boundaries \b don't work well with special chars like +, #, and .
+    # Also handle variations like "NextJS" vs "Next.js"
     special_patterns = {
         'c++': r'\bc\+\+(?!\w)',
         'c#': r'\bc#(?!\w)',
         'asp.net': r'\basp\.net\b',
         '.net': r'\.net\b',
-        'next.js': r'\bnext\.js\b',
-        'node.js': r'\bnode\.js\b',
-        'vue.js': r'\bvue\.js\b',
+        'next.js': r'\b(?:next\.js|nextjs)\b',  # Matches both "Next.js" and "NextJS"
+        'node.js': r'\b(?:node\.js|nodejs)\b',  # Matches both "Node.js" and "NodeJS"
+        'vue.js': r'\b(?:vue\.js|vuejs)\b',     # Matches both "Vue.js" and "VueJS"
     }
 
     # Extract skills using case-insensitive matching
@@ -72,30 +73,68 @@ def calculate_skill_diversity(skills_by_category: dict) -> float:
 def extract_experience_years(resume_text: str) -> float:
     """
     Extract years of experience from resume text.
-    Uses heuristics to find experience mentions.
+    Uses heuristics to find experience mentions and calculate duration from date ranges.
     """
-    # Pattern 1: "X years of experience"
-    pattern1 = r'(\d+)\+?\s*(?:years?|yrs?)\s+(?:of\s+)?experience'
-    matches1 = re.findall(pattern1, resume_text.lower())
+    resume_lower = resume_text.lower()
 
-    # Pattern 2: "X years" in work experience section
-    pattern2 = r'(\d+)\s*(?:years?|yrs?)'
-    matches2 = re.findall(pattern2, resume_text.lower())
+    # Pattern 1: Explicit "X years of experience" statements (most reliable)
+    pattern_explicit = r'(\d+)\+?\s*(?:years?|yrs?)\s+(?:of\s+)?(?:experience|exp\.?)'
+    explicit_matches = re.findall(pattern_explicit, resume_lower)
+    if explicit_matches:
+        # Take the maximum value found in explicit statements
+        years = max(int(match) for match in explicit_matches)
+        return min(float(years), 20.0)  # Cap at 20 years
 
-    # Take the maximum value found
-    all_matches = matches1 + matches2
-    if all_matches:
-        years = max(int(match) for match in all_matches)
-        return min(years, 20)  # Cap at 20 years
+    # Pattern 2: Calculate from date ranges (Month YYYY – Month YYYY or YYYY – YYYY)
+    # Common formats: "Jan 2024 – Present", "2023 – 2024", "May 2023 – Dec 2024"
+    total_months = 0
+
+    # Match ranges like "Month YYYY – Month YYYY" or "Month YYYY – Present"
+    date_range_pattern = r'(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+(\d{4})\s*[–—-]\s*(?:(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+(\d{4})|present|current)'
+    date_matches = re.findall(date_range_pattern, resume_lower)
+
+    from datetime import datetime
+    current_year = datetime.now().year
+
+    for match in date_matches:
+        start_year = int(match[0])
+        end_year = int(match[1]) if match[1] else current_year
+
+        # Only count realistic work experience (not future dates, not too far in past)
+        if 1990 <= start_year <= current_year and start_year <= end_year <= current_year + 1:
+            months = (end_year - start_year) * 12
+            total_months += months
+
+    if total_months > 0:
+        years = total_months / 12.0
+        return min(round(years, 1), 20.0)
+
+    # Pattern 3: Look for year ranges without months "2023 – 2024"
+    year_range_pattern = r'\b(19\d{2}|20\d{2})\s*[–—-]\s*(19\d{2}|20\d{2}|present|current)\b'
+    year_matches = re.findall(year_range_pattern, resume_lower)
+
+    total_years = 0
+    for match in year_matches:
+        start_year = int(match[0])
+        end_year = int(match[1]) if match[1] not in ['present', 'current'] else current_year
+
+        # Only count realistic work experience
+        if 1990 <= start_year <= current_year and start_year <= end_year <= current_year + 1:
+            years_diff = end_year - start_year
+            if years_diff <= 10:  # Sanity check: single position shouldn't be more than 10 years
+                total_years += years_diff
+
+    if total_years > 0:
+        return min(float(total_years), 20.0)
 
     # Default: estimate from resume length (very rough heuristic)
     word_count = len(resume_text.split())
     if word_count > 500:
-        return 3.0
+        return 1.0  # Changed from 3.0 to 1.0 for more conservative estimate
     elif word_count > 300:
-        return 2.0
+        return 0.5
     else:
-        return 1.0
+        return 0.0
 
 
 def extract_education_level(resume_text: str) -> str:
