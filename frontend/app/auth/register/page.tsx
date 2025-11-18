@@ -141,7 +141,7 @@ export default function RegisterPage() {
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="company_logo" className="text-sm font-medium">
-                      Company Logo URL (optional)
+                      Logo URL
                     </Label>
                     <Input
                       id="company_logo"
