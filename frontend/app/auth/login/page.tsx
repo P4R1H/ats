@@ -40,16 +40,18 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 bread-pattern">
       <div className="w-full max-w-md space-y-8 animate-scale-in">
-        <div className="text-center">
-          <Link href="/" className="inline-flex items-center space-x-3 mb-8">
+        <div className="text-center space-y-4">
+          <Link href="/" className="inline-flex items-center space-x-3">
             <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
               <Wheat className="h-8 w-8 text-white" />
             </div>
             <span className="text-3xl font-bold gradient-text">Bread</span>
           </Link>
-          <div className="inline-flex items-center space-x-2 bg-amber-100 px-4 py-2 rounded-full text-sm font-medium text-amber-900 mb-6">
-            <Sparkles className="h-4 w-4" />
-            <span>Welcome back to the bakery!</span>
+          <div className="flex justify-center">
+            <div className="inline-flex items-center space-x-2 bg-amber-100 px-4 py-2 rounded-full text-sm font-medium text-amber-900">
+              <Sparkles className="h-4 w-4" />
+              <span>Welcome back to the bakery!</span>
+            </div>
           </div>
         </div>
 

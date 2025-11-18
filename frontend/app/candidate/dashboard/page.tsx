@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Brain, FileText, TrendingUp, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { Wheat, FileText, TrendingUp, Clock, CheckCircle, XCircle } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
 
@@ -56,13 +56,15 @@ export default function CandidateDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
       {/* Header */}
-      <header className="border-b bg-card">
+      <header className="border-b bg-white/80 backdrop-blur-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Brain className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Intelligent ATS</span>
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+              <Wheat className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold gradient-text">Bread</span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">
@@ -125,7 +127,7 @@ export default function CandidateDashboard() {
               <div className="text-center py-12">
                 <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground mb-4">No applications yet</p>
-                <Button onClick={() => router.push('/candidate/jobs')}>
+                <Button className="gradient-bg text-white" onClick={() => router.push('/candidate/jobs')}>
                   Browse Jobs
                 </Button>
               </div>
