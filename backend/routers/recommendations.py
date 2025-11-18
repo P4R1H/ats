@@ -13,7 +13,8 @@ import re
 from database import get_db
 from auth import get_current_user
 from models import User, JobPosting, Application
-from scoring import score_candidate, meets_requirements
+from ml_integration.scoring import check_requirements, calculate_final_score
+import json
 
 router = APIRouter()
 
@@ -181,37 +182,74 @@ async def get_job_recommendations(
     recommendations = []
 
     for job in jobs:
-        # Create candidate profile from analysis
-        candidate_profile = {
-            'skills': [s.lower() for s in analysis.skills],
-            'experience_years': analysis.experience_years,
-            'education_level': analysis.education_level,
-            'has_certifications': analysis.has_certifications,
-            'has_leadership': analysis.has_leadership,
-        }
+        # Parse JSON fields from job
+        try:
+            required_skills = json.loads(job.required_skills) if job.required_skills else []
+        except:
+            required_skills = []
 
-        # Check if meets requirements
-        req_check = meets_requirements(candidate_profile, job)
+        try:
+            preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
+        except:
+            preferred_skills = []
+
+        try:
+            requirements = json.loads(job.requirements) if job.requirements else {}
+        except:
+            requirements = {}
+
+        # Get job requirements from requirements field
+        job_min_education = requirements.get('min_education', 'none')
+        job_certs_required = requirements.get('certifications_required', False)
+        job_leadership_required = requirements.get('leadership_required', False)
 
         # Calculate skills match percentage
-        required_skills = [s.lower() for s in (job.required_skills or [])]
-        preferred_skills = [s.lower() for s in (job.preferred_skills or [])]
         candidate_skills_lower = [s.lower() for s in analysis.skills]
+        required_skills_lower = [s.lower() for s in required_skills]
+        preferred_skills_lower = [s.lower() for s in preferred_skills]
 
-        total_skills = len(required_skills) + len(preferred_skills)
+        total_skills = len(required_skills_lower) + len(preferred_skills_lower)
         if total_skills > 0:
-            matched_required = len([s for s in required_skills if s in candidate_skills_lower])
-            matched_preferred = len([s for s in preferred_skills if s in candidate_skills_lower])
+            matched_required = len([s for s in required_skills_lower if s in candidate_skills_lower])
+            matched_preferred = len([s for s in preferred_skills_lower if s in candidate_skills_lower])
             skills_match_pct = ((matched_required + matched_preferred) / total_skills) * 100
         else:
             skills_match_pct = 0
 
         # Find missing skills
-        missing_required = [s for s in required_skills if s.lower() not in candidate_skills_lower]
-        missing_preferred = [s for s in preferred_skills if s.lower() not in candidate_skills_lower]
+        missing_required = [s for s in required_skills_lower if s not in candidate_skills_lower]
+        missing_preferred = [s for s in preferred_skills_lower if s not in candidate_skills_lower]
 
-        # Calculate predicted score
-        score_result = score_candidate(candidate_profile, job)
+        # Check if meets requirements using actual scoring function
+        meets_reqs, missing_reqs, rejection_reason = check_requirements(
+            candidate_skills=candidate_skills_lower,
+            candidate_experience=float(analysis.experience_years),
+            candidate_education=analysis.education_level,
+            candidate_has_certifications=analysis.has_certifications,
+            candidate_has_leadership=analysis.has_leadership,
+            job_required_skills=required_skills_lower,
+            job_min_experience=job.min_experience or 0,
+            job_min_education=job_min_education,
+            job_certifications_required=job_certs_required,
+            job_leadership_required=job_leadership_required
+        )
+
+        # Calculate predicted score using actual scoring function
+        score_result = calculate_final_score(
+            candidate_skills=candidate_skills_lower,
+            candidate_experience=float(analysis.experience_years),
+            candidate_education=analysis.education_level,
+            candidate_has_certifications=analysis.has_certifications,
+            candidate_has_leadership=analysis.has_leadership,
+            candidate_skill_diversity=0.5,  # Default diversity score
+            job_required_skills=required_skills_lower,
+            job_preferred_skills=preferred_skills_lower,
+            job_min_experience=job.min_experience or 0,
+            job_min_education=job_min_education,
+            job_certifications_required=job_certs_required,
+            job_leadership_required=job_leadership_required,
+        )
+
         potential_score = score_result['final_score']
 
         # Predict percentile (simplified - in real system would compare against other applicants)
@@ -222,15 +260,14 @@ async def get_job_recommendations(
         match_score = (
             (skills_match_pct * 0.4) +
             (potential_score * 0.4) +
-            (100 if req_check['meets_all_requirements'] else 0) * 0.2
+            (100 if meets_reqs else 0) * 0.2
         )
 
         recommendations.append(JobRecommendation(
             job={
                 'id': job.id,
                 'title': job.title,
-                'company': job.company,
-                'location': job.location,
+                'category': job.category,
                 'description': job.description[:200] + '...' if len(job.description) > 200 else job.description,
             },
             match_score=match_score,
@@ -238,7 +275,7 @@ async def get_job_recommendations(
             predicted_percentile=round(predicted_percentile, 1),
             missing_required_skills=missing_required,
             missing_preferred_skills=missing_preferred,
-            meets_requirements=req_check['meets_all_requirements'],
+            meets_requirements=meets_reqs,
             potential_score=round(potential_score, 1),
         ))
 
