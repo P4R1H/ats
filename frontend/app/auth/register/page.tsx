@@ -58,8 +58,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 bread-pattern">
-      <div className="w-full max-w-md space-y-3 animate-scale-in">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 bread-pattern overflow-y-auto">
+      <div className="w-full max-w-md space-y-2 animate-scale-in my-4">
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center space-x-2">
             <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
