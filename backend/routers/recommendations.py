@@ -159,12 +159,12 @@ def analyze_resume_text(text: str) -> ResumeAnalysis:
 
     # Detect certifications and leadership
     has_certifications = bool(re.search(
-        r'\b(certification|certified|certificate|aws certified|azure certified|pmp|cissp)\b',
+        r'\b(certifications?|certified|certificates?|aws\s+(?:certified|cloud\s+practitioner)|azure\s+certified|pmp|cissp|kaggle|postman\s+api)\b',
         text_lower
     ))
 
     has_leadership = bool(re.search(
-        r'\b(lead|led|manager|managed|director|head of|team lead|supervisor|coordinated)\b',
+        r'\b(lead|led|leader|manager|managed|director|head\s+of|team\s+lead|supervisor|coordinated?|leadership)\b',
         text_lower
     ))
 
