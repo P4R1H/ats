@@ -590,7 +590,7 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="text-sm text-gray-500">
-                © 2024 Bread ATS. All rights reserved.
+                © {new Date().getFullYear()} Bread ATS. All rights reserved.
               </div>
             </div>
           </div>
