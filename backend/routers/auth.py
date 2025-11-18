@@ -26,7 +26,9 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
         email=user_data.email,
         password_hash=hashed_password,
         full_name=user_data.full_name,
-        role=user_data.role
+        role=user_data.role,
+        company_name=user_data.company_name if user_data.role == "recruiter" else None,
+        company_logo=user_data.company_logo if user_data.role == "recruiter" else None
     )
 
     db.add(new_user)

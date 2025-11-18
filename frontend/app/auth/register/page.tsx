@@ -19,6 +19,8 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
     full_name: '',
+    company_name: '',
+    company_logo: '',
     role: searchParams.get('role') || 'candidate'
   })
   const [error, setError] = useState('')
@@ -40,7 +42,9 @@ export default function RegisterPage() {
       const response = await api.register({
         email: formData.email,
         password: formData.password,
-        full_name: formData.full_name,
+        full_name: formData.role === 'recruiter' ? formData.company_name : formData.full_name,
+        company_name: formData.role === 'recruiter' ? formData.company_name : undefined,
+        company_logo: formData.role === 'recruiter' ? formData.company_logo : undefined,
         role: formData.role
       })
 
@@ -123,17 +127,38 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="full_name" className="text-sm font-medium">Full Name</Label>
+                <Label htmlFor={formData.role === 'recruiter' ? 'company_name' : 'full_name'} className="text-sm font-medium">
+                  {formData.role === 'recruiter' ? 'Company Name' : 'Full Name'}
+                </Label>
                 <Input
-                  id="full_name"
+                  id={formData.role === 'recruiter' ? 'company_name' : 'full_name'}
                   type="text"
-                  placeholder="John Doe"
-                  value={formData.full_name}
-                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  placeholder={formData.role === 'recruiter' ? 'Acme Corporation' : 'John Doe'}
+                  value={formData.role === 'recruiter' ? formData.company_name : formData.full_name}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    [formData.role === 'recruiter' ? 'company_name' : 'full_name']: e.target.value
+                  })}
                   required
                   className="h-10 text-sm border-2 focus:border-amber-400"
                 />
               </div>
+
+              {formData.role === 'recruiter' && (
+                <div className="space-y-1">
+                  <Label htmlFor="company_logo" className="text-sm font-medium">
+                    Company Logo URL (optional)
+                  </Label>
+                  <Input
+                    id="company_logo"
+                    type="url"
+                    placeholder="https://example.com/logo.png"
+                    value={formData.company_logo}
+                    onChange={(e) => setFormData({ ...formData, company_logo: e.target.value })}
+                    className="h-10 text-sm border-2 focus:border-amber-400"
+                  />
+                </div>
+              )}
 
               <div className="space-y-1">
                 <Label htmlFor="email" className="text-sm font-medium">Email</Label>
