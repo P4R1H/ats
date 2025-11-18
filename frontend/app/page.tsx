@@ -262,8 +262,15 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-orange-200 bg-gradient-to-b from-white to-orange-50/30 mt-20">
-        <div className="container mx-auto px-4 py-12">
+      <footer className="relative border-t border-orange-200 bg-gradient-to-b from-white to-orange-50/30 mt-20 overflow-hidden">
+        {/* Giant BREAD text */}
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none">
+          <div className="text-[20rem] md:text-[28rem] font-black text-center leading-none tracking-tighter opacity-[0.03] select-none">
+            BREAD
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-12 relative z-10">
           <div className="max-w-4xl mx-auto">
             <div className="text-center space-y-6">
               {/* Logo and tagline */}
@@ -307,7 +314,7 @@ export default function HomePage() {
 
               {/* Copyright */}
               <p className="text-xs text-muted-foreground pt-4">
-                © 2024 Bread ATS. Built with ❤️ for transparent, fair hiring.
+                © 2024 Bread ATS
               </p>
             </div>
           </div>
