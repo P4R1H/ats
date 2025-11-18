@@ -21,10 +21,25 @@ def extract_skills_from_text(resume_text: str) -> Tuple[List[str], dict]:
     # Get all possible skills
     all_skills = get_all_skills()
 
+    # Special patterns for skills with special characters
+    # Word boundaries \b don't work with special chars like + and #
+    special_patterns = {
+        'c++': r'\bc\+\+\b',
+        'c#': r'\bc#\b',
+        'asp.net': r'\basp\.net\b',
+        '.net': r'\.net\b',
+    }
+
     # Extract skills using case-insensitive matching
     for skill in all_skills:
-        # Create a pattern that matches the skill as a whole word
-        pattern = r'\b' + re.escape(skill.lower()) + r'\b'
+        skill_lower = skill.lower()
+
+        # Use special pattern if available, otherwise use standard word boundary
+        if skill_lower in special_patterns:
+            pattern = special_patterns[skill_lower]
+        else:
+            # Create a pattern that matches the skill as a whole word
+            pattern = r'\b' + re.escape(skill_lower) + r'\b'
 
         if re.search(pattern, resume_text_lower):
             extracted_skills.append(skill)
