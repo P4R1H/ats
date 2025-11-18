@@ -7,12 +7,13 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import json
+import PyPDF2
+import io
 
 from database import get_db
 from auth import get_current_user
 from models import User, JobPosting, Application
 from ml_integration.scoring import check_requirements, calculate_final_score
-from ml_integration.resume_parser import extract_text_from_file
 from ml_integration.extract_skills import process_resume
 
 router = APIRouter()
@@ -52,8 +53,15 @@ async def analyze_resume(
     # Read file
     contents = await resume_file.read()
 
-    # Extract text from PDF using the shared function
-    text = extract_text_from_file(contents, resume_file.filename)
+    # Extract text from PDF bytes
+    try:
+        pdf_reader = PyPDF2.PdfReader(io.BytesIO(contents))
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text() + "\n"
+        text = text.strip()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to parse PDF: {str(e)}")
 
     # Use the same process_resume function as the application flow
     processed = process_resume(text)
