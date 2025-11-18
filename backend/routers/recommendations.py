@@ -12,7 +12,7 @@ import re
 
 from database import get_db
 from auth import get_current_user
-from models import User, Job, Application
+from models import User, JobPosting, Application
 from scoring import score_candidate, meets_requirements
 
 router = APIRouter()
@@ -173,7 +173,7 @@ async def get_job_recommendations(
     Get job recommendations based on resume analysis
     """
     # Get all active jobs
-    jobs = db.query(Job).filter(Job.status == "active").all()
+    jobs = db.query(JobPosting).filter(JobPosting.status == "active").all()
 
     if not jobs:
         return []
