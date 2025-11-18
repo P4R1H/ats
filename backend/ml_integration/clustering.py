@@ -187,10 +187,10 @@ def assign_cluster(
     has_leadership: bool = False,
     technical_skills_count: int = None,
     skills_by_category: Dict[str, List[str]] = None,
-    use_ml: bool = True
+    use_ml: bool = False
 ) -> Dict[str, any]:
     """
-    Assign a candidate to a cluster using ML or rule-based approach.
+    Assign a candidate to a cluster using ML or rule-based approach (default: rule-based).
 
     Args:
         experience_years: Years of experience
