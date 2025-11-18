@@ -23,7 +23,7 @@ import {
   Loader2
 } from 'lucide-react'
 import { api } from '@/lib/api'
-import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
+import { formatDate, formatPercentile, getScoreColor, stripMarkdown } from '@/lib/utils'
 
 export default function JobApplicationsPage() {
   const router = useRouter()
@@ -199,7 +199,7 @@ export default function JobApplicationsPage() {
           <div className="flex items-start justify-between gap-6">
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{job?.title}</h1>
-              <p className="text-gray-600 line-clamp-2">{job?.description}</p>
+              <p className="text-gray-600 line-clamp-2">{stripMarkdown(job?.description || '')}</p>
             </div>
             <Button
               onClick={() => {
@@ -265,7 +265,7 @@ export default function JobApplicationsPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'score' | 'date')}
-              className="flex-1 md:flex-none px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium focus:border-amber-500 focus:ring-amber-500"
+              className="flex-1 md:flex-none pl-4 pr-10 py-3 border border-gray-300 rounded-lg text-sm font-medium focus:border-amber-500 focus:ring-amber-500"
             >
               <option value="score">Sort by Score</option>
               <option value="date">Sort by Date</option>
