@@ -393,7 +393,7 @@ export default function ApplicationDetailPage() {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-900">{item.label}</span>
                       <span className={`text-sm font-bold ${item.color}`}>
-                        {item.value.toFixed(1)} / {item.weight}
+                        {item.value.toFixed(1)} / {item.weight.toFixed(1)}
                       </span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
