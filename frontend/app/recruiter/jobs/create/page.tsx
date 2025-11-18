@@ -96,7 +96,14 @@ export default function CreateJobPage() {
         category: formData.category,
         required_skills: formData.required_skills,
         preferred_skills: formData.preferred_skills,
-        status: 'active'
+        min_experience: 0,
+        education_level: null,
+        // Default weight values (must sum to 1.0)
+        weight_skills: 0.40,
+        weight_experience: 0.30,
+        weight_education: 0.20,
+        weight_certifications: 0.05,
+        weight_leadership: 0.05
       })
 
       router.push('/recruiter/dashboard')

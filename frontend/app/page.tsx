@@ -262,60 +262,144 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-orange-200 bg-gradient-to-b from-white to-orange-50/30 mt-20 overflow-hidden">
-        {/* Giant BREAD text */}
+      <footer className="relative border-t border-orange-200 bg-gradient-to-b from-white via-orange-50/20 to-amber-50/40 mt-20 overflow-hidden">
+        {/* Giant BREAD text background */}
         <div className="absolute inset-x-0 bottom-0 pointer-events-none">
           <div className="text-[20rem] md:text-[28rem] font-black text-center leading-none tracking-tighter opacity-[0.03] select-none">
             BREAD
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-12 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-6">
-              {/* Logo and tagline */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-center space-x-3">
-                  <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-                    <Wheat className="h-6 w-6 text-white" />
-                  </div>
-                  <span className="text-2xl font-bold gradient-text">Bread</span>
+        {/* Decorative gradient orbs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-300/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-300/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="container mx-auto px-4 py-16 relative z-10">
+          {/* Main footer content */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
+            {/* Brand section */}
+            <div className="md:col-span-4 space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
+                  <Wheat className="h-7 w-7 text-white" />
                 </div>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  Rise to the top with data-driven hiring powered by machine learning
-                </p>
+                <span className="text-3xl font-bold gradient-text">Bread</span>
               </div>
-
-              {/* Tech stack */}
-              <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
-                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
-                  ML & NLP
-                </span>
-                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
-                  FastAPI
-                </span>
-                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
-                  Next.js 14
-                </span>
-                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
-                  Scikit-learn
-                </span>
-              </div>
-
-              {/* Divider */}
-              <div className="pt-6 border-t border-orange-200">
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">Foundation of Data Science</span> Academic Project
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Developed by <span className="font-medium text-orange-600">Parth Gupta</span>
-                </p>
-              </div>
-
-              {/* Copyright */}
-              <p className="text-xs text-muted-foreground pt-4">
-                © 2024 Bread ATS
+              <p className="text-muted-foreground leading-relaxed">
+                Rise to the top with intelligent, data-driven hiring powered by machine learning and statistical analysis.
               </p>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <span className="px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-orange-700 rounded-lg text-sm font-medium border border-orange-200/50">
+                  🤖 ML-Powered
+                </span>
+                <span className="px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-orange-700 rounded-lg text-sm font-medium border border-orange-200/50">
+                  📊 Data-Driven
+                </span>
+              </div>
+            </div>
+
+            {/* Key Features */}
+            <div className="md:col-span-3 space-y-4">
+              <h3 className="font-bold text-lg text-foreground">Key Features</h3>
+              <ul className="space-y-3">
+                <li className="text-sm text-muted-foreground hover:text-orange-600 transition-colors cursor-pointer">
+                  → Percentile Rankings
+                </li>
+                <li className="text-sm text-muted-foreground hover:text-orange-600 transition-colors cursor-pointer">
+                  → Skill Gap Analysis
+                </li>
+                <li className="text-sm text-muted-foreground hover:text-orange-600 transition-colors cursor-pointer">
+                  → ML Clustering
+                </li>
+                <li className="text-sm text-muted-foreground hover:text-orange-600 transition-colors cursor-pointer">
+                  → Transparent Scoring
+                </li>
+              </ul>
+            </div>
+
+            {/* Tech Stack */}
+            <div className="md:col-span-3 space-y-4">
+              <h3 className="font-bold text-lg text-foreground">Built With</h3>
+              <div className="flex flex-col space-y-2">
+                <span className="px-3 py-2 bg-white/60 rounded-lg border border-orange-200 text-sm font-medium text-foreground hover:border-orange-400 hover:shadow-md transition-all">
+                  🧠 Scikit-learn & NLP
+                </span>
+                <span className="px-3 py-2 bg-white/60 rounded-lg border border-orange-200 text-sm font-medium text-foreground hover:border-orange-400 hover:shadow-md transition-all">
+                  ⚡ FastAPI + Python
+                </span>
+                <span className="px-3 py-2 bg-white/60 rounded-lg border border-orange-200 text-sm font-medium text-foreground hover:border-orange-400 hover:shadow-md transition-all">
+                  ⚛️ Next.js 14 + TypeScript
+                </span>
+              </div>
+            </div>
+
+            {/* Get Started */}
+            <div className="md:col-span-2 space-y-4">
+              <h3 className="font-bold text-lg text-foreground">Get Started</h3>
+              <div className="space-y-3">
+                <button
+                  onClick={() => router.push('/auth/register')}
+                  className="w-full px-4 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+                >
+                  Sign Up Free
+                </button>
+                <button
+                  onClick={() => router.push('/auth/login')}
+                  className="w-full px-4 py-2 text-sm border-2 border-orange-300 text-orange-700 rounded-lg font-medium hover:bg-orange-50 transition-all"
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Divider with decorative elements */}
+          <div className="relative py-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-orange-200"></div>
+            </div>
+            <div className="relative flex justify-center">
+              <span className="px-4 bg-gradient-to-b from-white to-orange-50/30 text-orange-400">
+                <Wheat className="h-4 w-4" />
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom section */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-left">
+              <p className="text-sm font-semibold text-foreground">
+                Foundation of Data Science Academic Project
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Developed with ❤️ by <span className="font-semibold text-orange-600">Parth Gupta</span>
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                © 2024 Bread ATS
+              </div>
+              <div className="h-4 w-px bg-orange-200"></div>
+              <div className="text-xs text-muted-foreground">
+                All rights reserved
+              </div>
+            </div>
+          </div>
+
+          {/* Stats bar */}
+          <div className="mt-12 grid grid-cols-3 gap-6 p-6 bg-white/40 backdrop-blur-sm rounded-2xl border border-orange-200/50">
+            <div className="text-center">
+              <div className="text-2xl font-bold gradient-text">150+</div>
+              <div className="text-xs text-muted-foreground mt-1">Skills Tracked</div>
+            </div>
+            <div className="text-center border-x border-orange-200">
+              <div className="text-2xl font-bold gradient-text">8</div>
+              <div className="text-xs text-muted-foreground mt-1">ML Clusters</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold gradient-text">99%</div>
+              <div className="text-xs text-muted-foreground mt-1">Accuracy</div>
             </div>
           </div>
         </div>
