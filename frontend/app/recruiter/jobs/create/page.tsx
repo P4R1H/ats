@@ -321,6 +321,7 @@ export default function CreateJobPage() {
                   </span>
                 </div>
 
+                <div className="space-y-4">
                   {[
                     { key: 'skills' as const, label: 'Skills Match', description: '70% required + 20% preferred + 10% diversity' },
                     { key: 'experience' as const, label: 'Experience', description: 'Job-relative scoring (perfect fit at min +0-2 years)' },
