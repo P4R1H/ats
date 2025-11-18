@@ -184,8 +184,8 @@ export default function ApplicationDetailPage() {
         </Button>
 
         {/* Header Card */}
-        <Card className="border border-gray-200 shadow-sm mb-8">
-          <CardContent className="p-8">
+        <Card className="border border-gray-200 shadow-sm mb-6">
+          <CardContent className="p-6">
             <div className="flex items-start justify-between mb-6">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -232,21 +232,21 @@ export default function ApplicationDetailPage() {
             </div>
 
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-100">
                 <div className={`text-4xl font-bold mb-2 ${getScoreColor(application.final_score || 0)}`}>
                   {application.final_score?.toFixed(1) || 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Final Score (out of 100)</div>
               </div>
-              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-4xl font-bold mb-2 text-gray-900">
+              <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
+                <div className="text-4xl font-bold mb-2 text-green-700">
                   {formatPercentile(application.overall_percentile || 50)}
                 </div>
                 <div className="text-sm text-gray-600">Overall Percentile</div>
               </div>
-              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-2xl font-bold mb-2 text-gray-900">
+              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                <div className="text-xl font-semibold mb-2 text-purple-700">
                   {application.cluster_name || 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Talent Cluster</div>
@@ -257,7 +257,7 @@ export default function ApplicationDetailPage() {
 
         {/* Requirements Check (Stage 1) */}
         {application.meets_requirements === false && (
-          <Card className="border border-gray-200 mb-8">
+          <Card className="border border-gray-200 mb-6">
             <CardContent className="p-6">
               <div className="flex items-start gap-4 mb-6">
                 <div className="p-3 bg-gray-100 rounded-lg">
@@ -322,7 +322,7 @@ export default function ApplicationDetailPage() {
         )}
 
         {application.meets_requirements !== false && (
-          <Card className="border border-gray-200 mb-8">
+          <Card className="border border-gray-200 mb-6">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-gray-100 rounded-lg">
@@ -359,7 +359,7 @@ export default function ApplicationDetailPage() {
 
         {/* Skills Gap Analysis - Full Width */}
         {(missingRequired.length > 0 || missingPreferred.length > 0) && (
-          <Card className="border border-gray-200 mb-8">
+          <Card className="border border-gray-200 mb-6">
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-6">
                 <div>
@@ -505,7 +505,7 @@ export default function ApplicationDetailPage() {
           </Card>
         )}
 
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid lg:grid-cols-2 gap-6 mb-6">
           {/* Score Breakdown */}
           <Card className="border border-gray-200">
             <CardContent className="p-6">
@@ -602,7 +602,7 @@ export default function ApplicationDetailPage() {
           </Card>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-6">
           {/* Skills Analysis */}
           <Card className="border border-gray-200">
             <CardContent className="p-6">
