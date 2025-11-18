@@ -198,12 +198,12 @@ export default function ApplicationDetailPage() {
               <div className="flex flex-col gap-2 items-end">
                 {/* Requirements Badge */}
                 {application.meets_requirements === false ? (
-                  <span className="inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-full font-medium border-2 border-red-300">
+                  <span className="inline-flex items-center px-4 py-2 bg-red-50 text-red-700 rounded-full font-medium border border-red-200">
                     <XCircle className="h-5 w-5 mr-2" />
                     Did Not Meet Requirements
                   </span>
                 ) : (
-                  <span className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full font-medium border-2 border-green-300">
+                  <span className="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-full font-medium border border-green-200">
                     <CheckCircle className="h-5 w-5 mr-2" />
                     Met All Requirements
                   </span>
@@ -295,9 +295,9 @@ export default function ApplicationDetailPage() {
               )}
 
               {/* What This Means */}
-              <div className="mt-6 p-6 bg-white rounded-xl border border-red-200">
-                <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5 text-amber-600" />
+              <div className="mt-6 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-gray-600" />
                   What This Means For You
                 </h3>
                 <div className="space-y-3 text-sm text-gray-700">
@@ -310,7 +310,7 @@ export default function ApplicationDetailPage() {
                     shows what you would score among qualified candidates, but you were not ranked because
                     you didn't pass Stage 1.
                   </p>
-                  <p className="font-medium text-green-700">
+                  <p className="font-medium text-gray-900">
                     ✓ Good news: You can improve! Review the missing requirements above and work on
                     acquiring those skills/qualifications. Then apply to similar positions where you meet
                     all requirements.
@@ -337,13 +337,13 @@ export default function ApplicationDetailPage() {
                     You now compete with other qualified candidates in Stage 2 (Scoring & Ranking).
                   </p>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
-                    <div className="p-4 bg-white rounded-lg border border-green-200">
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                       <div className="font-semibold text-gray-900 mb-2">✓ Stage 1: Requirements</div>
                       <p className="text-gray-600">
                         You meet all minimum education, experience, skills, and qualifications.
                       </p>
                     </div>
-                    <div className="p-4 bg-white rounded-lg border border-green-200">
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                       <div className="font-semibold text-gray-900 mb-2">→ Stage 2: Ranking</div>
                       <p className="text-gray-600">
                         Your score of {application.final_score?.toFixed(1) || 0}/100 ranks you at the{' '}
@@ -371,8 +371,8 @@ export default function ApplicationDetailPage() {
                     Personalized insights to help you improve your candidacy for this role
                   </p>
                 </div>
-                <div className="text-center p-4 bg-white rounded-xl border border-blue-200 shadow-sm">
-                  <div className="text-3xl font-bold text-blue-600 mb-1">
+                <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="text-3xl font-bold text-gray-900 mb-1">
                     +{potentialFinalScoreImprovement.toFixed(1)}
                   </div>
                   <div className="text-xs text-gray-600">Potential Score Gain</div>
@@ -380,7 +380,7 @@ export default function ApplicationDetailPage() {
               </div>
 
               {/* Match Progress */}
-              <div className="mb-6 p-6 bg-white rounded-xl border border-blue-200">
+              <div className="mb-6 p-6 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h3 className="font-semibold text-gray-900">Required Skills Match</h3>
@@ -388,11 +388,11 @@ export default function ApplicationDetailPage() {
                       You have {matchedRequired} out of {totalRequiredSkills} required skills
                     </p>
                   </div>
-                  <div className="text-2xl font-bold text-blue-600">{matchPercentage}%</div>
+                  <div className="text-2xl font-bold text-gray-900">{matchPercentage}%</div>
                 </div>
-                <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
+                    className="h-full bg-gray-900 transition-all duration-500"
                     style={{ width: `${matchPercentage}%` }}
                   />
                 </div>
@@ -401,23 +401,23 @@ export default function ApplicationDetailPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Missing Required Skills */}
                 {missingRequired.length > 0 && (
-                  <div className="p-6 bg-white rounded-xl border border-red-200">
+                  <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex items-center gap-2 mb-4">
-                      <XCircle className="h-5 w-5 text-red-600" />
+                      <XCircle className="h-5 w-5 text-gray-600" />
                       <h3 className="font-semibold text-gray-900">Missing Required Skills</h3>
-                      <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-medium">
+                      <span className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs font-medium">
                         High Priority
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 mb-4">
                       Adding these skills could increase your score by up to{' '}
-                      <strong className="text-red-600">+{potentialRequiredImprovement.toFixed(1)} points</strong>
+                      <strong className="text-gray-900">+{potentialRequiredImprovement.toFixed(1)} points</strong>
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {missingRequired.map((skill: string, idx: number) => (
                         <span
                           key={idx}
-                          className="px-3 py-1.5 bg-red-100 text-red-900 rounded-md text-sm font-medium border border-red-200"
+                          className="px-3 py-1.5 bg-gray-100 text-gray-900 rounded-md text-sm font-medium border border-gray-200"
                         >
                           {skill}
                         </span>
@@ -428,23 +428,23 @@ export default function ApplicationDetailPage() {
 
                 {/* Missing Preferred Skills */}
                 {missingPreferred.length > 0 && (
-                  <div className="p-6 bg-white rounded-xl border border-amber-200">
+                  <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex items-center gap-2 mb-4">
-                      <Target className="h-5 w-5 text-amber-600" />
+                      <Target className="h-5 w-5 text-gray-600" />
                       <h3 className="font-semibold text-gray-900">Missing Preferred Skills</h3>
-                      <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                      <span className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs font-medium">
                         Nice to Have
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 mb-4">
                       Adding these skills could increase your score by up to{' '}
-                      <strong className="text-amber-600">+{potentialPreferredImprovement.toFixed(1)} points</strong>
+                      <strong className="text-gray-900">+{potentialPreferredImprovement.toFixed(1)} points</strong>
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {missingPreferred.map((skill: string, idx: number) => (
                         <span
                           key={idx}
-                          className="px-3 py-1.5 bg-amber-100 text-amber-900 rounded-md text-sm font-medium border border-amber-200"
+                          className="px-3 py-1.5 bg-gray-100 text-gray-900 rounded-md text-sm font-medium border border-gray-200"
                         >
                           {skill}
                         </span>
@@ -457,12 +457,12 @@ export default function ApplicationDetailPage() {
               {/* Enhanced Recommended Actions */}
               <div className="mt-6 space-y-4">
                 {/* Learning Path */}
-                <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex items-start gap-3 mb-4">
-                    <Lightbulb className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                    <Lightbulb className="h-6 w-6 text-gray-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h3 className="font-bold text-gray-900 mb-1">Personalized Learning Path</h3>
-                      <p className="text-sm text-gray-700">
+                      <h3 className="font-semibold text-gray-900 mb-1">Personalized Learning Path</h3>
+                      <p className="text-sm text-gray-600">
                         Based on your current skill set and this role's requirements
                       </p>
                     </div>
@@ -470,7 +470,7 @@ export default function ApplicationDetailPage() {
 
                   <div className="space-y-4">
                     {missingRequired.length > 0 && (
-                      <div className="bg-white rounded-lg p-4 border-l-4 border-red-500">
+                      <div className="bg-white rounded-lg p-4 border-l-4 border-gray-900">
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <h4 className="font-semibold text-gray-900 text-sm mb-1">
@@ -480,7 +480,7 @@ export default function ApplicationDetailPage() {
                               Required skills - Worth up to +{potentialRequiredImprovement.toFixed(1)} points
                             </p>
                           </div>
-                          <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium">
+                          <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-medium">
                             Required
                           </span>
                         </div>
@@ -501,7 +501,7 @@ export default function ApplicationDetailPage() {
                     )}
 
                     {missingPreferred.length > 0 && (
-                      <div className="bg-white rounded-lg p-4 border-l-4 border-amber-500">
+                      <div className="bg-white rounded-lg p-4 border-l-4 border-gray-400">
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <h4 className="font-semibold text-gray-900 text-sm mb-1">
@@ -511,7 +511,7 @@ export default function ApplicationDetailPage() {
                               Preferred skills - Worth up to +{potentialPreferredImprovement.toFixed(1)} points
                             </p>
                           </div>
-                          <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-medium">
+                          <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-medium">
                             Preferred
                           </span>
                         </div>
@@ -534,12 +534,12 @@ export default function ApplicationDetailPage() {
                 </div>
 
                 {/* Action Steps */}
-                <div className="p-6 bg-white rounded-xl border border-blue-200">
+                <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex items-start gap-3 mb-4">
-                    <CheckCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="h-6 w-6 text-gray-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h3 className="font-bold text-gray-900 mb-1">Next Steps</h3>
-                      <p className="text-sm text-gray-700">
+                      <h3 className="font-semibold text-gray-900 mb-1">Next Steps</h3>
+                      <p className="text-sm text-gray-600">
                         Actionable steps to improve your candidacy
                       </p>
                     </div>
@@ -548,8 +548,8 @@ export default function ApplicationDetailPage() {
                   <div className="space-y-3">
                     {missingRequired.length > 0 && (
                       <>
-                        <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                          <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                        <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                          <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
                             1
                           </div>
                           <div className="text-sm text-gray-800">
@@ -558,8 +558,8 @@ export default function ApplicationDetailPage() {
                             Use free resources like freeCodeCamp, Codecademy, or YouTube tutorials.
                           </div>
                         </div>
-                        <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                          <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                        <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                          <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
                             2
                           </div>
                           <div className="text-sm text-gray-800">
@@ -569,8 +569,8 @@ export default function ApplicationDetailPage() {
                         </div>
                       </>
                     )}
-                    <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                      <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
                         {missingRequired.length > 0 ? '3' : '1'}
                       </div>
                       <div className="text-sm text-gray-800">
@@ -578,13 +578,13 @@ export default function ApplicationDetailPage() {
                         Include them in project descriptions to show context and application.
                       </div>
                     </div>
-                    <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                      <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                      <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
                         {missingRequired.length > 0 ? '4' : '2'}
                       </div>
                       <div className="text-sm text-gray-800">
                         <strong>Reapply when ready:</strong> Once you've acquired {missingRequired.length > 0 ? 'the required' : 'additional'} skills,
-                        submit a new application. Your score could increase by <strong className="text-green-600">+{potentialFinalScoreImprovement.toFixed(1)} points</strong>!
+                        submit a new application. Your score could increase by <strong className="text-gray-900">+{potentialFinalScoreImprovement.toFixed(1)} points</strong>!
                       </div>
                     </div>
                   </div>
@@ -644,9 +644,9 @@ export default function ApplicationDetailPage() {
               <p className="text-sm text-gray-600 mb-6">
                 How you compare to other candidates
               </p>
-              <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100 mb-6">
+              <div className="p-6 bg-gray-50 rounded-lg border border-gray-200 mb-6">
                 <div className="text-sm text-gray-600 mb-2">Overall Percentile</div>
-                <div className="text-4xl font-bold text-green-600 mb-3">
+                <div className="text-4xl font-bold text-gray-900 mb-3">
                   {formatPercentile(application.overall_percentile || 50)}
                 </div>
                 <p className="text-sm text-gray-700">
