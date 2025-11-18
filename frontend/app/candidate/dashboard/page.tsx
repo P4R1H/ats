@@ -198,7 +198,7 @@ export default function CandidateDashboard() {
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <h3 className="text-lg font-semibold text-gray-900">
-                              Job #{app.job_id}
+                              {app.job_title || `Job #${app.job_id}`}
                             </h3>
                             {app.status === 'pending' && (
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">

@@ -256,23 +256,25 @@ export default function JobApplicationsPage() {
               <option value="score">Sort by Score</option>
               <option value="date">Sort by Date</option>
             </select>
-            <Button
-              onClick={() => setShowGenerateDialog(true)}
-              disabled={generating}
-              variant="outline"
-            >
-              {generating ? (
-                <>
-                  <div className="animate-spin h-4 w-4 border-2 border-gray-900 border-t-transparent rounded-full mr-2"></div>
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Generate Test Data
-                </>
-              )}
-            </Button>
+            {process.env.NODE_ENV === 'development' && (
+              <Button
+                onClick={() => setShowGenerateDialog(true)}
+                disabled={generating}
+                variant="outline"
+              >
+                {generating ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-gray-900 border-t-transparent rounded-full mr-2"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate Test Data
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
 
