@@ -139,8 +139,8 @@ def generate_recommendations(
             f"Consider learning {complementary_skills} to complement your existing skills"
         )
 
-    # If candidate is a great match
-    if not missing_required and len(matched_required) >= len(matched_required) * 0.8:
+    # If candidate is a great match (all required skills matched)
+    if not missing_required and matched_required:
         recommendations.append(
             "Excellent match! Consider highlighting relevant projects in your application"
         )

@@ -1,6 +1,7 @@
 """Authentication utilities for JWT token management."""
 from datetime import datetime, timedelta
 from typing import Optional
+import os
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
@@ -10,7 +11,9 @@ from database import get_db
 from models import User
 
 # Security configuration
-SECRET_KEY = "your-secret-key-change-this-in-production"  # TODO: Move to .env
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
+if SECRET_KEY == "dev-secret-key-change-in-production" and os.getenv("ENVIRONMENT") == "production":
+    raise ValueError("SECRET_KEY must be set in production environment")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 

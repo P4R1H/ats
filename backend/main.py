@@ -1,4 +1,6 @@
 """Main FastAPI application for ATS backend."""
+import os
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -14,10 +16,15 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS
+# Configure CORS - load from environment variable
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://localhost:3001"
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Frontend URLs
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,8 +36,10 @@ app.include_router(jobs.router)
 app.include_router(applications.router)
 app.include_router(recommendations.router, prefix="/api/recommendations", tags=["recommendations"])
 
-# Mount static files for resume uploads
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Mount static files for resume uploads - use absolute path
+UPLOAD_DIR = Path(__file__).parent / "uploads"
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 
 @app.on_event("startup")

@@ -23,7 +23,8 @@ from ml_integration.skills_database import get_all_skills
 
 router = APIRouter(prefix="/api/applications", tags=["Applications"])
 
-UPLOAD_DIR = Path("uploads/resumes")
+# Use absolute path for upload directory
+UPLOAD_DIR = Path(__file__).parent.parent / "uploads" / "resumes"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -554,7 +555,18 @@ def get_application_details(
 
     # Check permissions
     job = db.query(JobPosting).filter(JobPosting.id == application.job_id).first()
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Associated job posting not found"
+        )
+
     candidate = db.query(User).filter(User.id == application.candidate_id).first()
+    if not candidate:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Associated candidate not found"
+        )
 
     if current_user.role == "candidate":
         # Candidates can only see their own applications
@@ -626,6 +638,9 @@ def get_applications_for_job(
     results = []
     for app in applications:
         candidate = db.query(User).filter(User.id == app.candidate_id).first()
+        if not candidate:
+            # Skip applications with missing candidate data
+            continue
 
         # Calculate dynamic percentile for this application
         dynamic_percentile = calculate_percentile(app.final_score or 0, all_scores)
@@ -666,6 +681,12 @@ def update_application_status(
 
     # Verify recruiter owns the job
     job = db.query(JobPosting).filter(JobPosting.id == application.job_id).first()
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Associated job posting not found"
+        )
+
     if job.recruiter_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

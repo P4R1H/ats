@@ -235,17 +235,17 @@ async def get_job_recommendations(
         # Parse JSON fields from job
         try:
             required_skills = json.loads(job.required_skills) if job.required_skills else []
-        except:
+        except (json.JSONDecodeError, TypeError):
             required_skills = []
 
         try:
             preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
-        except:
+        except (json.JSONDecodeError, TypeError):
             preferred_skills = []
 
         try:
             requirements = json.loads(job.requirements) if job.requirements else {}
-        except:
+        except (json.JSONDecodeError, TypeError):
             requirements = {}
 
         # Get job requirements from requirements field
