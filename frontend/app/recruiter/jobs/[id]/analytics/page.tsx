@@ -12,9 +12,32 @@ import {
   TrendingUp,
   Users,
   Target,
-  Award
+  Award,
+  Activity
 } from 'lucide-react'
 import { api } from '@/lib/api'
+import {
+  ScatterChart,
+  Scatter,
+  BarChart,
+  Bar,
+  PieChart as RechartsPie,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar
+} from 'recharts'
 
 export default function JobAnalyticsPage() {
   const router = useRouter()
@@ -72,32 +95,32 @@ export default function JobAnalyticsPage() {
     ? (applications.reduce((sum, app) => sum + (app.final_score || 0), 0) / applications.length).toFixed(1)
     : 0
 
-  // Score distribution (buckets: 0-20, 20-40, 40-60, 60-80, 80-100)
-  const scoreBuckets = {
-    '0-20': 0,
-    '20-40': 0,
-    '40-60': 0,
-    '60-80': 0,
-    '80-100': 0
-  }
+  // Score distribution for bar chart
+  const scoreBuckets = [
+    { range: '0-20', count: 0, min: 0, max: 20 },
+    { range: '20-40', count: 0, min: 20, max: 40 },
+    { range: '40-60', count: 0, min: 40, max: 60 },
+    { range: '60-80', count: 0, min: 60, max: 80 },
+    { range: '80-100', count: 0, min: 80, max: 100 }
+  ]
   applications.forEach(app => {
     const score = app.final_score || 0
-    if (score < 20) scoreBuckets['0-20']++
-    else if (score < 40) scoreBuckets['20-40']++
-    else if (score < 60) scoreBuckets['40-60']++
-    else if (score < 80) scoreBuckets['60-80']++
-    else scoreBuckets['80-100']++
+    if (score < 20) scoreBuckets[0].count++
+    else if (score < 40) scoreBuckets[1].count++
+    else if (score < 60) scoreBuckets[2].count++
+    else if (score < 80) scoreBuckets[3].count++
+    else scoreBuckets[4].count++
   })
-  const maxBucket = Math.max(...Object.values(scoreBuckets))
 
-  // Cluster distribution
+  // Cluster distribution for pie chart
   const clusterCounts: Record<string, number> = {}
   applications.forEach(app => {
     if (app.cluster_name) {
       clusterCounts[app.cluster_name] = (clusterCounts[app.cluster_name] || 0) + 1
     }
   })
-  const totalClustered = Object.values(clusterCounts).reduce((sum, count) => sum + count, 0)
+  const clusterData = Object.entries(clusterCounts).map(([name, value]) => ({ name, value }))
+  const CLUSTER_COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6']
 
   // Status distribution
   const statusCounts = {
@@ -106,7 +129,14 @@ export default function JobAnalyticsPage() {
     rejected: applications.filter(app => app.status === 'rejected').length
   }
 
-  // Skills analysis - most common skills
+  // Experience vs Score scatter data
+  const scatterData = applications.map(app => ({
+    experience: app.experience_years || 0,
+    score: app.final_score || 0,
+    cluster: app.cluster_name || 'Unknown'
+  }))
+
+  // Skills frequency
   const skillFrequency: Record<string, number> = {}
   applications.forEach(app => {
     if (app.extracted_skills && Array.isArray(app.extracted_skills)) {
@@ -118,31 +148,55 @@ export default function JobAnalyticsPage() {
   const topSkills = Object.entries(skillFrequency)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 10)
-  const maxSkillCount = topSkills.length > 0 ? topSkills[0][1] : 1
+    .map(([skill, count]) => ({ skill, count }))
 
-  // Experience distribution
-  const experienceBuckets = {
-    '0-2': 0,
-    '2-5': 0,
-    '5-10': 0,
-    '10+': 0
+  // Component breakdown - average scores
+  const avgSkillsScore = applications.length > 0
+    ? applications.reduce((sum, app) => sum + (app.skills_score || 0), 0) / applications.length
+    : 0
+  const avgExpScore = applications.length > 0
+    ? applications.reduce((sum, app) => sum + (app.experience_score || 0), 0) / applications.length
+    : 0
+  const avgEduScore = applications.length > 0
+    ? applications.reduce((sum, app) => sum + (app.education_score || 0), 0) / applications.length
+    : 0
+  const avgBonusScore = applications.length > 0
+    ? applications.reduce((sum, app) => sum + (app.bonus_score || 0), 0) / applications.length
+    : 0
+
+  const componentData = [
+    { component: 'Skills', score: Number(avgSkillsScore.toFixed(1)) },
+    { component: 'Experience', score: Number(avgExpScore.toFixed(1)) },
+    { component: 'Education', score: Number(avgEduScore.toFixed(1)) },
+    { component: 'Bonus', score: Number(avgBonusScore.toFixed(1)) }
+  ]
+
+  // Correlation calculation (simplified)
+  const calculateCorrelation = (arr1: number[], arr2: number[]) => {
+    const n = arr1.length
+    const sum1 = arr1.reduce((a, b) => a + b, 0)
+    const sum2 = arr2.reduce((a, b) => a + b, 0)
+    const sum1Sq = arr1.reduce((a, b) => a + b * b, 0)
+    const sum2Sq = arr2.reduce((a, b) => a + b * b, 0)
+    const pSum = arr1.map((_, i) => arr1[i] * arr2[i]).reduce((a, b) => a + b, 0)
+
+    const num = pSum - (sum1 * sum2 / n)
+    const den = Math.sqrt((sum1Sq - sum1 * sum1 / n) * (sum2Sq - sum2 * sum2 / n))
+
+    return den === 0 ? 0 : num / den
   }
-  applications.forEach(app => {
-    const exp = app.experience_years || 0
-    if (exp < 2) experienceBuckets['0-2']++
-    else if (exp < 5) experienceBuckets['2-5']++
-    else if (exp < 10) experienceBuckets['5-10']++
-    else experienceBuckets['10+']++
-  })
-  const maxExpBucket = Math.max(...Object.values(experienceBuckets))
 
-  // Education distribution
-  const educationCounts: Record<string, number> = {}
-  applications.forEach(app => {
-    if (app.education_level) {
-      educationCounts[app.education_level] = (educationCounts[app.education_level] || 0) + 1
-    }
-  })
+  const skillsScores = applications.map(a => a.skills_score || 0)
+  const expScores = applications.map(a => a.experience_score || 0)
+  const eduScores = applications.map(a => a.education_score || 0)
+  const finalScores = applications.map(a => a.final_score || 0)
+
+  const correlations = {
+    'Skills-Final': calculateCorrelation(skillsScores, finalScores),
+    'Experience-Final': calculateCorrelation(expScores, finalScores),
+    'Education-Final': calculateCorrelation(eduScores, finalScores),
+    'Skills-Experience': calculateCorrelation(skillsScores, expScores)
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -201,7 +255,7 @@ export default function JobAnalyticsPage() {
           </Card>
         ) : (
           <>
-            {/* Key Metrics - Simplified */}
+            {/* Key Metrics */}
             <div className="grid grid-cols-4 gap-4 mb-8">
               <Card className="border border-gray-200">
                 <CardContent className="p-5">
@@ -244,6 +298,54 @@ export default function JobAnalyticsPage() {
               </Card>
             </div>
 
+            {/* Experience vs Score Scatter Plot */}
+            <Card className="border border-gray-200 mb-8">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Activity className="h-5 w-5 text-blue-600" />
+                  <h2 className="text-lg font-semibold text-gray-900">Experience vs ML Score</h2>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Visualizing our job-relative scoring curve • Candidates near min_experience ({job?.min_experience || 0} years) score highest
+                </p>
+                <ResponsiveContainer width="100%" height={300}>
+                  <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis
+                      type="number"
+                      dataKey="experience"
+                      name="Experience (years)"
+                      label={{ value: 'Years of Experience', position: 'insideBottom', offset: -10 }}
+                      stroke="#6b7280"
+                    />
+                    <YAxis
+                      type="number"
+                      dataKey="score"
+                      name="ML Score"
+                      label={{ value: 'ML Score', angle: -90, position: 'insideLeft' }}
+                      stroke="#6b7280"
+                    />
+                    <Tooltip
+                      cursor={{ strokeDasharray: '3 3' }}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
+                              <p className="text-xs font-medium text-gray-900">{payload[0].payload.cluster}</p>
+                              <p className="text-xs text-gray-600">Experience: {payload[0].payload.experience} years</p>
+                              <p className="text-xs text-gray-600">Score: {payload[0].payload.score.toFixed(1)}</p>
+                            </div>
+                          )
+                        }
+                        return null
+                      }}
+                    />
+                    <Scatter data={scatterData} fill="#3b82f6" opacity={0.6} />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
             <div className="grid lg:grid-cols-2 gap-6 mb-8">
               {/* Score Distribution */}
               <Card className="border border-gray-200 bg-white">
@@ -252,94 +354,94 @@ export default function JobAnalyticsPage() {
                     <BarChart3 className="h-5 w-5 text-blue-600" />
                     <h2 className="text-lg font-semibold text-gray-900">Score Distribution</h2>
                   </div>
-                  <div className="space-y-4">
-                    {Object.entries(scoreBuckets).map(([range, count]) => (
-                      <div key={range}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">{range}</span>
-                          <span className="text-sm font-bold text-blue-600">{count} ({((count / totalApplications) * 100).toFixed(0)}%)</span>
-                        </div>
-                        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
-                            style={{ width: `${maxBucket > 0 ? (count / maxBucket) * 100 : 0}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={scoreBuckets}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="range" stroke="#6b7280" />
+                      <YAxis stroke="#6b7280" />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const pct = ((payload[0].value as number / totalApplications) * 100).toFixed(0)
+                            return (
+                              <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
+                                <p className="text-xs font-medium text-gray-900">{payload[0].payload.range}</p>
+                                <p className="text-xs text-blue-600">{payload[0].value} candidates ({pct}%)</p>
+                              </div>
+                            )
+                          }
+                          return null
+                        }}
+                      />
+                      <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
 
-              {/* Cluster Distribution */}
+              {/* Talent Clusters Pie Chart */}
               <Card className="border border-gray-200 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <PieChart className="h-5 w-5 text-purple-600" />
                     <h2 className="text-lg font-semibold text-gray-900">Talent Clusters</h2>
                   </div>
-                  {Object.keys(clusterCounts).length === 0 ? (
+                  {clusterData.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-8">No cluster data available</p>
                   ) : (
-                    <div className="space-y-4">
-                      {Object.entries(clusterCounts)
-                        .sort(([, a], [, b]) => b - a)
-                        .map(([cluster, count]) => {
-                          const percentage = ((count / totalClustered) * 100).toFixed(1)
-                          const colors: Record<string, string> = {
-                            'Highly Skilled Early Career': 'from-purple-500 to-pink-500',
-                            'Mid-Level Professional': 'from-blue-500 to-cyan-500',
-                            'Senior Expert': 'from-amber-500 to-orange-500',
-                            'Entry Level': 'from-green-500 to-emerald-500',
-                            'Specialized Professional': 'from-red-500 to-rose-500'
-                          }
-                          const gradient = colors[cluster] || 'from-gray-500 to-gray-600'
-
-                          return (
-                            <div key={cluster}>
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">{cluster}</span>
-                                <span className="text-sm font-bold text-purple-600">{count} ({percentage}%)</span>
-                              </div>
-                              <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                                <div
-                                  className={`h-full bg-gradient-to-r ${gradient} transition-all duration-500`}
-                                  style={{ width: `${percentage}%` }}
-                                />
-                              </div>
-                            </div>
-                          )
-                        })}
-                    </div>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <RechartsPie>
+                        <Pie
+                          data={clusterData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {clusterData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={CLUSTER_COLORS[index % CLUSTER_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </RechartsPie>
+                    </ResponsiveContainer>
                   )}
                 </CardContent>
               </Card>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6 mb-8">
-              {/* Experience Distribution */}
+              {/* Component Breakdown */}
               <Card className="border border-gray-200 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
-                    <h2 className="text-lg font-semibold text-gray-900">Experience Distribution</h2>
+                    <Target className="h-5 w-5 text-green-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Avg Component Scores</h2>
                   </div>
-                  <div className="space-y-4">
-                    {Object.entries(experienceBuckets).map(([range, count]) => (
-                      <div key={range}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">{range} years</span>
-                          <span className="text-sm font-bold text-green-600">{count} ({((count / totalApplications) * 100).toFixed(0)}%)</span>
-                        </div>
-                        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
-                            style={{ width: `${maxExpBucket > 0 ? (count / maxExpBucket) * 100 : 0}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={componentData} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis type="number" domain={[0, 100]} stroke="#6b7280" />
+                      <YAxis dataKey="component" type="category" stroke="#6b7280" />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
+                                <p className="text-xs font-medium text-gray-900">{payload[0].payload.component}</p>
+                                <p className="text-xs text-green-600">Average: {payload[0].value}/100</p>
+                              </div>
+                            )
+                          }
+                          return null
+                        }}
+                      />
+                      <Bar dataKey="score" fill="#10b981" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
 
@@ -353,26 +455,52 @@ export default function JobAnalyticsPage() {
                   {topSkills.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-8">No skill data available</p>
                   ) : (
-                    <div className="space-y-4">
-                      {topSkills.map(([skill, count]) => (
-                        <div key={skill}>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-gray-700">{skill}</span>
-                            <span className="text-sm font-bold text-amber-600">{count} candidates</span>
-                          </div>
-                          <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500"
-                              style={{ width: `${(count / maxSkillCount) * 100}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={topSkills} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        <XAxis type="number" stroke="#6b7280" />
+                        <YAxis dataKey="skill" type="category" width={100} stroke="#6b7280" />
+                        <Tooltip />
+                        <Bar dataKey="count" fill="#f59e0b" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
                   )}
                 </CardContent>
               </Card>
             </div>
+
+            {/* Statistical Insights */}
+            <Card className="border border-gray-200 bg-white mb-8">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Activity className="h-5 w-5 text-purple-600" />
+                  <h2 className="text-lg font-semibold text-gray-900">Statistical Insights</h2>
+                </div>
+                <p className="text-sm text-gray-600 mb-6">
+                  Correlation analysis showing relationships between score components and final scores
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {Object.entries(correlations).map(([key, value]) => {
+                    const absValue = Math.abs(value)
+                    const strength = absValue > 0.7 ? 'Strong' : absValue > 0.4 ? 'Moderate' : 'Weak'
+                    const color = absValue > 0.7 ? 'text-green-600' : absValue > 0.4 ? 'text-amber-600' : 'text-gray-600'
+                    return (
+                      <div key={key} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <p className="text-xs text-gray-600 mb-1">{key}</p>
+                        <p className={`text-2xl font-bold ${color}`}>{value.toFixed(2)}</p>
+                        <p className="text-xs text-gray-500 mt-1">{strength} correlation</p>
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-900">
+                    <strong>Interpretation:</strong> Correlation values range from -1 to 1. Values closer to 1 or -1 indicate stronger relationships.
+                    Our job-relative scoring system ensures skills match (not just total experience) drives final scores.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Application Status */}
             <Card className="border border-gray-200 bg-white">
