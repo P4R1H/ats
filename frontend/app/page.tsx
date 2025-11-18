@@ -465,53 +465,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section - More Interesting Background */}
-      <section className="relative px-4 py-24 overflow-hidden">
-        {/* Layered gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500"></div>
-        
-        {/* Animated blobs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
-          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-amber-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+      {/* CTA Section - Elegant and Subtle */}
+      <section className="relative px-4 py-24 overflow-hidden bg-gradient-to-b from-white to-amber-50">
+        {/* Subtle animated background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-amber-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
         </div>
 
-        {/* Dot pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`,
-            backgroundSize: '24px 24px',
-          }}></div>
-        </div>
-
-        {/* Wheat icons scattered */}
-        <div className="absolute inset-0 pointer-events-none">
-          <Wheat className="absolute top-10 left-10 h-16 w-16 text-white opacity-10 rotate-12" />
-          <Wheat className="absolute top-20 right-20 h-20 w-20 text-white opacity-10 -rotate-12" />
-          <Wheat className="absolute bottom-10 left-1/4 h-24 w-24 text-white opacity-10 rotate-45" />
-          <Wheat className="absolute bottom-20 right-1/3 h-16 w-16 text-white opacity-10 -rotate-45" />
-        </div>
-
-        <div className="relative max-w-4xl mx-auto text-center z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 drop-shadow-lg">
+        <div className="relative max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
             Ready to Rise?
           </h2>
-          <p className="text-xl text-white/95 mb-10 max-w-2xl mx-auto drop-shadow">
+          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
             Join Bread and experience hiring that's fresh, fair, and actually helpful.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
+            <Button
               size="lg"
-              className="bg-white text-amber-600 hover:bg-amber-50 shadow-2xl text-lg px-8 font-semibold"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-amber-200 text-lg px-8"
               onClick={() => router.push('/auth/register')}
             >
               Create Free Account
             </Button>
-            <Button 
+            <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white/20 backdrop-blur text-lg px-8 font-semibold"
+              className="border-2 border-amber-300 hover:bg-amber-50 text-amber-700 text-lg px-8"
               onClick={() => router.push('/auth/login')}
             >
               Sign In

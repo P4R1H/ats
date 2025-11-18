@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Wheat, Search, Briefcase, MapPin, Clock, ArrowLeft, Upload, FileText } from 'lucide-react'
+import { Wheat, Search, Briefcase, Clock, ArrowLeft, Upload, FileText, X, CheckCircle } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate } from '@/lib/utils'
 
@@ -97,39 +97,43 @@ export default function JobsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="animate-spin h-12 w-12 border-4 border-amber-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Loading jobs...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-gray-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-sm text-gray-600">Loading jobs...</p>
         </div>
       </div>
     )
   }
 
-  // Apply modal
+  // Apply modal view
   if (selectedJob) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-        <header className="border-b bg-white/80 backdrop-blur-md">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-                <Wheat className="h-6 w-6 text-white" />
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <button
+              onClick={() => router.push('/')}
+              className="flex items-center gap-2 group"
+            >
+              <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+                <Wheat className="h-5 w-5 text-white" />
               </div>
-              <span className="text-2xl font-bold gradient-text">Bread</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">
-                Welcome, {user?.full_name}
+              <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+                Bread
               </span>
-              <Button variant="outline" onClick={handleLogout}>
+            </button>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">{user?.full_name}</span>
+              <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm">
                 Logout
               </Button>
             </div>
           </div>
         </header>
 
-        <main className="container mx-auto px-4 py-8">
+        <main className="max-w-4xl mx-auto px-6 py-12">
           <Button
             variant="ghost"
             onClick={() => {
@@ -137,240 +141,297 @@ export default function JobsPage() {
               setResumeFile(null)
               setApplyError('')
             }}
-            className="mb-6"
+            className="mb-6 text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Jobs
           </Button>
 
-          <div className="max-w-3xl mx-auto">
-            <Card className="shadow-2xl border-2 border-amber-200/50 warm-glow">
-              <CardHeader className="space-y-1 pb-6">
-                <CardTitle className="text-3xl font-bold">{selectedJob.title}</CardTitle>
-                <CardDescription className="text-base">
-                  <div className="flex items-center space-x-4 mt-2">
-                    <span className="flex items-center">
-                      <Briefcase className="h-4 w-4 mr-1" />
-                      {selectedJob.category}
-                    </span>
-                    <span className="flex items-center">
-                      <Clock className="h-4 w-4 mr-1" />
-                      Posted {formatDate(selectedJob.created_at)}
-                    </span>
+          <Card className="border border-gray-200 shadow-sm">
+            <CardContent className="p-8">
+              {/* Job Header */}
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-3">{selectedJob.title}</h1>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-1.5">
+                    <Briefcase className="h-4 w-4" />
+                    <span>{selectedJob.category}</span>
                   </div>
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Description</h3>
-                  <p className="text-muted-foreground">{selectedJob.description}</p>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-4 w-4" />
+                    <span>Posted {formatDate(selectedJob.created_at)}</span>
+                  </div>
                 </div>
+              </div>
 
-                {selectedJob.required_skills && selectedJob.required_skills.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">Required Skills</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedJob.required_skills.map((skill: string, idx: number) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 bg-amber-100 text-amber-900 rounded-full text-sm font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
+              {/* Job Description */}
+              <div className="mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 mb-3">About this role</h2>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{selectedJob.description}</p>
+              </div>
+
+              {/* Required Skills */}
+              {selectedJob.required_skills && selectedJob.required_skills.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-3">Required Skills</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedJob.required_skills.map((skill: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-amber-100 text-amber-900 rounded-md text-sm font-medium"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Preferred Skills */}
+              {selectedJob.preferred_skills && selectedJob.preferred_skills.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-3">Preferred Skills</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedJob.preferred_skills.map((skill: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Application Form */}
+              <div className="border-t border-gray-200 pt-8">
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">Apply for this position</h2>
+
+                {applyError && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-700">{applyError}</p>
                   </div>
                 )}
 
-                {selectedJob.preferred_skills && selectedJob.preferred_skills.length > 0 && (
+                <div className="space-y-4">
                   <div>
-                    <h3 className="font-semibold text-lg mb-2">Preferred Skills</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedJob.preferred_skills.map((skill: string, idx: number) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 bg-orange-100 text-orange-900 rounded-full text-sm font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="border-t pt-6">
-                  <h3 className="font-semibold text-lg mb-4">Apply for this Position</h3>
-
-                  {applyError && (
-                    <div className="bg-red-50 border-2 border-red-200 text-red-700 p-4 rounded-xl text-sm mb-4 animate-slide-in">
-                      {applyError}
-                    </div>
-                  )}
-
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="resume" className="text-base font-medium">
-                        Upload Resume (PDF or DOCX)
-                      </Label>
-                      <div className="flex items-center space-x-3">
-                        <Input
-                          id="resume"
-                          type="file"
-                          accept=".pdf,.docx"
-                          onChange={handleFileChange}
-                          className="h-12 text-base border-2 focus:border-amber-400"
-                        />
-                        {resumeFile && (
-                          <FileText className="h-6 w-6 text-green-600" />
-                        )}
-                      </div>
-                      {resumeFile && (
-                        <p className="text-sm text-muted-foreground">
-                          Selected: {resumeFile.name}
-                        </p>
+                    <Label htmlFor="resume" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Upload Resume (PDF or DOCX)
+                    </Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-gray-400 transition-colors">
+                      <input
+                        id="resume"
+                        type="file"
+                        accept=".pdf,.docx"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      {resumeFile ? (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                              <FileText className="h-5 w-5 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">{resumeFile.name}</p>
+                              <p className="text-xs text-gray-500">
+                                {(resumeFile.size / 1024).toFixed(1)} KB
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setResumeFile(null)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <label htmlFor="resume" className="flex flex-col items-center cursor-pointer">
+                          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
+                            <Upload className="h-6 w-6 text-gray-400" />
+                          </div>
+                          <p className="text-sm font-medium text-gray-900 mb-1">
+                            Click to upload resume
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            PDF or DOCX up to 10MB
+                          </p>
+                        </label>
                       )}
                     </div>
+                  </div>
 
+                  <div className="flex items-center justify-end gap-3 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedJob(null)
+                        setResumeFile(null)
+                        setApplyError('')
+                      }}
+                    >
+                      Cancel
+                    </Button>
                     <Button
                       onClick={handleApply}
                       disabled={applying || !resumeFile}
-                      className="w-full h-12 gradient-bg text-white text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                      className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
                     >
-                      {applying ? 'Submitting...' : (
+                      {applying ? (
                         <>
-                          <Upload className="mr-2 h-5 w-5" />
+                          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="mr-2 h-4 w-4" />
                           Submit Application
                         </>
                       )}
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </main>
       </div>
     )
   }
 
-  // Job listing
+  // Job listing view
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-      <header className="border-b bg-white/80 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-              <Wheat className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2 group"
+          >
+            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+              <Wheat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold gradient-text">Bread</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.full_name}
+            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+              Bread
             </span>
-            <Button variant="outline" onClick={handleLogout}>
+          </button>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/candidate/dashboard')}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Dashboard
+            </Button>
+            <span className="text-sm text-gray-600">{user?.full_name}</span>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm">
               Logout
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Browse Jobs</h1>
-            <p className="text-muted-foreground">
-              {filteredJobs.length} {filteredJobs.length === 1 ? 'position' : 'positions'} available
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            onClick={() => router.push('/candidate/dashboard')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Browse Jobs</h1>
+          <p className="text-gray-600">
+            {filteredJobs.length} {filteredJobs.length === 1 ? 'position' : 'positions'} available
+          </p>
         </div>
 
         {/* Search */}
-        <Card className="mb-8">
-          <CardContent className="pt-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                placeholder="Search jobs by title, description, or category..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 text-base border-2 focus:border-amber-400"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="mb-8">
+          <div className="relative max-w-md">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              placeholder="Search by title, description, or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-11 h-12 border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+            />
+          </div>
+        </div>
 
         {/* Jobs Grid */}
         {filteredJobs.length === 0 ? (
-          <Card className="shadow-lg">
-            <CardContent className="text-center py-12">
-              <Briefcase className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                {searchTerm ? 'No jobs match your search' : 'No jobs available at the moment'}
+          <Card className="border border-gray-200">
+            <CardContent className="py-16 text-center">
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Briefcase className="h-6 w-6 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No jobs found</h3>
+              <p className="text-gray-600">
+                {searchTerm ? 'Try adjusting your search terms' : 'No positions available at the moment'}
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredJobs.map((job) => (
               <Card
                 key={job.id}
-                className="hover-lift border-2 hover:border-amber-300 transition-all cursor-pointer"
+                className="border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer"
                 onClick={() => setSelectedJob(job)}
               >
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg">
-                      <Briefcase className="h-5 w-5 text-white" />
-                    </div>
-                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                      Active
-                    </span>
+                <CardContent className="p-6">
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
+                    <Briefcase className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">{job.title}</CardTitle>
-                  <CardDescription className="line-clamp-2">
+
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
+                    {job.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
                     {job.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Briefcase className="h-4 w-4 mr-2" />
-                      {job.category}
+                  </p>
+
+                  {/* Meta info */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <Briefcase className="h-3.5 w-3.5" />
+                      <span>{job.category}</span>
                     </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4 mr-2" />
-                      Posted {formatDate(job.created_at)}
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>Posted {formatDate(job.created_at)}</span>
                     </div>
-                    {job.required_skills && job.required_skills.length > 0 && (
-                      <div className="pt-2">
-                        <p className="text-xs font-medium mb-2">Required Skills:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {job.required_skills.slice(0, 3).map((skill: string, idx: number) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-0.5 bg-amber-100 text-amber-900 rounded text-xs"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                          {job.required_skills.length > 3 && (
-                            <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">
-                              +{job.required_skills.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
                   </div>
-                  <Button className="w-full mt-4 gradient-bg text-white">
+
+                  {/* Skills preview */}
+                  {job.required_skills && job.required_skills.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs font-medium text-gray-700 mb-2">Required Skills:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {job.required_skills.slice(0, 3).map((skill: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 bg-amber-50 text-amber-700 rounded text-xs"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                        {job.required_skills.length > 3 && (
+                          <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                            +{job.required_skills.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Apply button */}
+                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white group-hover:shadow-md transition-shadow">
                     View & Apply
                   </Button>
                 </CardContent>
