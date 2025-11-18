@@ -3,20 +3,19 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
   Wheat,
   ArrowLeft,
-  TrendingUp,
-  TrendingDown,
   Users,
   Search,
   Award,
   CheckCircle,
   XCircle,
   Clock,
-  Target
+  Target,
+  TrendingUp
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
@@ -97,10 +96,10 @@ export default function JobApplicationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="animate-spin h-12 w-12 border-4 border-amber-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Loading applications...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-gray-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-sm text-gray-600">Loading applications...</p>
         </div>
       </div>
     )
@@ -117,190 +116,195 @@ export default function JobApplicationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50">
-      <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-              <Wheat className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2 group"
+          >
+            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+              <Wheat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold gradient-text">Bread</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.full_name}
+            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+              Bread
             </span>
-            <Button variant="outline" onClick={handleLogout}>
+          </button>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">{user?.full_name}</span>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm">
               Logout
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-12">
         <Button
           variant="ghost"
           onClick={() => router.push('/recruiter/dashboard')}
-          className="mb-6"
+          className="mb-6 text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Dashboard
         </Button>
 
         {/* Job Header */}
-        <Card className="mb-8 shadow-2xl border-2 border-amber-200/50 warm-glow">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold">{job?.title}</CardTitle>
-            <CardDescription className="text-base mt-2">
-              {job?.description}
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">{job?.title}</h1>
+          <p className="text-gray-600 line-clamp-2">{job?.description}</p>
+        </div>
 
-        {/* Stats */}
-        <div className="grid md:grid-cols-5 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Total Applications</CardDescription>
-              <CardTitle className="text-2xl flex items-center">
-                <Users className="h-5 w-5 mr-2 text-blue-600" />
-                {stats.total}
-              </CardTitle>
-            </CardHeader>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+          <Card className="border border-gray-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="h-4 w-4 text-blue-600" />
+                <div className="text-xs font-medium text-gray-600">Total Applications</div>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Pending</CardDescription>
-              <CardTitle className="text-2xl flex items-center">
-                <Clock className="h-5 w-5 mr-2 text-yellow-600" />
-                {stats.pending}
-              </CardTitle>
-            </CardHeader>
+          <Card className="border border-gray-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="h-4 w-4 text-amber-600" />
+                <div className="text-xs font-medium text-gray-600">Pending</div>
+              </div>
+              <div className="text-3xl font-bold text-amber-600">{stats.pending}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Shortlisted</CardDescription>
-              <CardTitle className="text-2xl flex items-center text-green-600">
-                <CheckCircle className="h-5 w-5 mr-2" />
-                {stats.shortlisted}
-              </CardTitle>
-            </CardHeader>
+          <Card className="border border-gray-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <div className="text-xs font-medium text-gray-600">Shortlisted</div>
+              </div>
+              <div className="text-3xl font-bold text-green-600">{stats.shortlisted}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Rejected</CardDescription>
-              <CardTitle className="text-2xl flex items-center text-red-600">
-                <XCircle className="h-5 w-5 mr-2" />
-                {stats.rejected}
-              </CardTitle>
-            </CardHeader>
+          <Card className="border border-gray-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-2">
+                <XCircle className="h-4 w-4 text-gray-600" />
+                <div className="text-xs font-medium text-gray-600">Rejected</div>
+              </div>
+              <div className="text-3xl font-bold text-gray-900">{stats.rejected}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Avg Score</CardDescription>
-              <CardTitle className={`text-2xl ${getScoreColor(stats.avgScore)}`}>
+          <Card className="border border-gray-200">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="h-4 w-4 text-purple-600" />
+                <div className="text-xs font-medium text-gray-600">Avg Score</div>
+              </div>
+              <div className={`text-3xl font-bold ${getScoreColor(stats.avgScore)}`}>
                 {stats.avgScore.toFixed(1)}
-              </CardTitle>
-            </CardHeader>
+              </div>
+            </CardContent>
           </Card>
         </div>
 
         {/* Search & Sort */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex items-center space-x-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Search by candidate name or cluster..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-12 border-2 focus:border-amber-400"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-muted-foreground">Sort by:</span>
-                <Button
-                  variant={sortBy === 'score' ? 'default' : 'outline'}
-                  onClick={() => setSortBy('score')}
-                  className={sortBy === 'score' ? 'gradient-bg text-white' : ''}
-                >
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Score
-                </Button>
-                <Button
-                  variant={sortBy === 'date' ? 'default' : 'outline'}
-                  onClick={() => setSortBy('date')}
-                  className={sortBy === 'date' ? 'gradient-bg text-white' : ''}
-                >
-                  <Clock className="h-4 w-4 mr-2" />
-                  Date
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex-1 relative max-w-md">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              placeholder="Search by candidate name or cluster..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-11 h-12 border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Sort by:</span>
+            <Button
+              size="sm"
+              variant={sortBy === 'score' ? 'default' : 'outline'}
+              onClick={() => setSortBy('score')}
+              className={sortBy === 'score' ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white' : ''}
+            >
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Score
+            </Button>
+            <Button
+              size="sm"
+              variant={sortBy === 'date' ? 'default' : 'outline'}
+              onClick={() => setSortBy('date')}
+              className={sortBy === 'date' ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white' : ''}
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Date
+            </Button>
+          </div>
+        </div>
 
         {/* Applications List */}
         {filteredApps.length === 0 ? (
-          <Card className="shadow-lg">
-            <CardContent className="text-center py-12">
-              <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                {searchTerm ? 'No applications match your search' : 'No applications yet'}
+          <Card className="border border-gray-200">
+            <CardContent className="py-16 text-center">
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-6 w-6 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No applications found</h3>
+              <p className="text-gray-600">
+                {searchTerm ? 'Try adjusting your search terms' : 'No candidates have applied yet'}
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredApps.map((app) => (
               <Card
                 key={app.id}
-                className="hover-lift border-2 hover:border-amber-300 transition-all"
+                className="border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
               >
-                <CardContent className="pt-6">
-                  <div className="grid md:grid-cols-12 gap-6 items-center">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-6">
                     {/* Score */}
-                    <div className="md:col-span-2 text-center">
-                      <div className={`text-4xl font-bold ${getScoreColor(app.final_score || 0)}`}>
+                    <div className="text-center min-w-[80px]">
+                      <div className={`text-4xl font-bold mb-1 ${getScoreColor(app.final_score || 0)}`}>
                         {app.final_score?.toFixed(1) || 'N/A'}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">Score</div>
+                      <div className="text-xs text-gray-500">out of 100</div>
                     </div>
 
                     {/* Details */}
-                    <div className="md:col-span-6 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-lg">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-semibold text-lg text-gray-900">
                           Application #{app.id}
                         </h3>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm text-gray-500">
                           {formatDate(app.applied_at)}
                         </span>
                       </div>
 
-                      <div className="flex items-center space-x-4 text-sm">
-                        <span className="flex items-center">
-                          <Award className="h-4 w-4 mr-1 text-blue-600" />
-                          {formatPercentile(app.overall_percentile || 50)}
-                        </span>
-                        <span className="flex items-center">
-                          <Target className="h-4 w-4 mr-1 text-green-600" />
-                          {app.num_skills || 0} skills matched
-                        </span>
+                      <div className="flex items-center flex-wrap gap-4 mb-3 text-sm">
+                        <div className="flex items-center gap-1.5">
+                          <Award className="h-4 w-4 text-blue-600" />
+                          <span className="text-gray-700">{formatPercentile(app.overall_percentile || 50)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Target className="h-4 w-4 text-green-600" />
+                          <span className="text-gray-700">{app.num_skills || 0} skills matched</span>
+                        </div>
                         {app.cluster_name && (
-                          <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">
+                          <span className="px-2.5 py-0.5 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
                             {app.cluster_name}
                           </span>
                         )}
                       </div>
 
+                      {/* Matched Skills */}
                       {app.matched_skills && app.matched_skills.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1.5">
                           {app.matched_skills.slice(0, 5).map((skill: string, idx: number) => (
                             <span
                               key={idx}
@@ -319,34 +323,36 @@ export default function JobApplicationsPage() {
                     </div>
 
                     {/* Status & Actions */}
-                    <div className="md:col-span-4 flex flex-col items-end space-y-3">
-                      <div className="flex items-center space-x-2">
+                    <div className="flex flex-col items-end gap-3">
+                      {/* Status Badge */}
+                      <div>
                         {app.status === 'pending' && (
-                          <span className="inline-flex items-center px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
+                          <span className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
                             <Clock className="h-3 w-3 mr-1" />
                             Pending
                           </span>
                         )}
                         {app.status === 'shortlisted' && (
-                          <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                          <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Shortlisted
                           </span>
                         )}
                         {app.status === 'rejected' && (
-                          <span className="inline-flex items-center px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
+                          <span className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
                             <XCircle className="h-3 w-3 mr-1" />
                             Rejected
                           </span>
                         )}
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2">
                         {app.status !== 'shortlisted' && (
                           <Button
                             size="sm"
                             onClick={() => handleUpdateStatus(app.id, 'shortlisted')}
-                            className="bg-green-600 hover:bg-green-700 text-white"
+                            className="bg-green-600 hover:bg-green-700 text-white text-xs"
                           >
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Shortlist
@@ -357,7 +363,7 @@ export default function JobApplicationsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleUpdateStatus(app.id, 'rejected')}
-                            className="border-red-300 text-red-600 hover:bg-red-50"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs"
                           >
                             <XCircle className="h-3 w-3 mr-1" />
                             Reject
