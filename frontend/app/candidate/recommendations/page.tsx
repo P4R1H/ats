@@ -158,8 +158,9 @@ export default function JobRecommendationsPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <Button
+          variant="ghost"
           onClick={() => router.push('/candidate/dashboard')}
-          className="mb-6 text-gray-600 hover:text-gray-900"
+          className="mb-6 px-0 text-gray-600 hover:text-gray-900 hover:bg-transparent"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Dashboard
