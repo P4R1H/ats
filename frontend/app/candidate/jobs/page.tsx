@@ -79,14 +79,17 @@ export default function JobsPage() {
 
     try {
       const formData = new FormData()
-      formData.append('resume', resumeFile)
+      formData.append('resume_file', resumeFile)
 
       await api.applyToJob(selectedJob.id, formData)
 
       // Success! Go to dashboard
       router.push('/candidate/dashboard')
     } catch (err: any) {
-      setApplyError(err.message || 'Failed to submit application')
+      console.error('Application error:', err)
+      // Handle different error formats
+      const errorMessage = err?.response?.data?.detail || err?.message || (typeof err === 'string' ? err : 'Failed to submit application. Please try again.')
+      setApplyError(errorMessage)
     } finally {
       setApplying(false)
     }
