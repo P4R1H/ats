@@ -38,6 +38,66 @@ def parse_json_field(value):
     return value
 
 
+def generate_random_resume_text(job_title: str, job_category: str) -> str:
+    """Generate a random but realistic resume text."""
+    import random
+
+    skills_pool = [
+        'Python', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'SQL', 'MongoDB',
+        'Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'Git', 'CI/CD', 'Agile',
+        'Machine Learning', 'Data Analysis', 'REST APIs', 'Microservices',
+        'TensorFlow', 'PyTorch', 'PostgreSQL', 'Redis', 'GraphQL', 'Next.js',
+        'Vue.js', 'Angular', 'Express', 'Django', 'Flask', 'FastAPI',
+        'HTML', 'CSS', 'Tailwind', 'Bootstrap', 'Material-UI', 'Testing',
+        'Jest', 'Pytest', 'Selenium', 'Linux', 'Bash', 'DevOps', 'Terraform'
+    ]
+
+    names = ['Alex Johnson', 'Maria Garcia', 'James Smith', 'Sarah Williams', 'David Chen',
+             'Emma Davis', 'Michael Brown', 'Lisa Anderson', 'Robert Martinez', 'Jennifer Lee']
+
+    educations = ['Bachelor\'s', 'Master\'s', 'PhD']
+    certifications = ['AWS Certified', 'Google Cloud Certified', 'Microsoft Certified',
+                      'Kubernetes Certified', 'Scrum Master', 'PMP']
+
+    name = random.choice(names)
+    education = random.choice(educations)
+    years_exp = random.randint(2, 10)
+    num_skills = random.randint(5, 15)
+    selected_skills = random.sample(skills_pool, num_skills)
+    has_cert = random.choice([True, False])
+    has_leadership = random.choice([True, False])
+
+    resume_text = f"""
+{name}
+Senior {job_title}
+
+PROFESSIONAL SUMMARY
+Experienced {job_title} with {years_exp} years of expertise in {job_category}.
+Proven track record of delivering high-quality solutions and leading successful projects.
+
+SKILLS
+{', '.join(selected_skills)}
+
+EXPERIENCE
+Senior {job_title} | Tech Company Inc. | {years_exp-2} years
+- Led development of scalable applications
+- Collaborated with cross-functional teams
+- Implemented best practices and code reviews
+{'- Managed team of 5 developers' if has_leadership else ''}
+
+{job_title} | Previous Company | 2 years
+- Developed and maintained production systems
+- Optimized performance and scalability
+- Participated in agile development process
+
+EDUCATION
+{education} in Computer Science | University
+
+{'CERTIFICATIONS\n' + random.choice(certifications) if has_cert else ''}
+"""
+    return resume_text.strip()
+
+
 @router.post("", response_model=ApplicationResponse, status_code=status.HTTP_201_CREATED)
 async def submit_application(
     job_id: int = Form(...),
@@ -333,3 +393,106 @@ def update_application_status(
     db.refresh(application)
 
     return ApplicationResponse.model_validate(application)
+
+
+@router.post("/job/{job_id}/generate-random", response_model=ApplicationResponse, status_code=status.HTTP_201_CREATED)
+def generate_random_application(
+    job_id: int,
+    current_user: User = Depends(get_current_recruiter),
+    db: Session = Depends(get_db)
+):
+    """Generate a random test application for a job (recruiters only)."""
+    # Verify job exists and belongs to recruiter
+    job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
+
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Job not found"
+        )
+
+    if job.recruiter_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to generate applications for this job"
+        )
+
+    # Generate random resume text
+    resume_text = generate_random_resume_text(job.title, job.category)
+
+    try:
+        # Process resume with ML
+        processed_data = process_resume(resume_text)
+
+        # Calculate scores
+        weights = {
+            'skills': job.weight_skills or 0.4,
+            'experience': job.weight_experience or 0.3,
+            'education': job.weight_education or 0.2,
+            'certifications': job.weight_certifications or 0.05,
+            'leadership': job.weight_leadership or 0.05
+        }
+
+        final_score = calculate_final_score(processed_data, weights)
+
+        # Get all scores for percentile calculation
+        all_scores = [app.final_score for app in db.query(Application.final_score).filter(
+            Application.job_id == job_id,
+            Application.final_score.isnot(None)
+        ).all()]
+        all_scores.append(final_score)
+
+        overall_percentile = calculate_percentile(final_score, all_scores)
+
+        # Assign cluster
+        cluster_info = assign_cluster(processed_data)
+
+        # Analyze skill gap
+        job_skills = job.required_skills if job.required_skills else []
+        skill_gap = analyze_skill_gap(processed_data['extracted_skills'], job_skills)
+
+        # Create application (use recruiter as fake candidate for testing)
+        new_application = Application(
+            job_id=job_id,
+            candidate_id=current_user.id,  # Using recruiter ID for test data
+            resume_file_path=f"test_resume_{job_id}_{current_user.id}.txt",
+            resume_text=resume_text,
+            # ML fields
+            extracted_skills=json.dumps(processed_data['extracted_skills']),
+            num_skills=processed_data['num_skills'],
+            skill_diversity=processed_data.get('skill_diversity', 0.0),
+            experience_years=processed_data.get('experience_years', 0.0),
+            education_level=processed_data.get('education_level'),
+            has_certifications=processed_data.get('has_certifications', False),
+            has_leadership=processed_data.get('has_leadership', False),
+            # Scores
+            skills_score=processed_data.get('skills_score', 0.0),
+            experience_score=processed_data.get('experience_score', 0.0),
+            education_score=processed_data.get('education_score', 0.0),
+            bonus_score=processed_data.get('bonus_score', 0.0),
+            final_score=final_score,
+            overall_percentile=overall_percentile,
+            category_percentile=overall_percentile,  # Simplified
+            # Clustering
+            cluster_id=cluster_info.get('cluster_id'),
+            cluster_name=cluster_info.get('cluster_name'),
+            # Skill gap
+            matched_skills=json.dumps(skill_gap['matched_skills']),
+            missing_skills=json.dumps(skill_gap['missing_skills']),
+            skill_match_percentage=skill_gap['match_percentage'],
+            recommendations=json.dumps(skill_gap['recommendations']),
+            # Status
+            status='pending'
+        )
+
+        db.add(new_application)
+        db.commit()
+        db.refresh(new_application)
+
+        return ApplicationResponse.model_validate(new_application)
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error generating random application: {str(e)}"
+        )

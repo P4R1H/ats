@@ -196,6 +196,12 @@ class APIClient {
       body: JSON.stringify({ status }),
     })
   }
+
+  async generateRandomApplication(jobId: number) {
+    return this.request(`/api/applications/job/${jobId}/generate-random`, {
+      method: 'POST',
+    })
+  }
 }
 
 export const api = new APIClient(API_BASE_URL)

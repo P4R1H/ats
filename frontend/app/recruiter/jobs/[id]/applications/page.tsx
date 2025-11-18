@@ -15,7 +15,8 @@ import {
   XCircle,
   Clock,
   Target,
-  TrendingUp
+  TrendingUp,
+  Sparkles
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
@@ -32,6 +33,7 @@ export default function JobApplicationsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState<'score' | 'date'>('score')
   const [loading, setLoading] = useState(true)
+  const [generating, setGenerating] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -91,6 +93,20 @@ export default function JobApplicationsPage() {
       setApplications(jobApps)
     } catch (error: any) {
       alert('Failed to update status: ' + error.message)
+    }
+  }
+
+  const handleGenerateRandom = async () => {
+    setGenerating(true)
+    try {
+      await api.generateRandomApplication(parseInt(jobId))
+      // Reload data
+      const jobApps = await api.getApplicationsForJob(jobId)
+      setApplications(jobApps)
+    } catch (error: any) {
+      alert('Failed to generate application: ' + error.message)
+    } finally {
+      setGenerating(false)
     }
   }
 
@@ -223,6 +239,24 @@ export default function JobApplicationsPage() {
             />
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={handleGenerateRandom}
+              disabled={generating}
+              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+            >
+              {generating ? (
+                <>
+                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Generate Test Application
+                </>
+              )}
+            </Button>
             <span className="text-sm text-gray-600">Sort by:</span>
             <Button
               size="sm"
