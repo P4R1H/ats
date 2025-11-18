@@ -104,12 +104,20 @@ export default function ApplicationDetailPage() {
     { label: 'Bonus Points', value: (application.bonus_score || 0) * (weights.certifications + weights.leadership), weight: (weights.certifications + weights.leadership) * 100, color: 'text-amber-600', bgColor: 'bg-amber-500' }
   ]
 
-  // Skills Gap Analysis
+  // Skills Gap Analysis - Handle both string and array formats
   const requiredSkills = job?.required_skills
-    ? job.required_skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+    ? Array.isArray(job.required_skills)
+      ? job.required_skills
+      : typeof job.required_skills === 'string'
+        ? job.required_skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+        : []
     : []
   const preferredSkills = job?.preferred_skills
-    ? job.preferred_skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+    ? Array.isArray(job.preferred_skills)
+      ? job.preferred_skills
+      : typeof job.preferred_skills === 'string'
+        ? job.preferred_skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+        : []
     : []
   const candidateSkills = application.extracted_skills || []
 
