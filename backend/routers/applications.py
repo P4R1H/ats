@@ -67,6 +67,10 @@ def generate_random_resume_text(job_title: str, job_category: str) -> str:
     has_cert = random.choice([True, False])
     has_leadership = random.choice([True, False])
 
+    certification_section = ""
+    if has_cert:
+        certification_section = "CERTIFICATIONS\n" + random.choice(certifications)
+
     resume_text = f"""
 {name}
 Senior {job_title}
@@ -93,7 +97,7 @@ Senior {job_title} | Tech Company Inc. | {years_exp-2} years
 EDUCATION
 {education} in Computer Science | University
 
-{'CERTIFICATIONS\n' + random.choice(certifications) if has_cert else ''}
+{certification_section}
 """
     return resume_text.strip()
 
