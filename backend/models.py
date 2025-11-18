@@ -14,6 +14,11 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String, nullable=False)  # 'candidate' or 'recruiter'
     full_name = Column(String, nullable=False)
+
+    # Recruiter-specific fields
+    company_name = Column(String)  # For recruiters
+    company_logo = Column(String)  # URL/path to logo for recruiters
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships

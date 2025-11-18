@@ -286,9 +286,28 @@ export default function CandidateDashboard() {
                   onClick={() => router.push('/candidate/jobs')}
                 >
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors line-clamp-1">
-                      {job.title}
-                    </h3>
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-amber-600 transition-colors line-clamp-1 flex-1">
+                        {job.title}
+                      </h3>
+                      {job.company_name && (
+                        <div className="flex items-center gap-2 ml-3">
+                          {job.company_logo && (
+                            <img
+                              src={job.company_logo}
+                              alt={job.company_name}
+                              className="h-8 w-8 rounded object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          )}
+                          <span className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                            {job.company_name}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                       {stripMarkdown(job.description)}
                     </p>

@@ -89,13 +89,20 @@ def get_jobs(
 
     jobs = query.order_by(JobPosting.created_at.desc()).all()
 
-    # Add application counts
+    # Add application counts and company info
     result = []
     for job in jobs:
         job_response = JobPostingResponse.model_validate(job)
         job_response.application_count = db.query(Application).filter(
             Application.job_id == job.id
         ).count()
+
+        # Add company info from recruiter
+        recruiter = db.query(User).filter(User.id == job.recruiter_id).first()
+        if recruiter:
+            job_response.company_name = recruiter.company_name
+            job_response.company_logo = recruiter.company_logo
+
         result.append(job_response)
 
     return result
