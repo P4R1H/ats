@@ -27,8 +27,8 @@ export default function HomePage() {
             >
               Sign In
             </Button>
-            <Button 
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md"
+            <Button
+              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
               onClick={() => router.push('/auth/register')}
             >
               Get Started
@@ -72,9 +72,9 @@ export default function HomePage() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button 
+            <Button
               size="lg"
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-amber-200 text-lg px-8"
+              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all text-lg px-8"
               onClick={() => router.push('/auth/register?role=candidate')}
             >
               <Users className="mr-2 h-5 w-5" />
@@ -483,7 +483,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-amber-200 text-lg px-8"
+              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all text-lg px-8"
               onClick={() => router.push('/auth/register')}
             >
               Create Free Account

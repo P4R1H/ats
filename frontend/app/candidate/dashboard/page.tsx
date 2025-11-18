@@ -178,7 +178,7 @@ export default function CandidateDashboard() {
                 </p>
                 <Button
                   onClick={() => router.push('/candidate/jobs')}
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                  className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
                 >
                   Browse Open Positions
                 </Button>
@@ -297,7 +297,7 @@ export default function CandidateDashboard() {
                     </p>
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <span className="text-xs text-gray-500">{job.category}</span>
-                      <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white" size="sm">
+                      <Button className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all" size="sm">
                         View & Apply
                       </Button>
                     </div>

@@ -193,7 +193,7 @@ export default function JobApplicationsPage() {
                 router.push(`/recruiter/jobs/${jobId}/analytics`)
               }}
               disabled={navigatingToAnalytics}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
             >
               {navigatingToAnalytics ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -407,7 +407,7 @@ export default function JobApplicationsPage() {
                   </Button>
                   <Button
                     onClick={handleGenerateRandom}
-                    className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                    className="flex-1 gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
                     Generate
