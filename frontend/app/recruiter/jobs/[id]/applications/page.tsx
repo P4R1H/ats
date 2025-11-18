@@ -34,6 +34,8 @@ export default function JobApplicationsPage() {
   const [sortBy, setSortBy] = useState<'score' | 'date'>('score')
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
+  const [showGenerateDialog, setShowGenerateDialog] = useState(false)
+  const [generateCount, setGenerateCount] = useState(5)
 
   useEffect(() => {
     loadData()
@@ -97,14 +99,21 @@ export default function JobApplicationsPage() {
   }
 
   const handleGenerateRandom = async () => {
+    if (generateCount < 1 || generateCount > 50) {
+      alert('Please enter a number between 1 and 50')
+      return
+    }
+
+    setShowGenerateDialog(false)
     setGenerating(true)
     try {
-      await api.generateRandomApplication(parseInt(jobId))
+      const result = await api.generateRandomApplication(parseInt(jobId), generateCount)
       // Reload data
       const jobApps = await api.getApplicationsForJob(jobId)
       setApplications(jobApps)
+      alert(result.message || `Generated ${generateCount} test application(s) successfully!`)
     } catch (error: any) {
-      alert('Failed to generate application: ' + error.message)
+      alert('Failed to generate applications: ' + error.message)
     } finally {
       setGenerating(false)
     }
@@ -241,7 +250,7 @@ export default function JobApplicationsPage() {
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              onClick={handleGenerateRandom}
+              onClick={() => setShowGenerateDialog(true)}
               disabled={generating}
               className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
             >
@@ -253,7 +262,7 @@ export default function JobApplicationsPage() {
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Generate Test Application
+                  Generate Test Applications
                 </>
               )}
             </Button>
@@ -412,6 +421,52 @@ export default function JobApplicationsPage() {
           </div>
         )}
       </main>
+
+      {/* Generate Applications Dialog */}
+      {showGenerateDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4 border border-gray-200 shadow-2xl">
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Generate Test Applications</h2>
+              <p className="text-gray-600 mb-6">
+                How many test applications would you like to generate? (1-50)
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-900 block mb-2">
+                    Number of Applications
+                  </label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="50"
+                    value={generateCount}
+                    onChange={(e) => setGenerateCount(parseInt(e.target.value) || 1)}
+                    className="h-12 text-lg border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                    autoFocus
+                  />
+                </div>
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowGenerateDialog(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleGenerateRandom}
+                    className="flex-1 gradient-bg text-white shadow-lg hover:shadow-xl"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate {generateCount}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }
