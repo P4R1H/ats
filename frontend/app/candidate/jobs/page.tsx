@@ -16,6 +16,7 @@ export default function JobsPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
+  const [applications, setApplications] = useState<any[]>([])
   const [filteredJobs, setFilteredJobs] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedJob, setSelectedJob] = useState<any>(null)
@@ -43,13 +44,15 @@ export default function JobsPage() {
 
   const loadData = async () => {
     try {
-      const [currentUser, availableJobs] = await Promise.all([
+      const [currentUser, availableJobs, myApps] = await Promise.all([
         api.getCurrentUser(),
-        api.getJobs()
+        api.getJobs(),
+        api.getMyApplications()
       ])
 
       setUser(currentUser)
       setJobs(availableJobs)
+      setApplications(myApps)
       setFilteredJobs(availableJobs)
     } catch (error: any) {
       if (error.message.includes('401')) {
@@ -390,13 +393,8 @@ export default function JobsPage() {
                 onClick={() => setSelectedJob(job)}
               >
                 <CardContent className="p-6">
-                  {/* Category Badge */}
-                  <span className="inline-block px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-medium rounded-full mb-3">
-                    {job.category}
-                  </span>
-
                   {/* Title */}
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
                     {job.title}
                   </h3>
 
@@ -406,7 +404,11 @@ export default function JobsPage() {
                   </p>
 
                   {/* Meta info */}
-                  <div className="mb-4">
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <Briefcase className="h-3.5 w-3.5" />
+                      <span>{job.category}</span>
+                    </div>
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Clock className="h-3.5 w-3.5" />
                       <span>Posted {formatDate(job.created_at)}</span>
@@ -436,9 +438,18 @@ export default function JobsPage() {
                   )}
 
                   {/* Apply button */}
-                  <Button className="w-full gradient-bg text-white shadow-lg hover:shadow-xl transition-all">
-                    View & Apply
-                  </Button>
+                  {applications.some(app => app.job_id === job.id) ? (
+                    <Button
+                      disabled
+                      className="w-full bg-gray-100 text-gray-500 cursor-not-allowed"
+                    >
+                      Applied
+                    </Button>
+                  ) : (
+                    <Button className="w-full gradient-bg text-white shadow-lg hover:shadow-xl transition-all">
+                      View & Apply
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
