@@ -266,7 +266,23 @@ def get_my_applications(
         Application.candidate_id == current_user.id
     ).order_by(Application.applied_at.desc()).all()
 
-    return [ApplicationResponse.model_validate(app) for app in applications]
+    # Calculate dynamic percentiles for each application
+    results = []
+    for app in applications:
+        # Get all applications for the same job to calculate percentile
+        all_applications = db.query(Application).filter(
+            Application.job_id == app.job_id
+        ).all()
+        all_scores = [a.final_score for a in all_applications if a.final_score is not None]
+        dynamic_percentile = calculate_percentile(app.final_score or 0, all_scores)
+
+        # Create response with dynamic percentile
+        app_response = ApplicationResponse.model_validate(app)
+        app_data = app_response.model_dump()
+        app_data['overall_percentile'] = dynamic_percentile
+        results.append(ApplicationResponse(**app_data))
+
+    return results
 
 
 @router.get("/{application_id}", response_model=ApplicationDetailResponse)
@@ -305,6 +321,13 @@ def get_application_details(
                 detail="You don't have permission to view this application"
             )
 
+    # Calculate dynamic percentile based on all applications for this job
+    all_applications = db.query(Application).filter(
+        Application.job_id == application.job_id
+    ).all()
+    all_scores = [app.final_score for app in all_applications if app.final_score is not None]
+    dynamic_percentile = calculate_percentile(application.final_score or 0, all_scores)
+
     # Build detailed response with all fields
     response_data = {
         **ApplicationResponse.model_validate(application).model_dump(),
@@ -312,7 +335,8 @@ def get_application_details(
         "candidate_email": candidate.email,
         "job_title": job.title,
         "job_category": job.category,
-        "resume_text": application.resume_text
+        "resume_text": application.resume_text,
+        "overall_percentile": dynamic_percentile  # Override with dynamic value
     }
 
     return ApplicationDetailResponse(**response_data)
@@ -345,10 +369,16 @@ def get_applications_for_job(
         Application.job_id == job_id
     ).order_by(Application.final_score.desc()).all()
 
+    # Calculate dynamic percentiles
+    all_scores = [app.final_score for app in applications if app.final_score is not None]
+
     # Build detailed responses
     results = []
     for app in applications:
         candidate = db.query(User).filter(User.id == app.candidate_id).first()
+
+        # Calculate dynamic percentile for this application
+        dynamic_percentile = calculate_percentile(app.final_score or 0, all_scores)
 
         # Build response with all fields properly
         response_data = {
@@ -357,7 +387,8 @@ def get_applications_for_job(
             "candidate_email": candidate.email,
             "job_title": job.title,
             "job_category": job.category,
-            "resume_text": app.resume_text
+            "resume_text": app.resume_text,
+            "overall_percentile": dynamic_percentile  # Override with dynamic value
         }
 
         results.append(ApplicationDetailResponse(**response_data))
