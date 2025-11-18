@@ -72,9 +72,21 @@ export default function RecruiterDashboard() {
             </span>
           </button>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              {user?.full_name}
-            </span>
+            <div className="flex items-center gap-2">
+              {user?.company_logo && (
+                <img
+                  src={user.company_logo}
+                  alt={user.company_name || 'Company'}
+                  className="h-6 w-6 rounded object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              )}
+              <span className="text-sm text-gray-600">
+                {user?.company_name || user?.full_name}
+              </span>
+            </div>
             <Button
               variant="outline"
               size="sm"

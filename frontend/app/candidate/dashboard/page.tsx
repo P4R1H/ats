@@ -291,12 +291,12 @@ export default function CandidateDashboard() {
                         {job.title}
                       </h3>
                       {job.company_name && (
-                        <div className="flex items-center gap-2 ml-3">
+                        <div className="flex items-center gap-1.5 ml-3">
                           {job.company_logo && (
                             <img
                               src={job.company_logo}
                               alt={job.company_name}
-                              className="h-8 w-8 rounded object-contain"
+                              className="h-6 w-6 rounded object-contain"
                               onError={(e) => {
                                 e.currentTarget.style.display = 'none'
                               }}
