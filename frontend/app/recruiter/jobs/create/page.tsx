@@ -374,10 +374,12 @@ export default function CreateJobPage() {
                 </div>
               )}
 
-              {/* Skills Section */}
+              {/* Skills Section - Simplified */}
               <div className="space-y-6">
+                {/* Required Skills */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Required Skills</h3>
+                  <Label className="text-base">Required Skills</Label>
+                  <p className="text-xs text-gray-500 mb-3">Critical skills needed for this role</p>
                   <div className="flex gap-2 mb-3">
                     <Input
                       value={currentSkill}
@@ -401,11 +403,11 @@ export default function CreateJobPage() {
                   </div>
 
                   {formData.required_skills.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="flex flex-wrap gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
                       {formData.required_skills.map((skill) => (
                         <span
                           key={skill}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-900 rounded-md text-sm"
+                          className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-blue-300 text-blue-900 rounded-md text-sm"
                         >
                           {skill}
                           <button
@@ -419,37 +421,12 @@ export default function CreateJobPage() {
                       ))}
                     </div>
                   )}
-
-                  {/* Quick Add Suggestions */}
-                  <div className="space-y-3">
-                    <p className="text-xs text-gray-600">Quick add from common skills:</p>
-                    {Object.entries(SKILL_CATEGORIES).map(([category, skills]) => (
-                      <div key={category} className="space-y-2">
-                        <p className="text-xs font-semibold text-gray-700">{category}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {skills.map((skill) => (
-                            <button
-                              key={skill}
-                              type="button"
-                              onClick={() => handleQuickAddSkill(skill, 'required')}
-                              disabled={formData.required_skills.includes(skill)}
-                              className={`px-2 py-1 text-xs rounded transition-colors ${
-                                formData.required_skills.includes(skill)
-                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                              }`}
-                            >
-                              {skill}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
 
+                {/* Preferred Skills */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Preferred Skills (Optional)</h3>
+                  <Label className="text-base">Preferred Skills (Optional)</Label>
+                  <p className="text-xs text-gray-500 mb-3">Nice-to-have skills that add value</p>
                   <div className="flex gap-2 mb-3">
                     <Input
                       value={currentPreferredSkill}
@@ -473,11 +450,11 @@ export default function CreateJobPage() {
                   </div>
 
                   {formData.preferred_skills.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="flex flex-wrap gap-2 p-3 bg-purple-50 rounded-lg border border-purple-200">
                       {formData.preferred_skills.map((skill) => (
                         <span
                           key={skill}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-900 rounded-md text-sm"
+                          className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-purple-300 text-purple-900 rounded-md text-sm"
                         >
                           {skill}
                           <button
@@ -491,33 +468,63 @@ export default function CreateJobPage() {
                       ))}
                     </div>
                   )}
+                </div>
 
-                  <div className="space-y-3">
-                    <p className="text-xs text-gray-600">Quick add from common skills:</p>
+                {/* Quick Add Skills - Single Collapsible Section */}
+                <details className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <summary className="cursor-pointer text-sm font-medium text-gray-900 hover:text-gray-700">
+                    Browse common skills by category
+                  </summary>
+                  <div className="mt-4 space-y-4">
                     {Object.entries(SKILL_CATEGORIES).map(([category, skills]) => (
-                      <div key={category} className="space-y-2">
-                        <p className="text-xs font-semibold text-gray-700">{category}</p>
+                      <div key={category}>
+                        <p className="text-xs font-semibold text-gray-700 mb-2">{category}</p>
                         <div className="flex flex-wrap gap-2">
-                          {skills.map((skill) => (
-                            <button
-                              key={skill}
-                              type="button"
-                              onClick={() => handleQuickAddSkill(skill, 'preferred')}
-                              disabled={formData.preferred_skills.includes(skill) || formData.required_skills.includes(skill)}
-                              className={`px-2 py-1 text-xs rounded transition-colors ${
-                                formData.preferred_skills.includes(skill) || formData.required_skills.includes(skill)
-                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                              }`}
-                            >
-                              {skill}
-                            </button>
-                          ))}
+                          {skills.map((skill) => {
+                            const isRequired = formData.required_skills.includes(skill)
+                            const isPreferred = formData.preferred_skills.includes(skill)
+                            const isAdded = isRequired || isPreferred
+
+                            return (
+                              <div key={skill} className="inline-flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickAddSkill(skill, 'required')}
+                                  disabled={isAdded}
+                                  className={`px-2 py-1 text-xs rounded-l transition-colors ${
+                                    isRequired
+                                      ? 'bg-blue-200 text-blue-900'
+                                      : isAdded
+                                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                      : 'bg-gray-100 text-gray-700 hover:bg-blue-100'
+                                  }`}
+                                  title="Add as required"
+                                >
+                                  {skill}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickAddSkill(skill, 'preferred')}
+                                  disabled={isAdded}
+                                  className={`px-1.5 py-1 text-xs rounded-r border-l border-gray-300 transition-colors ${
+                                    isPreferred
+                                      ? 'bg-purple-200 text-purple-900'
+                                      : isAdded
+                                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                      : 'bg-gray-100 text-gray-700 hover:bg-purple-100'
+                                  }`}
+                                  title="Add as preferred"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
+                </details>
               </div>
 
               <Button

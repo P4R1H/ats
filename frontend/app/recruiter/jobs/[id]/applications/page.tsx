@@ -177,92 +177,77 @@ export default function JobApplicationsPage() {
         </Button>
 
         {/* Job Header */}
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">{job?.title}</h1>
-            <p className="text-gray-600 line-clamp-2">{job?.description}</p>
-          </div>
-          <Button
-            onClick={() => router.push(`/recruiter/jobs/${jobId}/analytics`)}
-            className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
-          >
-            <BarChart3 className="h-4 w-4 mr-2" />
-            ML Analytics
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">{job?.title}</h1>
+          <p className="text-gray-600 line-clamp-2">{job?.description}</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        {/* Stats Cards - Simplified */}
+        <div className="grid grid-cols-3 gap-6 mb-8">
           <Card className="border border-gray-200">
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-blue-600" />
-                <div className="text-xs font-medium text-gray-600">Total Applications</div>
+                <Users className="h-5 w-5 text-blue-600" />
+                <div className="text-sm font-medium text-gray-600">Total</div>
               </div>
               <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-gray-200">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="h-4 w-4 text-amber-600" />
-                <div className="text-xs font-medium text-gray-600">Pending</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {stats.pending} pending · {stats.shortlisted} shortlisted
               </div>
-              <div className="text-3xl font-bold text-amber-600">{stats.pending}</div>
             </CardContent>
           </Card>
 
           <Card className="border border-gray-200">
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <div className="text-xs font-medium text-gray-600">Shortlisted</div>
-              </div>
-              <div className="text-3xl font-bold text-green-600">{stats.shortlisted}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-gray-200">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2 mb-2">
-                <XCircle className="h-4 w-4 text-gray-600" />
-                <div className="text-xs font-medium text-gray-600">Rejected</div>
-              </div>
-              <div className="text-3xl font-bold text-gray-900">{stats.rejected}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-gray-200">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="h-4 w-4 text-purple-600" />
-                <div className="text-xs font-medium text-gray-600">Avg Score</div>
+                <TrendingUp className="h-5 w-5 text-green-600" />
+                <div className="text-sm font-medium text-gray-600">Avg Score</div>
               </div>
               <div className={`text-3xl font-bold ${getScoreColor(stats.avgScore)}`}>
                 {stats.avgScore.toFixed(1)}
               </div>
+              <div className="text-xs text-gray-500 mt-1">out of 100</div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-gray-200">
+            <CardContent className="pt-6 flex items-center justify-center">
+              <Button
+                onClick={() => router.push(`/recruiter/jobs/${jobId}/analytics`)}
+                className="gradient-bg text-white shadow-md hover:shadow-lg transition-all"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                View ML Analytics
+              </Button>
             </CardContent>
           </Card>
         </div>
 
-        {/* Search & Sort */}
-        <div className="flex items-center gap-4 mb-6">
+        {/* Search & Controls - Simplified */}
+        <div className="flex items-center justify-between gap-4 mb-6">
           <div className="flex-1 relative max-w-md">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
-              placeholder="Search by candidate name or cluster..."
+              placeholder="Search applications..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 h-12 border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+              className="pl-11 border-gray-300 focus:border-amber-500 focus:ring-amber-500"
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'score' | 'date')}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:border-amber-500 focus:ring-amber-500"
+            >
+              <option value="score">Sort by Score</option>
+              <option value="date">Sort by Date</option>
+            </select>
             <Button
               size="sm"
               onClick={() => setShowGenerateDialog(true)}
               disabled={generating}
-              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+              className="gradient-bg text-white disabled:opacity-50"
             >
               {generating ? (
                 <>
@@ -272,28 +257,9 @@ export default function JobApplicationsPage() {
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Generate Test Applications
+                  Generate Test Data
                 </>
               )}
-            </Button>
-            <span className="text-sm text-gray-600">Sort by:</span>
-            <Button
-              size="sm"
-              variant={sortBy === 'score' ? 'default' : 'outline'}
-              onClick={() => setSortBy('score')}
-              className={sortBy === 'score' ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white' : ''}
-            >
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Score
-            </Button>
-            <Button
-              size="sm"
-              variant={sortBy === 'date' ? 'default' : 'outline'}
-              onClick={() => setSortBy('date')}
-              className={sortBy === 'date' ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white' : ''}
-            >
-              <Clock className="h-4 w-4 mr-2" />
-              Date
             </Button>
           </div>
         </div>
@@ -319,117 +285,57 @@ export default function JobApplicationsPage() {
                 className="border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
                 onClick={() => router.push(`/recruiter/jobs/${jobId}/applications/${app.id}`)}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-6">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-6">
                     {/* Score */}
-                    <div className="text-center min-w-[80px]">
-                      <div className={`text-4xl font-bold mb-1 ${getScoreColor(app.final_score || 0)}`}>
+                    <div className="text-center min-w-[70px]">
+                      <div className={`text-3xl font-bold ${getScoreColor(app.final_score || 0)}`}>
                         {app.final_score?.toFixed(1) || 'N/A'}
                       </div>
-                      <div className="text-xs text-gray-500">out of 100</div>
+                      <div className="text-xs text-gray-500 mt-0.5">/ 100</div>
                     </div>
 
                     {/* Details */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold text-lg text-gray-900">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-semibold text-gray-900">
                           Application #{app.id}
                         </h3>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-xs text-gray-500">
                           {formatDate(app.applied_at)}
                         </span>
                       </div>
 
-                      <div className="flex items-center flex-wrap gap-4 mb-3 text-sm">
-                        <div className="flex items-center gap-1.5">
-                          <Award className="h-4 w-4 text-blue-600" />
-                          <span className="text-gray-700">{formatPercentile(app.overall_percentile || 50)}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Target className="h-4 w-4 text-green-600" />
-                          <span className="text-gray-700">{app.num_skills || 0} skills matched</span>
-                        </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-600">
                         {app.cluster_name && (
-                          <span className="px-2.5 py-0.5 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                          <span className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded text-xs font-medium">
                             {app.cluster_name}
                           </span>
                         )}
+                        <span>{app.num_skills || 0} skills</span>
+                        <span>•</span>
+                        <span>{formatPercentile(app.overall_percentile || 50)}</span>
                       </div>
-
-                      {/* Matched Skills */}
-                      {app.matched_skills && app.matched_skills.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
-                          {app.matched_skills.slice(0, 5).map((skill: string, idx: number) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-0.5 bg-green-100 text-green-900 rounded text-xs"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                          {app.matched_skills.length > 5 && (
-                            <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">
-                              +{app.matched_skills.length - 5} more
-                            </span>
-                          )}
-                        </div>
-                      )}
                     </div>
 
-                    {/* Status & Actions */}
-                    <div className="flex flex-col items-end gap-3">
-                      {/* Status Badge */}
-                      <div>
-                        {app.status === 'pending' && (
-                          <span className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
-                            <Clock className="h-3 w-3 mr-1" />
-                            Pending
-                          </span>
-                        )}
-                        {app.status === 'shortlisted' && (
-                          <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Shortlisted
-                          </span>
-                        )}
-                        {app.status === 'rejected' && (
-                          <span className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
-                            <XCircle className="h-3 w-3 mr-1" />
-                            Rejected
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex items-center gap-2">
-                        {app.status !== 'shortlisted' && (
-                          <Button
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleUpdateStatus(app.id, 'shortlisted')
-                            }}
-                            className="bg-green-600 hover:bg-green-700 text-white text-xs"
-                          >
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Shortlist
-                          </Button>
-                        )}
-                        {app.status !== 'rejected' && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleUpdateStatus(app.id, 'rejected')
-                            }}
-                            className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs"
-                          >
-                            <XCircle className="h-3 w-3 mr-1" />
-                            Reject
-                          </Button>
-                        )}
-                      </div>
+                    {/* Status */}
+                    <div className="flex items-center gap-3">
+                      {app.status === 'pending' && (
+                        <span className="inline-flex items-center px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium border border-amber-200">
+                          Pending
+                        </span>
+                      )}
+                      {app.status === 'shortlisted' && (
+                        <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium border border-green-200">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Shortlisted
+                        </span>
+                      )}
+                      {app.status === 'rejected' && (
+                        <span className="inline-flex items-center px-3 py-1 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border border-gray-200">
+                          Rejected
+                        </span>
+                      )}
                     </div>
                   </div>
                 </CardContent>
