@@ -563,6 +563,14 @@ export default function HomePage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-4">Resources</h3>
               <ul className="space-y-3">
+                <li>
+                  <button
+                    onClick={() => router.push('/methodology')}
+                    className="text-gray-600 hover:text-amber-600 transition-colors text-left"
+                  >
+                    ML Methodology
+                  </button>
+                </li>
                 <li className="text-gray-600">Documentation</li>
                 <li className="text-gray-600">API Reference</li>
                 <li className="text-gray-600">Support</li>
