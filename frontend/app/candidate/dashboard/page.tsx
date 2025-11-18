@@ -286,15 +286,17 @@ export default function CandidateDashboard() {
                   onClick={() => router.push('/candidate/jobs')}
                 >
                   <CardContent className="p-6">
+                    <span className="inline-block px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-medium rounded-full mb-3">
+                      {job.category}
+                    </span>
                     <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors line-clamp-1">
                       {job.title}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                       {stripMarkdown(job.description)}
                     </p>
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <span className="text-xs text-gray-500">{job.category}</span>
-                      <Button className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all" size="sm">
+                    <div className="pt-4 border-t border-gray-100">
+                      <Button className="w-full gradient-bg text-white shadow-lg hover:shadow-xl transition-all" size="sm">
                         View & Apply
                       </Button>
                     </div>
