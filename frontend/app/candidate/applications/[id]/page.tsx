@@ -258,7 +258,7 @@ export default function ApplicationDetailPage() {
         {/* Requirements Check (Stage 1) */}
         {application.meets_requirements === false && (
           <Card className="border border-gray-200 mb-8">
-            <CardContent className="p-8">
+            <CardContent className="p-6">
               <div className="flex items-start gap-4 mb-6">
                 <div className="p-3 bg-gray-100 rounded-lg">
                   <XCircle className="h-6 w-6 text-gray-600" />
@@ -323,7 +323,7 @@ export default function ApplicationDetailPage() {
 
         {application.meets_requirements !== false && (
           <Card className="border border-gray-200 mb-8">
-            <CardContent className="p-8">
+            <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-gray-100 rounded-lg">
                   <CheckCircle className="h-6 w-6 text-green-600" />
@@ -360,37 +360,37 @@ export default function ApplicationDetailPage() {
         {/* Skills Gap Analysis - Full Width */}
         {(missingRequired.length > 0 || missingPreferred.length > 0) && (
           <Card className="border border-gray-200 mb-8">
-            <CardContent className="p-8">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Lightbulb className="h-5 w-5 text-amber-600" />
                     <h2 className="text-xl font-semibold text-gray-900">Skills Gap Analysis</h2>
                   </div>
-                  <p className="text-gray-700">
-                    Personalized insights to help you improve your candidacy for this role
+                  <p className="text-sm text-gray-600">
+                    Personalized insights to help you improve your candidacy
                   </p>
                 </div>
-                <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="text-3xl font-bold text-gray-900 mb-1">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-gray-900">
                     +{potentialFinalScoreImprovement.toFixed(1)}
                   </div>
-                  <div className="text-xs text-gray-600">Potential Score Gain</div>
+                  <div className="text-xs text-gray-600">Potential Gain</div>
                 </div>
               </div>
 
-              {/* Match Progress */}
-              <div className="mb-6 p-6 bg-gray-50 rounded-lg border border-gray-200">
+              {/* Skills Match Progress */}
+              <div className="mb-6 pb-6 border-b border-gray-200">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h3 className="font-semibold text-gray-900">Required Skills Match</h3>
+                    <h3 className="font-medium text-gray-900">Required Skills Match</h3>
                     <p className="text-sm text-gray-600">
-                      You have {matchedRequired} out of {totalRequiredSkills} required skills
+                      {matchedRequired} of {totalRequiredSkills} skills
                     </p>
                   </div>
                   <div className="text-2xl font-bold text-gray-900">{matchPercentage}%</div>
                 </div>
-                <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gray-900 transition-all duration-500"
                     style={{ width: `${matchPercentage}%` }}
@@ -398,26 +398,25 @@ export default function ApplicationDetailPage() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Missing Required Skills */}
+              {/* Missing Skills */}
+              <div className="space-y-5">
                 {missingRequired.length > 0 && (
-                  <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-center gap-2 mb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
                       <XCircle className="h-5 w-5 text-gray-600" />
-                      <h3 className="font-semibold text-gray-900">Missing Required Skills</h3>
-                      <span className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs font-medium">
+                      <h3 className="font-medium text-gray-900">Missing Required Skills</h3>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-medium">
                         High Priority
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Adding these skills could increase your score by up to{' '}
-                      <strong className="text-gray-900">+{potentialRequiredImprovement.toFixed(1)} points</strong>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Worth up to <strong>+{potentialRequiredImprovement.toFixed(1)} points</strong>
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {missingRequired.map((skill: string, idx: number) => (
                         <span
                           key={idx}
-                          className="px-3 py-1.5 bg-gray-100 text-gray-900 rounded-md text-sm font-medium border border-gray-200"
+                          className="px-3 py-1.5 bg-gray-100 text-gray-900 rounded-md text-sm font-medium"
                         >
                           {skill}
                         </span>
@@ -426,25 +425,23 @@ export default function ApplicationDetailPage() {
                   </div>
                 )}
 
-                {/* Missing Preferred Skills */}
                 {missingPreferred.length > 0 && (
-                  <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-center gap-2 mb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
                       <Target className="h-5 w-5 text-gray-600" />
-                      <h3 className="font-semibold text-gray-900">Missing Preferred Skills</h3>
-                      <span className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs font-medium">
+                      <h3 className="font-medium text-gray-900">Missing Preferred Skills</h3>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-medium">
                         Nice to Have
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Adding these skills could increase your score by up to{' '}
-                      <strong className="text-gray-900">+{potentialPreferredImprovement.toFixed(1)} points</strong>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Worth up to <strong>+{potentialPreferredImprovement.toFixed(1)} points</strong>
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {missingPreferred.map((skill: string, idx: number) => (
                         <span
                           key={idx}
-                          className="px-3 py-1.5 bg-gray-100 text-gray-900 rounded-md text-sm font-medium border border-gray-200"
+                          className="px-3 py-1.5 bg-gray-100 text-gray-900 rounded-md text-sm font-medium"
                         >
                           {skill}
                         </span>
@@ -454,138 +451,52 @@ export default function ApplicationDetailPage() {
                 )}
               </div>
 
-              {/* Enhanced Recommended Actions */}
-              <div className="mt-6 space-y-4">
-                {/* Learning Path */}
-                <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="flex items-start gap-3 mb-4">
-                    <Lightbulb className="h-6 w-6 text-gray-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">Personalized Learning Path</h3>
-                      <p className="text-sm text-gray-600">
-                        Based on your current skill set and this role's requirements
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {missingRequired.length > 0 && (
-                      <div className="bg-white rounded-lg p-4 border-l-4 border-gray-900">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h4 className="font-semibold text-gray-900 text-sm mb-1">
-                              🎯 High Priority ({missingRequired.length} skill{missingRequired.length > 1 ? 's' : ''})
-                            </h4>
-                            <p className="text-xs text-gray-600">
-                              Required skills - Worth up to +{potentialRequiredImprovement.toFixed(1)} points
-                            </p>
-                          </div>
-                          <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-medium">
-                            Required
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {missingRequired.slice(0, 3).map((skill: string, idx: number) => (
-                            <div key={idx} className="flex items-center justify-between text-sm">
-                              <span className="font-medium text-gray-800">{idx + 1}. {skill}</span>
-                              <span className="text-xs text-gray-500">2-4 weeks</span>
-                            </div>
-                          ))}
-                          {missingRequired.length > 3 && (
-                            <p className="text-xs text-gray-500 italic">
-                              + {missingRequired.length - 3} more skill{missingRequired.length - 3 > 1 ? 's' : ''}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {missingPreferred.length > 0 && (
-                      <div className="bg-white rounded-lg p-4 border-l-4 border-gray-400">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h4 className="font-semibold text-gray-900 text-sm mb-1">
-                              ⭐ Medium Priority ({missingPreferred.length} skill{missingPreferred.length > 1 ? 's' : ''})
-                            </h4>
-                            <p className="text-xs text-gray-600">
-                              Preferred skills - Worth up to +{potentialPreferredImprovement.toFixed(1)} points
-                            </p>
-                          </div>
-                          <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-medium">
-                            Preferred
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {missingPreferred.slice(0, 3).map((skill: string, idx: number) => (
-                            <div key={idx} className="flex items-center justify-between text-sm">
-                              <span className="font-medium text-gray-800">{idx + 1}. {skill}</span>
-                              <span className="text-xs text-gray-500">1-3 weeks</span>
-                            </div>
-                          ))}
-                          {missingPreferred.length > 3 && (
-                            <p className="text-xs text-gray-500 italic">
-                              + {missingPreferred.length - 3} more skill{missingPreferred.length - 3 > 1 ? 's' : ''}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+              {/* Recommended Actions */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle className="h-5 w-5 text-gray-600" />
+                  <h3 className="font-medium text-gray-900">Recommended Next Steps</h3>
                 </div>
-
-                {/* Action Steps */}
-                <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="flex items-start gap-3 mb-4">
-                    <CheckCircle className="h-6 w-6 text-gray-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">Next Steps</h3>
-                      <p className="text-sm text-gray-600">
-                        Actionable steps to improve your candidacy
-                      </p>
+                <div className="space-y-3">
+                  {missingRequired.length > 0 && (
+                    <>
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                          1
+                        </div>
+                        <div className="text-sm text-gray-700">
+                          <strong className="text-gray-900">Learn required skills:</strong> Start with {missingRequired[0]}
+                          {missingRequired.length > 1 && ` and ${missingRequired[1]}`}.
+                          Use free resources like freeCodeCamp or Codecademy.
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                          2
+                        </div>
+                        <div className="text-sm text-gray-700">
+                          <strong className="text-gray-900">Build projects:</strong> Create 1-2 small projects demonstrating each skill
+                          to prove practical knowledge.
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                      {missingRequired.length > 0 ? '3' : '1'}
+                    </div>
+                    <div className="text-sm text-gray-700">
+                      <strong className="text-gray-900">Update your resume:</strong> Add new skills to a dedicated section
+                      with project context.
                     </div>
                   </div>
-
-                  <div className="space-y-3">
-                    {missingRequired.length > 0 && (
-                      <>
-                        <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                          <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
-                            1
-                          </div>
-                          <div className="text-sm text-gray-800">
-                            <strong>Learn required skills:</strong> Start with {missingRequired[0]}
-                            {missingRequired.length > 1 && ` and ${missingRequired[1]}`}.
-                            Use free resources like freeCodeCamp, Codecademy, or YouTube tutorials.
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                          <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
-                            2
-                          </div>
-                          <div className="text-sm text-gray-800">
-                            <strong>Build projects:</strong> Create 1-2 small projects demonstrating each skill.
-                            This proves practical knowledge beyond just listing the skill.
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
-                        {missingRequired.length > 0 ? '3' : '1'}
-                      </div>
-                      <div className="text-sm text-gray-800">
-                        <strong>Update your resume:</strong> Add new skills to a dedicated "Skills" section.
-                        Include them in project descriptions to show context and application.
-                      </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                      {missingRequired.length > 0 ? '4' : '2'}
                     </div>
-                    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
-                        {missingRequired.length > 0 ? '4' : '2'}
-                      </div>
-                      <div className="text-sm text-gray-800">
-                        <strong>Reapply when ready:</strong> Once you've acquired {missingRequired.length > 0 ? 'the required' : 'additional'} skills,
-                        submit a new application. Your score could increase by <strong className="text-gray-900">+{potentialFinalScoreImprovement.toFixed(1)} points</strong>!
-                      </div>
+                    <div className="text-sm text-gray-700">
+                      <strong className="text-gray-900">Reapply when ready:</strong> Your score could increase by{' '}
+                      <strong className="text-gray-900">+{potentialFinalScoreImprovement.toFixed(1)} points</strong>!
                     </div>
                   </div>
                 </div>
