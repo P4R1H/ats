@@ -187,23 +187,26 @@ export default function JobAnalyticsPage() {
     else scoreDistribution[4].count++
   })
 
-  // Component percentiles distribution
+  // Component scores (average scores for each component)
+  const avgSkillsScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.skills_score || 0), 0) / displayedApplications.length
+    : 0
+  const avgExpScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.experience_score || 0), 0) / displayedApplications.length
+    : 0
+  const avgEduScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.education_score || 0), 0) / displayedApplications.length
+    : 0
+  const avgBonusScore = displayedApplications.length > 0
+    ? displayedApplications.reduce((sum, app) => sum + (app.bonus_score || 0), 0) / displayedApplications.length
+    : 0
+
   const componentPercentiles = [
-    { component: 'Skills', value: 0, count: 0 },
-    { component: 'Experience', value: 0, count: 0 },
-    { component: 'Education', value: 0, count: 0 }
+    { component: 'Skills', value: Number(avgSkillsScore.toFixed(1)) },
+    { component: 'Experience', value: Number(avgExpScore.toFixed(1)) },
+    { component: 'Education', value: Number(avgEduScore.toFixed(1)) },
+    { component: 'Bonus', value: Number(avgBonusScore.toFixed(1)) }
   ]
-  displayedApplications.forEach(app => {
-    componentPercentiles[0].value += (app.skills_percentile || 0)
-    componentPercentiles[0].count++
-    componentPercentiles[1].value += (app.experience_percentile || 0)
-    componentPercentiles[1].count++
-    componentPercentiles[2].value += (app.education_percentile || 0)
-    componentPercentiles[2].count++
-  })
-  componentPercentiles.forEach(comp => {
-    comp.value = comp.count > 0 ? Number((comp.value / comp.count).toFixed(1)) : 0
-  })
 
   // Skills by category aggregation
   const skillsByCategoryAgg: Record<string, number> = {}
@@ -348,27 +351,6 @@ export default function JobAnalyticsPage() {
     balanced: qualificationRate >= 20 && qualificationRate <= 60,
     tooLenient: qualificationRate > 60
   }
-
-  // Component breakdown
-  const avgSkillsScore = displayedApplications.length > 0
-    ? displayedApplications.reduce((sum, app) => sum + (app.skills_score || 0), 0) / displayedApplications.length
-    : 0
-  const avgExpScore = displayedApplications.length > 0
-    ? displayedApplications.reduce((sum, app) => sum + (app.experience_score || 0), 0) / displayedApplications.length
-    : 0
-  const avgEduScore = displayedApplications.length > 0
-    ? displayedApplications.reduce((sum, app) => sum + (app.education_score || 0), 0) / displayedApplications.length
-    : 0
-  const avgBonusScore = displayedApplications.length > 0
-    ? displayedApplications.reduce((sum, app) => sum + (app.bonus_score || 0), 0) / displayedApplications.length
-    : 0
-
-  const componentData = [
-    { component: 'Skills', score: Number(avgSkillsScore.toFixed(1)), max: 100 },
-    { component: 'Experience', score: Number(avgExpScore.toFixed(1)), max: 100 },
-    { component: 'Education', score: Number(avgEduScore.toFixed(1)), max: 100 },
-    { component: 'Bonus', score: Number(avgBonusScore.toFixed(1)), max: 100 }
-  ]
 
   // Correlation heatmap data
   const calculateCorrelation = (arr1: number[], arr2: number[]) => {
@@ -797,14 +779,14 @@ export default function JobAnalyticsPage() {
                     </CardContent>
                   </Card>
 
-                  {/* Component Percentiles */}
-                  <Card className="h-full border border-gray-200">
+                  {/* Component Scores */}
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Gauge className="h-6 w-6 text-purple-600" />
-                        <h3 className="text-xl font-bold text-gray-900">Component Percentiles</h3>
+                        <h3 className="text-xl font-bold text-gray-900">Component Scores</h3>
                       </div>
-                      <p className="text-sm text-gray-600 mb-6">Average candidate performance by component</p>
+                      <p className="text-sm text-gray-600 mb-6">Average score breakdown by component</p>
                       <ResponsiveContainer width="100%" height={350}>
                         <BarChart data={componentPercentiles} layout="horizontal">
                           <defs>
@@ -1097,7 +1079,7 @@ export default function JobAnalyticsPage() {
                               cx="50%"
                               cy="50%"
                               labelLine={false}
-                              label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                               outerRadius={90}
                               fill="#8884d8"
                               dataKey="value"
@@ -1106,7 +1088,19 @@ export default function JobAnalyticsPage() {
                                 <Cell key={`cell-${index}`} fill={CLUSTER_COLORS[index % CLUSTER_COLORS.length]} />
                               ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip content={({ payload }) => {
+                              if (payload && payload.length > 0) {
+                                const data = payload[0].payload
+                                return (
+                                  <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                                    <p className="font-semibold text-gray-900">{data.name}</p>
+                                    <p className="text-sm text-gray-600">Count: {data.value}</p>
+                                    <p className="text-sm text-gray-600">Avg Score: {data.avgScore}</p>
+                                  </div>
+                                )
+                              }
+                              return null
+                            }} />
                           </RechartsPie>
                         </ResponsiveContainer>
                       )}
