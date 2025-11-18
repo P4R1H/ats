@@ -28,6 +28,11 @@ class APIClient {
   }
 
   private async request(endpoint: string, options: RequestInit = {}) {
+    // Always load fresh token from localStorage
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('token')
+    }
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -114,6 +119,11 @@ class APIClient {
 
   // Application endpoints
   async submitApplication(jobId: number, resumeFile: File) {
+    // Always load fresh token from localStorage
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('token')
+    }
+
     const formData = new FormData()
     formData.append('job_id', jobId.toString())
     formData.append('resume_file', resumeFile)
@@ -150,6 +160,11 @@ class APIClient {
   }
 
   async applyToJob(jobId: number, formData: FormData) {
+    // Always load fresh token from localStorage
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('token')
+    }
+
     const headers: HeadersInit = {}
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`
