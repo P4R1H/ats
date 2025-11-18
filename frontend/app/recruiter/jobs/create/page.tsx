@@ -397,7 +397,7 @@ export default function CreateJobPage() {
                                 type="button"
                                 onClick={() => !isPreferred && handleQuickAddSkill(skill, 'preferred')}
                                 disabled={isPreferred}
-                                className={`px-2 py-1.5 border-l border-gray-200 ${
+                                className={`p-2 border-l border-gray-200 flex items-center justify-center transition-colors ${
                                   isPreferred
                                     ? 'bg-amber-500 text-white'
                                     : 'bg-white text-gray-700 hover:bg-amber-50'
