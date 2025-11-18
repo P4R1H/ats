@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from database import init_db
 
 # Import routers
-from routers import auth, jobs, applications
+from routers import auth, jobs, applications, recommendations
 
 # Create FastAPI app
 app = FastAPI(
@@ -27,6 +27,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(jobs.router)
 app.include_router(applications.router)
+app.include_router(recommendations.router, prefix="/api/recommendations", tags=["recommendations"])
 
 # Mount static files for resume uploads
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

@@ -285,6 +285,17 @@ export default function MethodologyPage() {
                         4
                       </div>
                       <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">Get Personalized Job Recommendations</h3>
+                        <p className="text-sm text-gray-700">
+                          Upload your resume to discover jobs where you're predicted to rank in the top percentiles. Our AI analyzes your skills, experience, education, certifications, and leadership background to match you with positions where you have the best chance of success. See predicted percentile rankings, skills match percentages, and identify any skills gaps before applying.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                        5
+                      </div>
+                      <div>
                         <h3 className="font-semibold text-gray-900 mb-1">Track Your Applications</h3>
                         <p className="text-sm text-gray-700">
                           View your application status, ML insights, score breakdown, skill gap analysis, and personalized recommendations on your dashboard.
