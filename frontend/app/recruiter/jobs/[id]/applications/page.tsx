@@ -16,7 +16,8 @@ import {
   Clock,
   Target,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  BarChart3
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
@@ -176,9 +177,18 @@ export default function JobApplicationsPage() {
         </Button>
 
         {/* Job Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{job?.title}</h1>
-          <p className="text-gray-600 line-clamp-2">{job?.description}</p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{job?.title}</h1>
+            <p className="text-gray-600 line-clamp-2">{job?.description}</p>
+          </div>
+          <Button
+            onClick={() => router.push(`/recruiter/jobs/${jobId}/analytics`)}
+            className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
+          >
+            <BarChart3 className="h-4 w-4 mr-2" />
+            ML Analytics
+          </Button>
         </div>
 
         {/* Stats Cards */}
