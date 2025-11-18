@@ -20,7 +20,8 @@ import {
   BarChart3,
   Star,
   Briefcase,
-  Loader2
+  Loader2,
+  ChevronDown
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor, stripMarkdown } from '@/lib/utils'
@@ -262,14 +263,17 @@ export default function JobApplicationsPage() {
             />
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'score' | 'date')}
-              className="flex-1 md:flex-none pl-4 pr-10 py-3 border border-gray-300 rounded-lg text-sm font-medium focus:border-amber-500 focus:ring-amber-500"
-            >
-              <option value="score">Sort by Score</option>
-              <option value="date">Sort by Date</option>
-            </select>
+            <div className="relative flex-1 md:flex-none">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'score' | 'date')}
+                className="w-full appearance-none pl-4 pr-10 h-12 border border-gray-300 rounded-lg text-sm font-medium focus:border-amber-500 focus:ring-amber-500 bg-white cursor-pointer"
+              >
+                <option value="score">Sort by Score</option>
+                <option value="date">Sort by Date</option>
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+            </div>
             {process.env.NODE_ENV === 'development' && (
               <Button
                 onClick={() => setShowGenerateDialog(true)}
