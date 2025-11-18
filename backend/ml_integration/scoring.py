@@ -29,59 +29,112 @@ except FileNotFoundError:
     }
 
 
-def calculate_skills_score(num_skills: int, skill_diversity: float = 0.5) -> float:
+def calculate_skills_score(
+    candidate_skills: list,
+    required_skills: list,
+    preferred_skills: list = None,
+    skill_diversity: float = 0.5
+) -> float:
     """
-    Calculate skills score (0-100).
+    Calculate skills score (0-100) based on job requirements match.
+
+    This is the CORE of the ATS scoring system - we compare candidate skills
+    directly against the job's required and preferred skills.
 
     Args:
-        num_skills: Number of skills extracted
+        candidate_skills: List of skills extracted from resume
+        required_skills: List of required skills for the job
+        preferred_skills: List of preferred skills for the job (optional)
         skill_diversity: Skill diversity score (0-1)
 
     Returns:
         Skills score (0-100)
+
+    Scoring breakdown:
+    - 70 points: Required skills match (critical for job fit)
+    - 20 points: Preferred skills match (nice-to-have)
+    - 10 points: Skill diversity (breadth of expertise)
     """
-    # Base score from number of skills (logarithmic scale)
-    # 5 skills = ~50, 10 skills = ~70, 20 skills = ~90
-    if num_skills == 0:
-        base_score = 0
+    if preferred_skills is None:
+        preferred_skills = []
+
+    # Convert all skills to lowercase for case-insensitive matching
+    candidate_skills_lower = [s.lower() for s in candidate_skills]
+    required_skills_lower = [s.lower() for s in required_skills]
+    preferred_skills_lower = [s.lower() for s in preferred_skills] if preferred_skills else []
+
+    # Calculate required skills match percentage (70 points max)
+    if required_skills_lower:
+        matched_required = len(set(candidate_skills_lower) & set(required_skills_lower))
+        required_match_pct = matched_required / len(required_skills_lower)
+        required_score = required_match_pct * 70
     else:
-        import math
-        base_score = min(100, 30 + (math.log(num_skills) / math.log(20)) * 70)
+        # If no required skills specified, give base score based on having any skills
+        required_score = min(70, len(candidate_skills) * 7)
 
-    # Diversity bonus (up to 20 points)
-    diversity_bonus = skill_diversity * 20
+    # Calculate preferred skills match percentage (20 points max)
+    if preferred_skills_lower:
+        matched_preferred = len(set(candidate_skills_lower) & set(preferred_skills_lower))
+        preferred_match_pct = matched_preferred / len(preferred_skills_lower)
+        preferred_score = preferred_match_pct * 20
+    else:
+        # If no preferred skills, distribute some weight to having extra skills
+        preferred_score = min(20, (len(candidate_skills) - len(required_skills_lower)) * 2) if len(candidate_skills) > len(required_skills_lower) else 0
 
-    # Total skills score
-    skills_score = min(100, base_score + diversity_bonus)
+    # Diversity bonus (10 points max)
+    diversity_score = skill_diversity * 10
 
-    return round(skills_score, 2)
+    # Calculate final skills score
+    skills_score = required_score + preferred_score + diversity_score
+
+    return round(min(100, skills_score), 2)
 
 
-def calculate_experience_score(experience_years: float) -> float:
+def calculate_experience_score(experience_years: float, min_experience: int = 0) -> float:
     """
-    Calculate experience score (0-100) with non-linear scaling.
+    Calculate experience score (0-100) relative to job requirements.
+
+    This scoring rewards candidates who match the job's experience level.
+    Overqualified candidates receive diminishing returns.
 
     Args:
-        experience_years: Years of experience
+        experience_years: Candidate's years of experience
+        min_experience: Job's minimum required experience
 
     Returns:
         Experience score (0-100)
+
+    Scoring breakdown:
+    - Below minimum: Proportional penalty (0-60 points)
+    - At minimum to +2 years: Perfect fit range (90-100 points)
+    - +3 to +5 years overqualified: Good but declining (80-90 points)
+    - +6+ years overqualified: Risk of leaving/boredom (70-80 points)
     """
-    if experience_years <= 0:
+    if experience_years < 0:
         return 0
 
-    # Non-linear scaling: diminishing returns after 5 years
-    # 0 years = 0, 1 year = 30, 2 years = 50, 5 years = 80, 10+ years = 100
-    if experience_years >= 10:
-        return 100.0
-    elif experience_years >= 5:
-        score = 80 + (experience_years - 5) * 4
-    elif experience_years >= 2:
-        score = 50 + (experience_years - 2) * 10
-    else:
-        score = experience_years * 30
+    # Calculate difference from minimum requirement
+    experience_diff = experience_years - min_experience
 
-    return round(min(100, score), 2)
+    if experience_diff < 0:
+        # Below minimum - proportional penalty
+        # At 50% of minimum → 50 points, at 0% → 0 points
+        score = (experience_years / max(min_experience, 1)) * 60
+    elif experience_diff <= 2:
+        # Perfect fit range - highest scores
+        # At minimum → 90, at +2 years → 100
+        score = 90 + (experience_diff * 5)
+    elif experience_diff <= 5:
+        # Slightly overqualified - good but not perfect
+        # At +3 years → 88, at +5 years → 80
+        score = 90 - ((experience_diff - 2) * 3)
+    else:
+        # Significantly overqualified - diminishing returns
+        # Risk: may leave for better opportunity, may be bored
+        # At +6 years → 77, at +10 years → 65
+        score = max(60, 80 - ((experience_diff - 5) * 3))
+
+    return round(min(100, max(0, score)), 2)
 
 
 def calculate_education_score(education_level: str) -> float:
@@ -120,9 +173,12 @@ def calculate_bonus_score(has_certifications: bool, has_leadership: bool) -> flo
 
 
 def calculate_final_score(
-    num_skills: int,
+    candidate_skills: list,
+    required_skills: list,
+    preferred_skills: list,
     skill_diversity: float,
     experience_years: float,
+    min_experience: int,
     education_level: str,
     has_certifications: bool,
     has_leadership: bool,
@@ -131,10 +187,16 @@ def calculate_final_score(
     """
     Calculate final resume score using weighted components.
 
+    This is the MAIN SCORING FUNCTION that combines all components
+    to produce a final candidate score for a specific job.
+
     Args:
-        num_skills: Number of skills
+        candidate_skills: List of candidate's skills
+        required_skills: List of job's required skills
+        preferred_skills: List of job's preferred skills
         skill_diversity: Skill diversity (0-1)
         experience_years: Years of experience
+        min_experience: Job's minimum experience requirement
         education_level: Education level
         has_certifications: Has certifications
         has_leadership: Has leadership experience
@@ -147,9 +209,14 @@ def calculate_final_score(
     if weights is None:
         weights = SCORING_CONFIG["weights"]
 
-    # Calculate component scores
-    skills_score = calculate_skills_score(num_skills, skill_diversity)
-    experience_score = calculate_experience_score(experience_years)
+    # Calculate component scores using JOB-SPECIFIC criteria
+    skills_score = calculate_skills_score(
+        candidate_skills,
+        required_skills,
+        preferred_skills,
+        skill_diversity
+    )
+    experience_score = calculate_experience_score(experience_years, min_experience)
     education_score = calculate_education_score(education_level)
     bonus_score = calculate_bonus_score(has_certifications, has_leadership)
 
