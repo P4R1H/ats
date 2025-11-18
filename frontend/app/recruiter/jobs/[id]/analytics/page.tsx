@@ -50,6 +50,7 @@ import {
   Radar,
   ComposedChart,
   Area,
+  AreaChart,
   ReferenceLine
 } from 'recharts'
 
