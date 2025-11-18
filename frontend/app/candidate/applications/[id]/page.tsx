@@ -255,75 +255,37 @@ export default function ApplicationDetailPage() {
           </CardContent>
         </Card>
 
-        {/* Requirements Check (Stage 1) */}
-        {application.meets_requirements === false && (
-          <Card className="border border-gray-200 mb-6">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4 mb-6">
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <XCircle className="h-6 w-6 text-gray-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    Application Did Not Meet Minimum Requirements
-                  </h2>
-                  <p className="text-gray-700 mb-1">
-                    Our two-stage scoring system requires candidates to meet ALL minimum requirements
-                    before being ranked. Unfortunately, your application was missing some requirements.
-                  </p>
-                  {application.rejection_reason && (
-                    <p className="text-sm text-red-800 font-medium mt-3 p-3 bg-red-100 rounded-lg">
-                      {application.rejection_reason}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Missing Requirements Breakdown */}
-              {application.missing_requirements && application.missing_requirements.length > 0 && (
-                <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
-                  <h3 className="font-semibold text-gray-900 mb-4">Missing Requirements:</h3>
-                  <ul className="space-y-3">
-                    {application.missing_requirements.map((req: string, idx: number) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-800">{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* What This Means */}
-              <div className="mt-6 p-6 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5 text-gray-600" />
-                  What This Means For You
-                </h3>
-                <div className="space-y-3 text-sm text-gray-700">
-                  <p>
-                    <strong>Stage 1 (Requirements Check):</strong> This is a pass/fail filter.
-                    Your application did not meet all minimum requirements set by the employer.
-                  </p>
-                  <p>
-                    <strong>Stage 2 (Scoring & Ranking):</strong> Your score of {application.final_score?.toFixed(1) || 0}
-                    shows what you would score among qualified candidates, but you were not ranked because
-                    you didn't pass Stage 1.
-                  </p>
-                  <p className="font-medium text-gray-900">
-                    ✓ Good news: You can improve! Review the missing requirements above and work on
-                    acquiring those skills/qualifications. Then apply to similar positions where you meet
-                    all requirements.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Requirements & Skills Gap - Side by Side */}
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
-          {application.meets_requirements !== false && (
+          {application.meets_requirements === false ? (
+            <Card className="border border-gray-200">
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                  Requirements Not Met
+                </h2>
+                <p className="text-sm text-gray-600 mb-6">
+                  Failed Stage 1 (Requirements Check)
+                </p>
+
+                {application.missing_requirements && application.missing_requirements.length > 0 && (
+                  <div className="space-y-3 mb-6">
+                    {application.missing_requirements.map((req: string, idx: number) => (
+                      <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                        <XCircle className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-gray-800">{req}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="pt-6 border-t border-gray-200 text-sm text-gray-600">
+                  <p>
+                    Your application did not meet all minimum requirements. Review the missing items above and work on acquiring those qualifications for future applications.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
             <Card className="border border-gray-200">
               <CardContent className="p-6">
                 <div className="flex items-start gap-3 mb-4">

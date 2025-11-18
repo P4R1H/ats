@@ -19,7 +19,8 @@ import {
   Sparkles,
   BarChart3,
   Star,
-  Briefcase
+  Briefcase,
+  Loader2
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, formatPercentile, getScoreColor } from '@/lib/utils'
@@ -39,6 +40,7 @@ export default function JobApplicationsPage() {
   const [generating, setGenerating] = useState(false)
   const [showGenerateDialog, setShowGenerateDialog] = useState(false)
   const [generateCount, setGenerateCount] = useState(5)
+  const [navigatingToAnalytics, setNavigatingToAnalytics] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -186,10 +188,18 @@ export default function JobApplicationsPage() {
               <p className="text-gray-600 line-clamp-2">{job?.description}</p>
             </div>
             <Button
-              onClick={() => router.push(`/recruiter/jobs/${jobId}/analytics`)}
+              onClick={() => {
+                setNavigatingToAnalytics(true)
+                router.push(`/recruiter/jobs/${jobId}/analytics`)
+              }}
+              disabled={navigatingToAnalytics}
               className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
             >
-              <BarChart3 className="h-4 w-4 mr-2" />
+              {navigatingToAnalytics ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <BarChart3 className="h-4 w-4 mr-2" />
+              )}
               Analytics
             </Button>
           </div>
