@@ -38,7 +38,7 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section with Enhanced Background */}
-      <section className="hero-bg relative min-h-[calc(100vh-4rem)] flex items-center">
+      <section className="hero-bg relative min-h-[calc(100vh-4rem)] flex items-start pt-16">
         <div className="container mx-auto px-4 text-center relative z-10 w-full">
           <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
             <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-orange-700 shadow-sm border border-orange-200">
