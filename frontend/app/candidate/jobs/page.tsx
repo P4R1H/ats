@@ -287,7 +287,7 @@ export default function JobsPage() {
                     <Button
                       onClick={handleApply}
                       disabled={applying || !resumeFile}
-                      className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                      className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
                     >
                       {applying ? (
                         <>
@@ -440,7 +440,7 @@ export default function JobsPage() {
                   )}
 
                   {/* Apply button */}
-                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white group-hover:shadow-md transition-shadow">
+                  <Button className="w-full gradient-bg text-white shadow-lg hover:shadow-xl transition-all">
                     View & Apply
                   </Button>
                 </CardContent>

@@ -487,7 +487,7 @@ export default function CreateJobPage() {
             <Button
               type="submit"
               disabled={loading || totalWeight !== 100}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
             >
               {loading ? 'Creating...' : 'Create Job Posting'}
             </Button>
