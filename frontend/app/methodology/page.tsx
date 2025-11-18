@@ -72,11 +72,11 @@ export default function MethodologyPage() {
   ]
 
   const scoreComponents = [
-    { label: 'Skills Match', weight: 40, color: 'bg-blue-500', description: '70% required + 20% preferred + 10% diversity' },
-    { label: 'Experience', weight: 30, color: 'bg-green-500', description: 'Job-relative (perfect fit at min_experience +0-2 years)' },
-    { label: 'Education', weight: 20, color: 'bg-purple-500', description: 'PhD (100) > Master\'s (85) > Bachelor\'s (70)' },
-    { label: 'Certifications', weight: 5, color: 'bg-amber-500', description: 'Binary bonus for certifications' },
-    { label: 'Leadership', weight: 5, color: 'bg-orange-500', description: 'Binary bonus for leadership experience' },
+    { label: 'Skills Match', weight: 40, color: 'bg-blue-500', description: 'Stage 2: 80% preferred + 20% diversity (required checked in Stage 1)' },
+    { label: 'Experience', weight: 30, color: 'bg-green-500', description: 'Stage 2: Years BEYOND minimum (relative scoring)' },
+    { label: 'Education', weight: 20, color: 'bg-purple-500', description: 'Stage 2: Degrees ABOVE minimum (relative scoring)' },
+    { label: 'Certifications', weight: 5, color: 'bg-amber-500', description: 'Stage 2: Bonus if not required' },
+    { label: 'Leadership', weight: 5, color: 'bg-orange-500', description: 'Stage 2: Bonus if not required' },
   ]
 
   const clusterExamples = [
@@ -1115,11 +1115,77 @@ export default function MethodologyPage() {
           {activeSection === 'scoring' && (
             <div className="space-y-8 animate-fade-in">
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">Multi-Factor Scoring Algorithm</h1>
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">Two-Stage Scoring System</h1>
                 <p className="text-lg text-gray-600">
-                  Transparent, weighted scoring system with recruiter customization
+                  Requirements filtering followed by competitive ranking of qualified candidates
                 </p>
               </div>
+
+              {/* Two-Stage Overview */}
+              <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-cyan-50">
+                <CardContent className="p-8">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">System Architecture</h2>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-6 bg-white rounded-xl border-2 border-red-300">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-red-100 rounded-full">
+                          <CheckCircle className="h-6 w-6 text-red-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">Stage 1: Requirements Check</h3>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-4">
+                        <strong>Pass/Fail Filter:</strong> Candidates must meet ALL hard requirements
+                        to proceed to scoring.
+                      </p>
+                      <div className="space-y-2 text-xs text-gray-800">
+                        <p>✓ ALL required skills (must have every one)</p>
+                        <p>✓ Minimum experience (years ≥ min_experience)</p>
+                        <p>✓ Minimum education (level ≥ min_education)</p>
+                        <p>✓ Certifications (if required)</p>
+                        <p>✓ Leadership experience (if required)</p>
+                      </div>
+                      <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-xs text-red-900 font-medium">
+                          Missing ANY requirement → <strong>Automatic rejection (score = 0)</strong>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-white rounded-xl border-2 border-green-300">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-green-100 rounded-full">
+                          <TrendingUp className="h-6 w-6 text-green-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">Stage 2: Competitive Ranking</h3>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-4">
+                        <strong>Weighted Scoring:</strong> Qualified candidates are scored 0-100
+                        based on how much they EXCEED minimums.
+                      </p>
+                      <div className="space-y-2 text-xs text-gray-800">
+                        <p><strong>Skills:</strong> Preferred skills + diversity</p>
+                        <p><strong>Experience:</strong> Years beyond minimum</p>
+                        <p><strong>Education:</strong> Degrees above minimum</p>
+                        <p><strong>Bonuses:</strong> Certifications + leadership</p>
+                        <p><strong>Final:</strong> Weighted combination</p>
+                      </div>
+                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-xs text-green-900 font-medium">
+                          Passed Stage 1 → <strong>Ranked by fit for role (0-100)</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-white border border-blue-200 rounded-lg">
+                    <p className="text-sm text-gray-900">
+                      <strong className="text-blue-900">💡 Key Innovation:</strong> This fixes the fundamental flaw
+                      where weights were confused with requirements. If you need a PhD + Python, these are requirements
+                      (Stage 1), NOT weights. Weights are for ranking qualified candidates who already have those basics.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
 
               <Card className="border border-gray-200">
                 <CardContent className="p-8">
@@ -1155,64 +1221,77 @@ export default function MethodologyPage() {
 
               <Card className="border border-gray-200">
                 <CardContent className="p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Component Calculations</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Stage 2 Component Calculations</h2>
+                  <p className="text-sm text-gray-600 mb-6">
+                    These formulas only apply to candidates who passed Stage 1 (met all requirements).
+                    Scores measure how much candidates EXCEED minimums.
+                  </p>
 
                   <div className="space-y-6">
                     <div className="border-l-4 border-blue-500 pl-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">Skills Score (0-100) - Job-Relative</h3>
+                      <h3 className="font-semibold text-gray-900 mb-2">Skills Score (0-100) - Preferred Skills Only</h3>
                       <p className="text-sm text-gray-700 mb-2">
-                        Compares candidate skills to job's required and preferred skills
+                        <strong>Stage 1 already verified required skills.</strong> Stage 2 scores preferred skills (nice-to-have) + diversity.
                       </p>
                       <div className="bg-gray-50 p-3 rounded font-mono text-xs text-gray-800">
-                        required_match = matched_required / total_required<br/>
                         preferred_match = matched_preferred / total_preferred<br/>
-                        <strong>skills_score = (required_match × 70) + (preferred_match × 20) + (diversity × 10)</strong>
+                        <strong>skills_score = (preferred_match × 80) + (diversity × 20)</strong>
                       </div>
                       <p className="text-xs text-gray-600 mt-2">
-                        <strong>Key Innovation:</strong> Strong resume matching 100% of required skills scores ~87, while generic resume with many unrelated skills scores low.
+                        <strong>Key Change:</strong> Required skills are pass/fail (Stage 1), not scored. This prevents
+                        double-counting and clarifies what's a must-have vs nice-to-have.
                       </p>
                     </div>
 
                     <div className="border-l-4 border-green-500 pl-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">Experience Score (0-100) - Job-Relative</h3>
+                      <h3 className="font-semibold text-gray-900 mb-2">Experience Score (0-100) - Years BEYOND Minimum</h3>
                       <p className="text-sm text-gray-700 mb-2">
-                        Rewards candidates who match the job's experience level (overqualified candidates penalized)
+                        <strong>Stage 1 verified candidate meets min_experience.</strong> Stage 2 scores fit relative to minimum.
                       </p>
                       <div className="bg-gray-50 p-3 rounded font-mono text-xs text-gray-800">
-                        diff = experience_years - min_experience<br/>
-                        if diff &lt; 0: score = (experience / min_experience) × 60<br/>
-                        elif diff ≤ 2: <strong>score = 90 + (diff × 5) // Perfect fit!</strong><br/>
-                        elif diff ≤ 5: score = 90 - ((diff - 2) × 3)<br/>
-                        else: score = max(60, 80 - ((diff - 5) × 3))
+                        beyond_min = experience_years - min_experience<br/>
+                        if beyond_min ≤ 0: score = 70 // At minimum = baseline<br/>
+                        elif beyond_min ≤ 2: <strong>score = 70 + (beyond_min × 15) // Perfect fit!</strong><br/>
+                        elif beyond_min ≤ 5: score = 100 - ((beyond_min - 2) × 3)<br/>
+                        else: score = max(70, 85 - ((beyond_min - 5) × 3))
                       </div>
                       <p className="text-xs text-gray-600 mt-2">
-                        <strong>Key Innovation:</strong> Junior role (min_experience=0): 2-year candidate scores 100, 10-year candidate scores 71.
+                        <strong>Key Change:</strong> Now relative to job's minimum. At minimum = 70 pts. +1-2 years beyond = 85-100 pts (perfect fit).
+                        Overqualified candidates still ranked but with diminishing returns.
                       </p>
                     </div>
 
                     <div className="border-l-4 border-purple-500 pl-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">Education Score (0-100)</h3>
+                      <h3 className="font-semibold text-gray-900 mb-2">Education Score (0-100) - Degrees ABOVE Minimum</h3>
                       <p className="text-sm text-gray-700 mb-2">
-                        Fixed scores based on degree level
+                        <strong>Stage 1 verified candidate meets min_education.</strong> Stage 2 scores degrees above minimum.
                       </p>
                       <div className="bg-gray-50 p-3 rounded font-mono text-xs text-gray-800">
-                        PhD: 100<br/>
-                        Master's: 85<br/>
-                        Bachelor's: 70<br/>
-                        Diploma: 50<br/>
-                        Not Specified: 40
+                        levels_above = candidate_level - min_level<br/>
+                        if levels_above == 0: score = 70 // At minimum<br/>
+                        elif levels_above == 1: score = 85 // One above<br/>
+                        elif levels_above ≥ 2: score = 100 // Two+ above
                       </div>
+                      <p className="text-xs text-gray-600 mt-2">
+                        <strong>Key Change:</strong> Education is now job-relative. If min = Bachelor's, then Bachelor's = 70,
+                        Master's = 85, PhD = 100. If min = Master's, then Master's = 70, PhD = 100.
+                      </p>
                     </div>
 
                     <div className="border-l-4 border-amber-500 pl-4">
                       <h3 className="font-semibold text-gray-900 mb-2">Bonus Scores (0-100)</h3>
                       <p className="text-sm text-gray-700 mb-2">
-                        Binary indicators for certifications and leadership
+                        <strong>Stage 1 verified required cert/leadership if applicable.</strong> Stage 2 gives bonus if not required.
                       </p>
                       <div className="bg-gray-50 p-3 rounded font-mono text-xs text-gray-800">
-                        Has Certifications: 100 (else 0)<br/>
-                        Has Leadership: 100 (else 0)
+                        Has Certifications (when not required): 50 pts<br/>
+                        Has Leadership (when not required): 50 pts<br/>
+                        <strong>bonus_score = cert_bonus + leadership_bonus</strong>
                       </div>
+                      <p className="text-xs text-gray-600 mt-2">
+                        <strong>Key Change:</strong> If cert/leadership are required, they're checked in Stage 1. Bonus only applies
+                        when they're not required but candidate has them anyway.
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -1220,44 +1299,89 @@ export default function MethodologyPage() {
 
               <Card className="border border-gray-200">
                 <CardContent className="p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Real-World Example: Junior Developer Role</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Real-World Example: Two-Stage System in Action</h2>
                   <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-lg border border-blue-200 mb-4">
                     <div className="mb-4 p-3 bg-white rounded border border-blue-200">
-                      <h4 className="font-semibold text-sm text-gray-900 mb-2">Job Requirements:</h4>
-                      <p className="text-xs text-gray-700">Min Experience: <strong>0-2 years</strong></p>
-                      <p className="text-xs text-gray-700">Required Skills: <strong>Python, React, SQL</strong></p>
-                      <p className="text-xs text-gray-700">Preferred Skills: <strong>Docker, AWS</strong></p>
+                      <h4 className="font-semibold text-sm text-gray-900 mb-2">Job: Senior Full-Stack Developer</h4>
+                      <p className="text-xs text-gray-700"><strong>Stage 1 Requirements (Must Have ALL):</strong></p>
+                      <p className="text-xs text-gray-700 ml-3">• Min Experience: 3 years</p>
+                      <p className="text-xs text-gray-700 ml-3">• Required Skills: Python, React, PostgreSQL</p>
+                      <p className="text-xs text-gray-700 ml-3">• Min Education: Bachelor's degree</p>
+                      <p className="text-xs text-gray-700 mt-2"><strong>Stage 2 Preferences (Nice to Have):</strong></p>
+                      <p className="text-xs text-gray-700 ml-3">• Preferred Skills: Docker, AWS, TypeScript</p>
+                      <p className="text-xs text-gray-700 ml-3">• Certifications, Leadership (bonuses)</p>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="p-4 bg-white rounded border border-green-200">
-                        <h3 className="font-semibold text-green-900 mb-3">Strong Fit Candidate</h3>
-                        <div className="space-y-2 text-xs">
-                          <p><strong>Experience:</strong> 1.5 years → Score: 97.5 (perfect fit!)</p>
-                          <p><strong>Skills:</strong> Python, React, SQL, Docker → Score: 85 (3/3 required, 1/2 preferred)</p>
-                          <p><strong>Education:</strong> Bachelor's → Score: 70</p>
+
+                    <div className="grid md:grid-cols-3 gap-4">
+                      {/* Candidate A - Perfect Fit */}
+                      <div className="p-4 bg-white rounded border-2 border-green-300">
+                        <h3 className="font-semibold text-green-900 mb-2 text-sm">Candidate A: Perfect Fit</h3>
+                        <div className="mb-3 p-2 bg-green-50 rounded border border-green-200">
+                          <p className="text-xs font-semibold text-green-900">✓ Stage 1: PASSED</p>
+                          <p className="text-xs text-green-800">Has all required skills, 4 years exp, Bachelor's</p>
+                        </div>
+                        <div className="space-y-1 text-xs">
+                          <p><strong>Skills:</strong> 90/100 (2/3 preferred)</p>
+                          <p><strong>Experience:</strong> 85/100 (+1 year beyond min)</p>
+                          <p><strong>Education:</strong> 70/100 (at minimum)</p>
+                          <p><strong>Bonus:</strong> 50/100 (has leadership)</p>
                           <p className="pt-2 border-t border-green-200 font-bold text-green-900">
-                            Final: <span className="text-lg">83.6/100</span> (Top 10%)
+                            Final: <span className="text-base">82.5/100</span>
                           </p>
                         </div>
                       </div>
-                      <div className="p-4 bg-white rounded border border-red-200">
-                        <h3 className="font-semibold text-red-900 mb-3">Overqualified Candidate</h3>
-                        <div className="space-y-2 text-xs">
-                          <p><strong>Experience:</strong> 10 years → Score: 71 (overqualified penalty)</p>
-                          <p><strong>Skills:</strong> 15 random skills, only Python matches → Score: 30 (1/3 required)</p>
-                          <p><strong>Education:</strong> Master's → Score: 85</p>
+
+                      {/* Candidate B - Rejected */}
+                      <div className="p-4 bg-white rounded border-2 border-red-300">
+                        <h3 className="font-semibold text-red-900 mb-2 text-sm">Candidate B: Missing Req</h3>
+                        <div className="mb-3 p-2 bg-red-50 rounded border border-red-200">
+                          <p className="text-xs font-semibold text-red-900">✗ Stage 1: REJECTED</p>
+                          <p className="text-xs text-red-800">Missing PostgreSQL (required skill)</p>
+                        </div>
+                        <div className="space-y-1 text-xs text-gray-500">
+                          <p><strong>Skills:</strong> N/A (not scored)</p>
+                          <p><strong>Experience:</strong> N/A (not scored)</p>
+                          <p><strong>Education:</strong> N/A (not scored)</p>
+                          <p><strong>Bonus:</strong> N/A (not scored)</p>
                           <p className="pt-2 border-t border-red-200 font-bold text-red-900">
-                            Final: <span className="text-lg">53.8/100</span> (Below 50%)
+                            Final: <span className="text-base">0/100</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Candidate C - Overqualified */}
+                      <div className="p-4 bg-white rounded border-2 border-amber-300">
+                        <h3 className="font-semibold text-amber-900 mb-2 text-sm">Candidate C: Overqualified</h3>
+                        <div className="mb-3 p-2 bg-green-50 rounded border border-green-200">
+                          <p className="text-xs font-semibold text-green-900">✓ Stage 1: PASSED</p>
+                          <p className="text-xs text-green-800">Has all requirements + PhD, 10 years</p>
+                        </div>
+                        <div className="space-y-1 text-xs">
+                          <p><strong>Skills:</strong> 95/100 (3/3 preferred)</p>
+                          <p><strong>Experience:</strong> 70/100 (+7 years, diminishing)</p>
+                          <p><strong>Education:</strong> 100/100 (+2 above min)</p>
+                          <p><strong>Bonus:</strong> 100/100 (cert + leadership)</p>
+                          <p className="pt-2 border-t border-amber-200 font-bold text-amber-900">
+                            Final: <span className="text-base">84.5/100</span>
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-2">
                     <p className="text-sm text-amber-900">
-                      <strong>Why This Matters:</strong> Traditional ATS systems would rank the 10-year candidate higher due to experience alone.
-                      Our job-relative system correctly identifies the 1.5-year candidate as the better fit for this junior role.
+                      <strong>Key Insights from Two-Stage System:</strong>
                     </p>
+                    <ul className="text-sm text-amber-900 space-y-1 ml-4 list-disc">
+                      <li><strong>Candidate A (82.5)</strong> and <strong>Candidate C (84.5)</strong> are close despite C having
+                      7 more years of experience and a PhD. This is intentional - both are qualified, but C's overqualification
+                      doesn't dramatically inflate their score.</li>
+                      <li><strong>Candidate B (0)</strong> was automatically rejected for missing a required skill, even though
+                      they might have great experience in other areas. Requirements are non-negotiable.</li>
+                      <li>Traditional systems would rank C >> A >> B purely on credentials. Our system correctly identifies
+                      that A and C are both qualified with A being a slightly better fit for the role level.</li>
+                    </ul>
                   </div>
                 </CardContent>
               </Card>
