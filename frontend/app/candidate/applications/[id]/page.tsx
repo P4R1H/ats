@@ -233,20 +233,20 @@ export default function ApplicationDetailPage() {
 
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
-                <div className={`text-5xl font-bold mb-2 ${getScoreColor(application.final_score || 0)}`}>
+              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <div className={`text-4xl font-bold mb-2 ${getScoreColor(application.final_score || 0)}`}>
                   {application.final_score?.toFixed(1) || 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Final Score (out of 100)</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
-                <div className="text-5xl font-bold mb-2 text-blue-600">
+              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-4xl font-bold mb-2 text-gray-900">
                   {formatPercentile(application.overall_percentile || 50)}
                 </div>
                 <div className="text-sm text-gray-600">Overall Percentile</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                <div className="text-3xl font-bold mb-2 text-purple-600">
+              <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-2xl font-bold mb-2 text-gray-900">
                   {application.cluster_name || 'N/A'}
                 </div>
                 <div className="text-sm text-gray-600">Talent Cluster</div>
@@ -257,11 +257,11 @@ export default function ApplicationDetailPage() {
 
         {/* Requirements Check (Stage 1) */}
         {application.meets_requirements === false && (
-          <Card className="border-2 border-red-300 mb-8 bg-gradient-to-br from-red-50 to-orange-50">
+          <Card className="border border-gray-200 mb-8">
             <CardContent className="p-8">
               <div className="flex items-start gap-4 mb-6">
-                <div className="p-3 bg-red-100 rounded-full">
-                  <XCircle className="h-8 w-8 text-red-600" />
+                <div className="p-3 bg-gray-100 rounded-lg">
+                  <XCircle className="h-6 w-6 text-gray-600" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -281,8 +281,8 @@ export default function ApplicationDetailPage() {
 
               {/* Missing Requirements Breakdown */}
               {application.missing_requirements && application.missing_requirements.length > 0 && (
-                <div className="bg-white rounded-xl border-2 border-red-200 p-6">
-                  <h3 className="font-bold text-gray-900 mb-4">Missing Requirements:</h3>
+                <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
+                  <h3 className="font-semibold text-gray-900 mb-4">Missing Requirements:</h3>
                   <ul className="space-y-3">
                     {application.missing_requirements.map((req: string, idx: number) => (
                       <li key={idx} className="flex items-start gap-3">
@@ -322,11 +322,11 @@ export default function ApplicationDetailPage() {
         )}
 
         {application.meets_requirements !== false && (
-          <Card className="border-2 border-green-300 mb-8 bg-gradient-to-br from-green-50 to-emerald-50">
+          <Card className="border border-gray-200 mb-8">
             <CardContent className="p-8">
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-green-100 rounded-full">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                <div className="p-3 bg-gray-100 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -359,13 +359,13 @@ export default function ApplicationDetailPage() {
 
         {/* Skills Gap Analysis - Full Width */}
         {(missingRequired.length > 0 || missingPreferred.length > 0) && (
-          <Card className="border border-gray-200 mb-8 bg-gradient-to-br from-blue-50 to-cyan-50">
+          <Card className="border border-gray-200 mb-8">
             <CardContent className="p-8">
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Lightbulb className="h-6 w-6 text-blue-600" />
-                    <h2 className="text-2xl font-bold text-gray-900">Skills Gap Analysis</h2>
+                    <Lightbulb className="h-5 w-5 text-amber-600" />
+                    <h2 className="text-xl font-semibold text-gray-900">Skills Gap Analysis</h2>
                   </div>
                   <p className="text-gray-700">
                     Personalized insights to help you improve your candidacy for this role

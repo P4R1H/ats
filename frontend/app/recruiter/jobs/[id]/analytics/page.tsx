@@ -126,10 +126,10 @@ export default function JobAnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-white to-orange-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="animate-spin h-12 w-12 border-3 border-amber-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-sm text-gray-600 font-medium">Loading world-class analytics...</p>
+          <div className="animate-spin h-8 w-8 border-2 border-gray-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-sm text-gray-600">Loading analytics...</p>
         </div>
       </div>
     )
@@ -437,15 +437,15 @@ export default function JobAnalyticsPage() {
   // ==================== RENDER ====================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-amber-200 sticky top-0 bg-white/80 backdrop-blur-lg z-50 shadow-sm">
+      <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <button
             onClick={() => router.push('/')}
             className="flex items-center gap-2 group"
           >
-            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-lg transition-all duration-300">
+            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
               <Wheat className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
@@ -454,7 +454,7 @@ export default function JobAnalyticsPage() {
           </button>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">{user?.full_name}</span>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm border-amber-200 hover:bg-amber-50">
+            <Button variant="outline" size="sm" onClick={handleLogout} className="text-sm">
               Logout
             </Button>
           </div>
@@ -463,26 +463,21 @@ export default function JobAnalyticsPage() {
 
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* Page Header */}
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <Button
               variant="ghost"
               onClick={() => router.push(`/recruiter/jobs/${jobId}/applications`)}
-              className="mb-4 text-gray-600 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+              className="mb-4 text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Applications
             </Button>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg">
-                <Brain className="h-8 w-8 text-white" />
-              </div>
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-600 via-orange-500 to-amber-500 bg-clip-text text-transparent">
-                ML Analytics Dashboard
-              </h1>
-            </div>
-            <p className="text-lg text-gray-600 ml-14">
-              {job?.title} • Foundation of Data Science Analytics
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Analytics Dashboard
+            </h1>
+            <p className="text-gray-600">
+              {job?.title}
             </p>
           </div>
           {totalApplications > 0 && (
@@ -491,31 +486,30 @@ export default function JobAnalyticsPage() {
                 variant="outline"
                 size="sm"
                 onClick={exportData}
-                className="border-amber-300 text-amber-700 hover:bg-amber-50"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Export Data
               </Button>
-              <div className="flex items-center gap-2 p-1 bg-white rounded-xl shadow-md border border-amber-200">
+              <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg border border-gray-200">
                 <button
                   onClick={() => setShowOnlyQualified(false)}
-                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                     !showOnlyQualified
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  All Applications ({totalApplications})
+                  All ({totalApplications})
                 </button>
                 <button
                   onClick={() => setShowOnlyQualified(true)}
-                  className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                     showOnlyQualified
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Qualified Only ({qualifiedCount})
+                  Qualified ({qualifiedCount})
                 </button>
               </div>
             </div>
@@ -523,13 +517,13 @@ export default function JobAnalyticsPage() {
         </div>
 
         {applications.length === 0 ? (
-          <Card className="border-2 border-amber-200 shadow-xl bg-white">
-            <CardContent className="py-20 text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <BarChart3 className="h-8 w-8 text-amber-600" />
+          <Card className="border border-gray-200">
+            <CardContent className="py-16 text-center">
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="h-6 w-6 text-gray-400" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">No Data Yet</h3>
-              <p className="text-gray-600 text-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No data yet</h3>
+              <p className="text-gray-600">
                 Analytics will appear once candidates apply to this job.
               </p>
             </CardContent>
@@ -539,60 +533,45 @@ export default function JobAnalyticsPage() {
             {/* ==================== KEY METRICS ==================== */}
             <section>
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <Card className="border-2 border-amber-200 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-white to-amber-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Users className="h-5 w-5 text-blue-600" />
-                      <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Apps</span>
-                    </div>
-                    <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="text-sm font-medium text-gray-600 mb-1">Total Apps</div>
+                    <span className="text-3xl font-bold text-gray-900">
                       {totalApplications}
                     </span>
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-green-200 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-green-50 to-emerald-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Target className="h-5 w-5 text-green-600" />
-                      <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Qualified</span>
-                    </div>
+                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="text-sm font-medium text-gray-600 mb-1">Qualified</div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-green-700">{qualifiedCount}</span>
-                      <span className="text-sm font-medium text-green-600">({qualificationRate}%)</span>
+                      <span className="text-3xl font-bold text-gray-900">{qualifiedCount}</span>
+                      <span className="text-sm text-gray-500">({qualificationRate}%)</span>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-amber-200 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-white to-orange-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="h-5 w-5 text-amber-600" />
-                      <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Avg Score</span>
-                    </div>
-                    <span className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="text-sm font-medium text-gray-600 mb-1">Avg Score</div>
+                    <span className="text-3xl font-bold text-amber-600">
                       {avgScore}
                     </span>
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-purple-200 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-white to-purple-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Award className="h-5 w-5 text-purple-600" />
-                      <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shortlisted</span>
-                    </div>
-                    <span className="text-4xl font-bold text-purple-700">{statusCounts.shortlisted}</span>
+                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="text-sm font-medium text-gray-600 mb-1">Shortlisted</div>
+                    <span className="text-3xl font-bold text-gray-900">{statusCounts.shortlisted}</span>
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-pink-200 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-white to-pink-50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Network className="h-5 w-5 text-pink-600" />
-                      <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Clusters</span>
-                    </div>
-                    <span className="text-4xl font-bold text-pink-700">{Object.keys(clusterCounts).length}</span>
+                <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="text-sm font-medium text-gray-600 mb-1">Clusters</div>
+                    <span className="text-3xl font-bold text-gray-900">{Object.keys(clusterCounts).length}</span>
                   </CardContent>
                 </Card>
               </div>
@@ -614,20 +593,14 @@ export default function JobAnalyticsPage() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {insights.map((insight, idx) => {
                     const Icon = insight.icon
-                    const colorClasses = {
-                      amber: 'from-amber-500 to-orange-500 border-amber-200',
-                      blue: 'from-blue-500 to-cyan-500 border-blue-200',
-                      green: 'from-green-500 to-emerald-500 border-green-200',
-                      purple: 'from-purple-500 to-pink-500 border-purple-200'
-                    }[insight.color]
                     return (
-                      <Card key={idx} className={`border-2 ${colorClasses.split(' ')[1]} shadow-lg hover:shadow-xl transition-all duration-300 bg-white`}>
+                      <Card key={idx} className="border border-gray-200 hover:shadow-md transition-shadow">
                         <CardContent className="p-6">
-                          <div className={`w-12 h-12 bg-gradient-to-br ${colorClasses.split(' ')[0]} rounded-xl flex items-center justify-center mb-4 shadow-md`}>
-                            <Icon className="h-6 w-6 text-white" />
+                          <div className="flex items-center gap-2 mb-3">
+                            <Icon className="h-5 w-5 text-gray-600" />
+                            <h3 className="text-sm font-medium text-gray-600">{insight.title}</h3>
                           </div>
-                          <h3 className="text-sm font-semibold text-gray-600 mb-1 uppercase tracking-wide">{insight.title}</h3>
-                          <p className="text-3xl font-bold text-gray-900 mb-2">{insight.value}</p>
+                          <p className="text-2xl font-bold text-gray-900 mb-1">{insight.value}</p>
                           <p className="text-xs text-gray-500">{insight.description}</p>
                         </CardContent>
                       </Card>
@@ -652,7 +625,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.overview && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Requirements Effectiveness */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Gauge className="h-6 w-6 text-amber-600" />
@@ -729,7 +702,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Rejection Reasons */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Filter className="h-6 w-6 text-red-600" />
@@ -790,7 +763,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.distributions && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Talent Pool Quality */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <TrendingUp className="h-6 w-6 text-blue-600" />
@@ -825,7 +798,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Component Percentiles */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Gauge className="h-6 w-6 text-purple-600" />
@@ -853,7 +826,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Experience vs Score Scatter */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white lg:col-span-2">
+                  <Card className="border border-gray-200 lg:col-span-2">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Activity className="h-6 w-6 text-blue-600" />
@@ -907,7 +880,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.patterns && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Skills in Shortlisted Candidates */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Award className="h-6 w-6 text-green-600" />
@@ -941,7 +914,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Experience Success Rate */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <TrendingUp className="h-6 w-6 text-amber-600" />
@@ -975,7 +948,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Time Series */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white lg:col-span-2">
+                  <Card className="border border-gray-200 lg:col-span-2">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Calendar className="h-6 w-6 text-purple-600" />
@@ -1022,7 +995,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.skills && (
                 <div className="grid lg:grid-cols-2 gap-6">
                   {/* Skills by Category Radar */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Network className="h-6 w-6 text-blue-600" />
@@ -1057,7 +1030,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Top Skills Bar */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Sparkles className="h-6 w-6 text-amber-600" />
@@ -1108,7 +1081,7 @@ export default function JobAnalyticsPage() {
               {expandedSections.clusters && (
                 <div className="grid lg:grid-cols-3 gap-6">
                   {/* Cluster Distribution Pie */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white">
+                  <Card className="border border-gray-200">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <PieChart className="h-6 w-6 text-pink-600" />
@@ -1141,7 +1114,7 @@ export default function JobAnalyticsPage() {
                   </Card>
 
                   {/* Cluster Details */}
-                  <Card className="border-2 border-amber-200 shadow-lg bg-white lg:col-span-2">
+                  <Card className="border border-gray-200 lg:col-span-2">
                     <CardContent className="p-8">
                       <div className="flex items-center gap-2 mb-6">
                         <Award className="h-6 w-6 text-purple-600" />
@@ -1191,7 +1164,7 @@ export default function JobAnalyticsPage() {
 
             {/* ==================== STATISTICAL ANALYSIS ==================== */}
             <section>
-              <Card className="border-2 border-amber-200 shadow-lg bg-white">
+              <Card className="border border-gray-200">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-2 mb-6">
                     <Activity className="h-6 w-6 text-purple-600" />
@@ -1228,33 +1201,24 @@ export default function JobAnalyticsPage() {
 
             {/* ==================== APPLICATION STATUS ==================== */}
             <section>
-              <Card className="border-2 border-amber-200 shadow-lg bg-white">
+              <Card className="border border-gray-200">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-2 mb-6">
                     <Users className="h-6 w-6 text-blue-600" />
                     <h2 className="text-2xl font-bold text-gray-900">Application Status Overview</h2>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="text-center p-8 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border-2 border-amber-200 shadow-md hover:shadow-xl transition-all duration-300">
-                      <div className="text-5xl font-bold text-amber-600 mb-3">{statusCounts.pending}</div>
-                      <div className="text-base font-semibold text-gray-700 mb-2">Pending Review</div>
-                      <div className="text-sm text-gray-600">
-                        {((statusCounts.pending / displayedApplications.length) * 100).toFixed(0)}% of pool
-                      </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-4xl font-bold text-gray-900 mb-2">{statusCounts.pending}</div>
+                      <div className="text-sm font-medium text-gray-600">Pending Review</div>
                     </div>
-                    <div className="text-center p-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 shadow-md hover:shadow-xl transition-all duration-300">
-                      <div className="text-5xl font-bold text-green-600 mb-3">{statusCounts.shortlisted}</div>
-                      <div className="text-base font-semibold text-gray-700 mb-2">Shortlisted</div>
-                      <div className="text-sm text-gray-600">
-                        {((statusCounts.shortlisted / displayedApplications.length) * 100).toFixed(0)}% of pool
-                      </div>
+                    <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-4xl font-bold text-amber-600 mb-2">{statusCounts.shortlisted}</div>
+                      <div className="text-sm font-medium text-gray-600">Shortlisted</div>
                     </div>
-                    <div className="text-center p-8 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border-2 border-gray-300 shadow-md hover:shadow-xl transition-all duration-300">
-                      <div className="text-5xl font-bold text-gray-600 mb-3">{statusCounts.rejected}</div>
-                      <div className="text-base font-semibold text-gray-700 mb-2">Rejected</div>
-                      <div className="text-sm text-gray-600">
-                        {((statusCounts.rejected / displayedApplications.length) * 100).toFixed(0)}% of pool
-                      </div>
+                    <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-4xl font-bold text-gray-900 mb-2">{statusCounts.rejected}</div>
+                      <div className="text-sm font-medium text-gray-600">Rejected</div>
                     </div>
                   </div>
                 </CardContent>
