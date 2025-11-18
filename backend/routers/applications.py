@@ -268,6 +268,18 @@ async def submit_application(
         required_skills = json.loads(job.required_skills) if job.required_skills else []
         preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
 
+        # Parse requirements JSON for hard filters
+        requirements_data = {}
+        if job.requirements:
+            try:
+                requirements_data = json.loads(job.requirements)
+            except json.JSONDecodeError:
+                requirements_data = {}
+
+        job_min_education = requirements_data.get('min_education', 'none')
+        job_certifications_required = requirements_data.get('certifications_required', False)
+        job_leadership_required = requirements_data.get('leadership_required', False)
+
         # Calculate scores using job-specific requirements
         weights = {
             "skills": job.weight_skills,
@@ -277,16 +289,23 @@ async def submit_application(
             "leadership": job.weight_leadership
         }
 
+        # TWO-STAGE SCORING: Requirements check → Ranking
         scores = calculate_final_score(
+            # Candidate attributes
             candidate_skills=processed_data['extracted_skills'],
-            required_skills=required_skills,
-            preferred_skills=preferred_skills,
-            skill_diversity=processed_data['skill_diversity'],
-            experience_years=processed_data['experience_years'],
-            min_experience=job.min_experience or 0,
-            education_level=processed_data['education_level'],
-            has_certifications=processed_data['has_certifications'],
-            has_leadership=processed_data['has_leadership'],
+            candidate_experience=processed_data['experience_years'],
+            candidate_education=processed_data['education_level'],
+            candidate_has_certifications=processed_data['has_certifications'],
+            candidate_has_leadership=processed_data['has_leadership'],
+            candidate_skill_diversity=processed_data['skill_diversity'],
+            # Job requirements (hard filters)
+            job_required_skills=required_skills,
+            job_preferred_skills=preferred_skills,
+            job_min_experience=job.min_experience or 0,
+            job_min_education=job_min_education,
+            job_certifications_required=job_certifications_required,
+            job_leadership_required=job_leadership_required,
+            # Weights for ranking
             weights=weights
         )
 
@@ -333,7 +352,11 @@ async def submit_application(
             education_level=processed_data['education_level'],
             has_certifications=processed_data['has_certifications'],
             has_leadership=processed_data['has_leadership'],
-            # Scores
+            # Requirements check (Stage 1)
+            meets_requirements=scores['meets_requirements'],
+            missing_requirements=json.dumps(scores['missing_requirements']),
+            rejection_reason=scores['rejection_reason'],
+            # Scores (Stage 2)
             skills_score=scores['skills_score'],
             experience_score=scores['experience_score'],
             education_score=scores['education_score'],
@@ -586,6 +609,18 @@ def generate_random_applications(
             required_skills = json.loads(job.required_skills) if job.required_skills else []
             preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
 
+            # Parse requirements JSON for hard filters
+            requirements_data = {}
+            if job.requirements:
+                try:
+                    requirements_data = json.loads(job.requirements)
+                except json.JSONDecodeError:
+                    requirements_data = {}
+
+            job_min_education = requirements_data.get('min_education', 'none')
+            job_certifications_required = requirements_data.get('certifications_required', False)
+            job_leadership_required = requirements_data.get('leadership_required', False)
+
             # Calculate scores using job-specific requirements
             weights = {
                 'skills': job.weight_skills or 0.4,
@@ -595,16 +630,23 @@ def generate_random_applications(
                 'leadership': job.weight_leadership or 0.05
             }
 
+            # TWO-STAGE SCORING: Requirements check → Ranking
             scores = calculate_final_score(
+                # Candidate attributes
                 candidate_skills=processed_data['extracted_skills'],
-                required_skills=required_skills,
-                preferred_skills=preferred_skills,
-                skill_diversity=processed_data['skill_diversity'],
-                experience_years=processed_data['experience_years'],
-                min_experience=job.min_experience or 0,
-                education_level=processed_data['education_level'],
-                has_certifications=processed_data['has_certifications'],
-                has_leadership=processed_data['has_leadership'],
+                candidate_experience=processed_data['experience_years'],
+                candidate_education=processed_data['education_level'],
+                candidate_has_certifications=processed_data['has_certifications'],
+                candidate_has_leadership=processed_data['has_leadership'],
+                candidate_skill_diversity=processed_data['skill_diversity'],
+                # Job requirements (hard filters)
+                job_required_skills=required_skills,
+                job_preferred_skills=preferred_skills,
+                job_min_experience=job.min_experience or 0,
+                job_min_education=job_min_education,
+                job_certifications_required=job_certifications_required,
+                job_leadership_required=job_leadership_required,
+                # Weights for ranking
                 weights=weights
             )
 
@@ -645,7 +687,11 @@ def generate_random_applications(
                 education_level=processed_data.get('education_level'),
                 has_certifications=processed_data.get('has_certifications', False),
                 has_leadership=processed_data.get('has_leadership', False),
-                # Scores
+                # Requirements check (Stage 1)
+                meets_requirements=scores['meets_requirements'],
+                missing_requirements=json.dumps(scores['missing_requirements']),
+                rejection_reason=scores['rejection_reason'],
+                # Scores (Stage 2)
                 skills_score=scores['skills_score'],
                 experience_score=scores['experience_score'],
                 education_score=scores['education_score'],

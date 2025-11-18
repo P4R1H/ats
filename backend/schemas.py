@@ -123,7 +123,12 @@ class ApplicationResponse(BaseModel):
     has_certifications: bool = False
     has_leadership: bool = False
 
-    # Scores
+    # Two-Stage Scoring: Requirements Check (Stage 1)
+    meets_requirements: bool = True
+    missing_requirements: Optional[List[str]] = None
+    rejection_reason: Optional[str] = None
+
+    # Scores (Stage 2 - only for candidates who pass requirements)
     skills_score: Optional[float] = None
     experience_score: Optional[float] = None
     education_score: Optional[float] = None
@@ -147,7 +152,7 @@ class ApplicationResponse(BaseModel):
     status: str
     applied_at: datetime
 
-    @field_validator('extracted_skills', 'matched_skills', 'missing_skills', 'recommendations', mode='before')
+    @field_validator('extracted_skills', 'matched_skills', 'missing_skills', 'recommendations', 'missing_requirements', mode='before')
     @classmethod
     def parse_json_field(cls, v):
         """Parse JSON string fields to lists."""
