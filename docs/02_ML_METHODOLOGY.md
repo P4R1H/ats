@@ -1352,6 +1352,202 @@ This project demonstrates mastery of:
 
 ---
 
+## Enhanced Features & Lost Potential Implementation
+
+### Overview
+
+After the initial implementation, a comprehensive audit was conducted to identify "lost potential" - insights and functionality that could be provided to users based on data already being computed but not fully surfaced or utilized. This section documents the significant enhancements made to maximize value extraction from existing data infrastructure.
+
+### 1. Skills by Category Breakdown
+
+**Problem**: The system computed `skills_by_category` during resume parsing (9 categories: programming_languages, web_technologies, databases, data_science, cloud_devops, mobile, design, soft_skills, other_technical) but this rich data was discarded before storage.
+
+**Solution Implemented**:
+- Added `skills_by_category` (JSON) and `technical_skills_count` (Integer) to database schema
+- Modified backend to save category counts: `{"programming_languages": 5, "databases": 3, ...}`
+- Created **radar chart visualization** in analytics dashboard showing skill distribution across categories
+- Enables identification of candidate strengths/weaknesses by category
+
+**FDS Concept**: Data preservation and multidimensional visualization
+
+**Impact**: Recruiters can now see if candidates have balanced skill sets or are specialized in specific domains, leading to better role-fit assessment.
+
+### 2. Component-Level Percentiles
+
+**Problem**: UI expected `skills_percentile`, `experience_percentile`, and `education_percentile` but backend only computed overall percentile. Candidates couldn't identify specific areas for improvement.
+
+**Solution Implemented**:
+```python
+# Calculate component-specific percentiles
+skills_percentile = calculate_percentile(app.skills_score, all_skills_scores)
+experience_percentile = calculate_percentile(app.experience_score, all_experience_scores)
+education_percentile = calculate_percentile(app.education_score, all_education_scores)
+```
+
+- Added three new fields to Application model
+- Implemented percentile calculation for each scoring component
+- Updated UI to display: "Your skills are top 10%, but experience is average (50th percentile)"
+
+**FDS Concept**: Multidimensional statistical analysis and ranking
+
+**Impact**: Provides actionable, component-specific feedback to candidates on where to focus improvement efforts.
+
+### 3. Cluster Descriptions & Insights
+
+**Problem**: Clustering system returned detailed descriptions (e.g., "Early career professionals with diverse but foundational skills") but only cluster name was stored.
+
+**Solution Implemented**:
+- Added `cluster_description` (Text) field to database
+- Enhanced cluster visualization with expandable cards showing:
+  - Cluster description
+  - Number of candidates in cluster
+  - Average score for cluster
+  - Color-coded visual design
+- Enables peer benchmarking: "You're in 'Mid-Level Specialists' with 45 other candidates"
+
+**FDS Concept**: Cluster interpretation and contextual analysis
+
+**Impact**: Makes unsupervised learning results interpretable and actionable for non-technical users.
+
+### 4. Detailed Skills Gap Analysis
+
+**Problem**: System computed separate lists for `matched_required`, `matched_preferred`, `missing_required`, and `missing_preferred` skills but combined them before storage, losing granularity.
+
+**Solution Implemented**:
+- Added five new fields:
+  - `matched_required_skills` (JSON)
+  - `matched_preferred_skills` (JSON)
+  - `missing_required_skills` (JSON)
+  - `missing_preferred_skills` (JSON)
+  - `required_match_percentage` (Float)
+- Modified skill gap analysis to preserve detailed breakdown
+- UI now shows: "100% of required skills, but only 40% of preferred"
+
+**FDS Concept**: Hierarchical feature importance and prioritization
+
+**Impact**: Candidates can prioritize learning required skills over preferred ones; recruiters can adjust requirements based on data.
+
+### 5. Requirements Effectiveness Analysis
+
+**Problem**: No feedback loop to inform recruiters if job requirements were too strict, balanced, or too lenient.
+
+**Solution Implemented**:
+- Computed qualification rate: `(qualified_count / total_applications) * 100`
+- Created visual gauge indicator with three states:
+  - **Too Strict** (<20% qualify): Red, suggests relaxing requirements
+  - **Balanced** (20-60% qualify): Green, optimal balance
+  - **Too Lenient** (>60% qualify): Amber, suggests tightening requirements
+- Added actionable recommendations for each state
+
+**FDS Concept**: Feedback loops and data-driven optimization
+
+**Impact**: Helps recruiters optimize job postings based on actual application data, improving candidate pipeline quality.
+
+### 6. Success Pattern Analysis
+
+**Problem**: Rich data on shortlisted candidates existed but no analysis of what skills/experience correlated with success.
+
+**Solution Implemented**:
+- **Top Skills in Shortlisted**: Bar chart showing skills most common in shortlisted candidates
+- **Experience Success Rate**: Combined chart showing:
+  - Total applications per experience range (0-2, 2-5, 5-8, 8+ years)
+  - Shortlisted count per range
+  - Success rate percentage (line overlay)
+- Identifies "sweet spot" experience ranges
+
+**FDS Concept**: Supervised pattern recognition (post-hoc analysis of labeled data)
+
+**Impact**: Data-driven insights into what predicts hiring success, enabling smarter requirement setting.
+
+### 7. Advanced Visualizations
+
+**New Charts Implemented**:
+
+1. **Talent Pool Quality (Enhanced Score Distribution)**:
+   - Bar chart with quartile reference lines (Q1, Median, Q3)
+   - Color-coded score ranges (red for low, green for high)
+   - Helps identify top 25% threshold
+
+2. **Component Percentiles Bar Chart**:
+   - Shows average skills_percentile, experience_percentile, education_percentile
+   - Gradient fills for visual appeal
+   - Data labels for exact values
+
+3. **Correlation Heatmap**:
+   - 6 correlation cards showing relationships:
+     - Skills × Final Score
+     - Experience × Final Score
+     - Education × Final Score
+     - Skills × Experience
+     - Skills × Education
+     - Experience × Education
+   - Color-coded by strength (Strong >0.7, Moderate >0.4, Weak ≤0.4)
+
+4. **Applications Over Time (Time Series)**:
+   - Area chart showing daily application trends
+   - Gradient fill for visual clarity
+   - Last 14 dates displayed
+
+**FDS Concept**: Data visualization best practices, multivariate analysis
+
+**Impact**: Professional, publication-quality analytics dashboard suitable for data science showcase.
+
+### 8. Statistical Rigor Enhancements
+
+**Improvements**:
+- Explicit quartile calculations and display
+- Correlation coefficient computation with interpretation
+- Statistical significance indicators (through strength categorization)
+- Clear methodology notes ("Correlation analysis includes only candidates who passed Stage 1")
+
+**FDS Concept**: Statistical hypothesis testing and interpretation
+
+**Impact**: Demonstrates mastery of statistical concepts and communicates findings with appropriate rigor.
+
+### 9. Two-Stage Scoring Transparency
+
+**Enhanced Documentation**:
+- Visual funnel chart: Total → Qualified → Top 25%
+- Rejection reasons pie chart with detailed categorization
+- Stage-specific filtering in all analytics
+- Clear explanation of job-relative scoring in Stage 2
+
+**FDS Concept**: Algorithm transparency and interpretability
+
+**Impact**: Users understand why decisions are made, building trust in the ML system.
+
+### 10. UI/UX Consistency & Design Excellence
+
+**Improvements**:
+- Unified color scheme: Amber/orange gradients throughout
+- Consistent card designs with borders, shadows, hover effects
+- Proper alignment and spacing (fixed ML Analytics button misalignment)
+- Glassmorphism effects (backdrop blur on headers)
+- Professional loading states with animated spinners
+- Empty states with helpful messaging
+- Responsive layouts (mobile-friendly)
+
+**FDS Concept**: Data presentation and user-centered design
+
+**Impact**: Professional-grade interface that makes complex ML insights accessible to non-technical users.
+
+### Summary of Lost Potential Recovered
+
+| Enhancement | Data Status Before | Data Status After | User Impact |
+|-------------|-------------------|-------------------|-------------|
+| Skills by Category | Computed, discarded | Stored, visualized | Radar chart, category insights |
+| Component Percentiles | UI expected, not computed | Computed, stored, displayed | Multi-dimensional feedback |
+| Cluster Descriptions | Computed, not stored | Stored, rich display | Peer context, interpretability |
+| Detailed Skill Gap | Computed, combined | Separated, prioritized | Actionable learning paths |
+| Requirements Effectiveness | Not analyzed | Computed, visualized | Optimization guidance |
+| Success Patterns | Data existed | Analyzed, visualized | Predictive insights |
+| Advanced Charts | Basic charts | 10+ sophisticated charts | FDS showcase quality |
+| Statistical Rigor | Basic stats | Quartiles, correlations | Publication-ready |
+
+**Key Principle**: **Maximize value from existing data infrastructure without collecting new data sources.**
+
+---
+
 ## Limitations & Future Work
 
 ### Current Limitations

@@ -377,6 +377,16 @@ async def submit_application(
         ]
         category_percentile = calculate_percentile(scores['final_score'], category_scores)
 
+        # NEW: Calculate component-level percentiles
+        all_apps = db.query(Application).all()
+        skills_scores = [app.skills_score for app in all_apps if app.skills_score]
+        experience_scores = [app.experience_score for app in all_apps if app.experience_score]
+        education_scores = [app.education_score for app in all_apps if app.education_score]
+
+        skills_percentile = calculate_percentile(scores['skills_score'], skills_scores)
+        experience_percentile = calculate_percentile(scores['experience_score'], experience_scores)
+        education_percentile = calculate_percentile(scores['education_score'], education_scores)
+
         # Skill gap analysis
         required_skills = json.loads(job.required_skills)
         preferred_skills = json.loads(job.preferred_skills)
@@ -385,6 +395,12 @@ async def submit_application(
             required_skills=required_skills,
             preferred_skills=preferred_skills
         )
+
+        # NEW: Prepare skills by category counts
+        skills_by_category_counts = {
+            category: len(skills_list)
+            for category, skills_list in processed_data['skills_by_category'].items()
+        }
 
         # Create application
         new_application = Application(
@@ -400,6 +416,9 @@ async def submit_application(
             education_level=processed_data['education_level'],
             has_certifications=processed_data['has_certifications'],
             has_leadership=processed_data['has_leadership'],
+            # NEW: Skills by category
+            skills_by_category=json.dumps(skills_by_category_counts),
+            technical_skills_count=processed_data['technical_skills_count'],
             # Requirements check (Stage 1)
             meets_requirements=scores['meets_requirements'],
             missing_requirements=json.dumps(scores['missing_requirements']),
@@ -413,14 +432,25 @@ async def submit_application(
             # Rankings
             overall_percentile=overall_percentile,
             category_percentile=category_percentile,
+            # NEW: Component percentiles
+            skills_percentile=skills_percentile,
+            experience_percentile=experience_percentile,
+            education_percentile=education_percentile,
             # Clustering
             cluster_id=cluster_info['cluster_id'],
             cluster_name=cluster_info['cluster_name'],
+            cluster_description=cluster_info['cluster_description'],
             # Skill gap
             matched_skills=json.dumps(gap_analysis['matched_skills']),
             missing_skills=json.dumps(gap_analysis['missing_skills']),
             skill_match_percentage=gap_analysis['overall_match_percentage'],
-            recommendations=json.dumps(gap_analysis['recommendations'])
+            recommendations=json.dumps(gap_analysis['recommendations']),
+            # NEW: Detailed skill gap
+            matched_required_skills=json.dumps(gap_analysis['matched_required']),
+            matched_preferred_skills=json.dumps(gap_analysis['matched_preferred']),
+            missing_required_skills=json.dumps(gap_analysis['missing_required']),
+            missing_preferred_skills=json.dumps(gap_analysis['missing_preferred']),
+            required_match_percentage=gap_analysis['required_match_percentage']
         )
 
         db.add(new_application)

@@ -74,6 +74,10 @@ class Application(Base):
     has_certifications = Column(Boolean, default=False)
     has_leadership = Column(Boolean, default=False)
 
+    # NEW: Skills by Category (lost potential #1)
+    skills_by_category = Column(Text)  # JSON object: {"programming_languages": 5, "databases": 3, ...}
+    technical_skills_count = Column(Integer)  # Count of technical vs soft skills
+
     # Two-Stage Scoring: Requirements Check (Stage 1)
     meets_requirements = Column(Boolean, default=True)  # Pass/fail requirements check
     missing_requirements = Column(Text)  # JSON array of what requirements are missing
@@ -90,15 +94,28 @@ class Application(Base):
     overall_percentile = Column(Float)
     category_percentile = Column(Float)
 
+    # NEW: Component-level percentiles (lost potential #2)
+    skills_percentile = Column(Float)
+    experience_percentile = Column(Float)
+    education_percentile = Column(Float)
+
     # Clustering
     cluster_id = Column(Integer)
     cluster_name = Column(String)
+    cluster_description = Column(Text)  # NEW: Cluster description (lost potential #4)
 
     # Skill Gap Analysis
     matched_skills = Column(Text)  # JSON array
     missing_skills = Column(Text)  # JSON array
     skill_match_percentage = Column(Float)
     recommendations = Column(Text)  # JSON array
+
+    # NEW: Detailed skill gap breakdown (lost potential #5)
+    matched_required_skills = Column(Text)  # JSON array
+    matched_preferred_skills = Column(Text)  # JSON array
+    missing_required_skills = Column(Text)  # JSON array
+    missing_preferred_skills = Column(Text)  # JSON array
+    required_match_percentage = Column(Float)
 
     status = Column(String, default="pending")  # 'pending', 'reviewed', 'shortlisted', 'rejected'
     applied_at = Column(DateTime, default=datetime.utcnow)

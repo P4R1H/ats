@@ -123,6 +123,10 @@ class ApplicationResponse(BaseModel):
     has_certifications: bool = False
     has_leadership: bool = False
 
+    # Skills by Category
+    skills_by_category: Optional[dict] = None
+    technical_skills_count: Optional[int] = None
+
     # Two-Stage Scoring: Requirements Check (Stage 1)
     meets_requirements: bool = True
     missing_requirements: Optional[List[str]] = None
@@ -139,9 +143,15 @@ class ApplicationResponse(BaseModel):
     overall_percentile: Optional[float] = None
     category_percentile: Optional[float] = None
 
+    # Component-level percentiles
+    skills_percentile: Optional[float] = None
+    experience_percentile: Optional[float] = None
+    education_percentile: Optional[float] = None
+
     # Clustering
     cluster_id: Optional[int] = None
     cluster_name: Optional[str] = None
+    cluster_description: Optional[str] = None
 
     # Skill Gap Analysis
     matched_skills: Optional[List[str]] = None
@@ -149,13 +159,34 @@ class ApplicationResponse(BaseModel):
     skill_match_percentage: Optional[float] = None
     recommendations: Optional[List[str]] = None
 
+    # Detailed skill gap breakdown
+    matched_required_skills: Optional[List[str]] = None
+    matched_preferred_skills: Optional[List[str]] = None
+    missing_required_skills: Optional[List[str]] = None
+    missing_preferred_skills: Optional[List[str]] = None
+    required_match_percentage: Optional[float] = None
+
     status: str
     applied_at: datetime
 
-    @field_validator('extracted_skills', 'matched_skills', 'missing_skills', 'recommendations', 'missing_requirements', mode='before')
+    @field_validator('extracted_skills', 'matched_skills', 'missing_skills', 'recommendations', 'missing_requirements',
+                      'matched_required_skills', 'matched_preferred_skills', 'missing_required_skills', 'missing_preferred_skills', mode='before')
     @classmethod
     def parse_json_field(cls, v):
         """Parse JSON string fields to lists."""
+        if v is None:
+            return None
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return None
+        return v
+
+    @field_validator('skills_by_category', mode='before')
+    @classmethod
+    def parse_skills_by_category(cls, v):
+        """Parse skills_by_category JSON field to dict."""
         if v is None:
             return None
         if isinstance(v, str):
