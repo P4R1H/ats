@@ -123,35 +123,48 @@ export default function RegisterPage() {
                   </Button>
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor={formData.role === 'recruiter' ? 'company_name' : 'full_name'} className="text-sm font-medium">
-                  {formData.role === 'recruiter' ? 'Company Name' : 'Full Name'}
-                </Label>
-                <Input
-                  id={formData.role === 'recruiter' ? 'company_name' : 'full_name'}
-                  type="text"
-                  placeholder={formData.role === 'recruiter' ? 'Acme Corporation' : 'John Doe'}
-                  value={formData.role === 'recruiter' ? formData.company_name : formData.full_name}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    [formData.role === 'recruiter' ? 'company_name' : 'full_name']: e.target.value
-                  })}
-                  required
-                  className="h-10 text-sm border-2 focus:border-amber-400"
-                />
-              </div>
-
-              {formData.role === 'recruiter' && (
+              {formData.role === 'recruiter' ? (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="company_name" className="text-sm font-medium">
+                      Company Name
+                    </Label>
+                    <Input
+                      id="company_name"
+                      type="text"
+                      placeholder="Acme Corporation"
+                      value={formData.company_name}
+                      onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                      required
+                      className="h-10 text-sm border-2 focus:border-amber-400"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="company_logo" className="text-sm font-medium">
+                      Company Logo URL (optional)
+                    </Label>
+                    <Input
+                      id="company_logo"
+                      type="url"
+                      placeholder="https://example.com/logo.png"
+                      value={formData.company_logo}
+                      onChange={(e) => setFormData({ ...formData, company_logo: e.target.value })}
+                      className="h-10 text-sm border-2 focus:border-amber-400"
+                    />
+                  </div>
+                </div>
+              ) : (
                 <div className="space-y-1">
-                  <Label htmlFor="company_logo" className="text-sm font-medium">
-                    Company Logo URL (optional)
+                  <Label htmlFor="full_name" className="text-sm font-medium">
+                    Full Name
                   </Label>
                   <Input
-                    id="company_logo"
-                    type="url"
-                    placeholder="https://example.com/logo.png"
-                    value={formData.company_logo}
-                    onChange={(e) => setFormData({ ...formData, company_logo: e.target.value })}
+                    id="full_name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={formData.full_name}
+                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    required
                     className="h-10 text-sm border-2 focus:border-amber-400"
                   />
                 </div>
