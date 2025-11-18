@@ -262,18 +262,55 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-white/80 backdrop-blur-md mt-20">
-        <div className="container mx-auto px-4 py-8 text-center space-y-2">
-          <div className="flex items-center justify-center space-x-2 text-lg font-semibold">
-            <Wheat className="h-5 w-5 text-orange-600" />
-            <span>Bread</span>
+      <footer className="border-t border-orange-200 bg-gradient-to-b from-white to-orange-50/30 mt-20">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center space-y-6">
+              {/* Logo and tagline */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+                    <Wheat className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="text-2xl font-bold gradient-text">Bread</span>
+                </div>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  Rise to the top with data-driven hiring powered by machine learning
+                </p>
+              </div>
+
+              {/* Tech stack */}
+              <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
+                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
+                  ML & NLP
+                </span>
+                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
+                  FastAPI
+                </span>
+                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
+                  Next.js 14
+                </span>
+                <span className="px-3 py-1 bg-white/60 rounded-full border border-orange-200">
+                  Scikit-learn
+                </span>
+              </div>
+
+              {/* Divider */}
+              <div className="pt-6 border-t border-orange-200">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">Foundation of Data Science</span> Academic Project
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Developed by <span className="font-medium text-orange-600">Parth Gupta</span>
+                </p>
+              </div>
+
+              {/* Copyright */}
+              <p className="text-xs text-muted-foreground pt-4">
+                © 2024 Bread ATS. Built with ❤️ for transparent, fair hiring.
+              </p>
+            </div>
           </div>
-          <p className="text-muted-foreground">
-            Baked with ❤️ using ML, FastAPI, and Next.js
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Academic Project - Foundations of Data Science
-          </p>
         </div>
       </footer>
     </div>
