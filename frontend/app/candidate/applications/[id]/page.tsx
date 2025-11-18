@@ -195,7 +195,21 @@ export default function ApplicationDetailPage() {
                   Applied {formatDate(application.applied_at)}
                 </p>
               </div>
-              <div>
+              <div className="flex flex-col gap-2 items-end">
+                {/* Requirements Badge */}
+                {application.meets_requirements === false ? (
+                  <span className="inline-flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-full font-medium border-2 border-red-300">
+                    <XCircle className="h-5 w-5 mr-2" />
+                    Did Not Meet Requirements
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full font-medium border-2 border-green-300">
+                    <CheckCircle className="h-5 w-5 mr-2" />
+                    Met All Requirements
+                  </span>
+                )}
+
+                {/* Status Badge */}
                 {application.status === 'pending' && (
                   <span className="inline-flex items-center px-4 py-2 bg-amber-100 text-amber-800 rounded-full font-medium">
                     <Clock className="h-4 w-4 mr-2" />
@@ -240,6 +254,108 @@ export default function ApplicationDetailPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Requirements Check (Stage 1) */}
+        {application.meets_requirements === false && (
+          <Card className="border-2 border-red-300 mb-8 bg-gradient-to-br from-red-50 to-orange-50">
+            <CardContent className="p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="p-3 bg-red-100 rounded-full">
+                  <XCircle className="h-8 w-8 text-red-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Application Did Not Meet Minimum Requirements
+                  </h2>
+                  <p className="text-gray-700 mb-1">
+                    Our two-stage scoring system requires candidates to meet ALL minimum requirements
+                    before being ranked. Unfortunately, your application was missing some requirements.
+                  </p>
+                  {application.rejection_reason && (
+                    <p className="text-sm text-red-800 font-medium mt-3 p-3 bg-red-100 rounded-lg">
+                      {application.rejection_reason}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Missing Requirements Breakdown */}
+              {application.missing_requirements && application.missing_requirements.length > 0 && (
+                <div className="bg-white rounded-xl border-2 border-red-200 p-6">
+                  <h3 className="font-bold text-gray-900 mb-4">Missing Requirements:</h3>
+                  <ul className="space-y-3">
+                    {application.missing_requirements.map((req: string, idx: number) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-800">{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* What This Means */}
+              <div className="mt-6 p-6 bg-white rounded-xl border border-red-200">
+                <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-amber-600" />
+                  What This Means For You
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                  <p>
+                    <strong>Stage 1 (Requirements Check):</strong> This is a pass/fail filter.
+                    Your application did not meet all minimum requirements set by the employer.
+                  </p>
+                  <p>
+                    <strong>Stage 2 (Scoring & Ranking):</strong> Your score of {application.final_score?.toFixed(1) || 0}
+                    shows what you would score among qualified candidates, but you were not ranked because
+                    you didn't pass Stage 1.
+                  </p>
+                  <p className="font-medium text-green-700">
+                    ✓ Good news: You can improve! Review the missing requirements above and work on
+                    acquiring those skills/qualifications. Then apply to similar positions where you meet
+                    all requirements.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {application.meets_requirements !== false && (
+          <Card className="border-2 border-green-300 mb-8 bg-gradient-to-br from-green-50 to-emerald-50">
+            <CardContent className="p-8">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-green-100 rounded-full">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    You Met All Minimum Requirements!
+                  </h2>
+                  <p className="text-gray-700 mb-4">
+                    Congratulations! Your application passed Stage 1 (Requirements Check).
+                    You now compete with other qualified candidates in Stage 2 (Scoring & Ranking).
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div className="p-4 bg-white rounded-lg border border-green-200">
+                      <div className="font-semibold text-gray-900 mb-2">✓ Stage 1: Requirements</div>
+                      <p className="text-gray-600">
+                        You meet all minimum education, experience, skills, and qualifications.
+                      </p>
+                    </div>
+                    <div className="p-4 bg-white rounded-lg border border-green-200">
+                      <div className="font-semibold text-gray-900 mb-2">→ Stage 2: Ranking</div>
+                      <p className="text-gray-600">
+                        Your score of {application.final_score?.toFixed(1) || 0}/100 ranks you at the{' '}
+                        {formatPercentile(application.overall_percentile || 50)} among qualified candidates.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Skills Gap Analysis - Full Width */}
         {(missingRequired.length > 0 || missingPreferred.length > 0) && (
