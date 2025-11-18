@@ -74,7 +74,12 @@ class Application(Base):
     has_certifications = Column(Boolean, default=False)
     has_leadership = Column(Boolean, default=False)
 
-    # Scores
+    # Two-Stage Scoring: Requirements Check (Stage 1)
+    meets_requirements = Column(Boolean, default=True)  # Pass/fail requirements check
+    missing_requirements = Column(Text)  # JSON array of what requirements are missing
+    rejection_reason = Column(Text)  # Human-readable rejection reason
+
+    # Scores (Stage 2 - only for candidates who pass requirements)
     skills_score = Column(Float)
     experience_score = Column(Float)
     education_score = Column(Float)
