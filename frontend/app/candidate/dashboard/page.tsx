@@ -211,19 +211,22 @@ export default function CandidateDashboard() {
                           Applied {formatDate(app.applied_at)}
                         </p>
 
-                        <div className="flex items-center gap-6 text-sm">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-700">{app.num_skills || 0} skills</span>
-                          </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                            {app.num_skills || 0} skills
+                          </span>
                           {app.cluster_name && (
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-gray-700">{app.cluster_name}</span>
-                            </div>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                              {app.cluster_name}
+                            </span>
                           )}
                         </div>
                       </div>
 
                       <div className="ml-6 flex flex-col items-end gap-2">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          {formatPercentile(app.overall_percentile || 50)}
+                        </span>
                         <div className={`text-3xl font-bold ${getScoreColor(app.final_score || 0)}`}>
                           {app.final_score?.toFixed(0) || 'N/A'}
                         </div>
