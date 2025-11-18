@@ -19,11 +19,44 @@ from ml_integration.extract_skills import process_resume
 from ml_integration.scoring import calculate_final_score, calculate_percentile
 from ml_integration.clustering import assign_cluster
 from ml_integration.skill_gap import analyze_skill_gap
+from ml_integration.skills_database import get_all_skills
 
 router = APIRouter(prefix="/api/applications", tags=["Applications"])
 
 UPLOAD_DIR = Path("uploads/resumes")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def normalize_skill(skill: str) -> str:
+    """Normalize skill for matching (remove dots, spaces, lowercase)"""
+    return skill.lower().replace('.', '').replace(' ', '').replace('-', '')
+
+
+def map_to_skills_database(skills: List[str]) -> List[str]:
+    """
+    Map job skills to proper SKILLS_DATABASE format for resume generation.
+
+    This ensures that skills written to resume text match the format that
+    process_resume expects, enabling proper extraction and matching.
+
+    Example: "python" or "nextjs" -> "Python", "Next.js"
+    """
+    all_db_skills = get_all_skills()
+
+    # Create normalized -> proper casing mapping
+    skill_map = {normalize_skill(s): s for s in all_db_skills}
+
+    mapped_skills = []
+    for skill in skills:
+        normalized = normalize_skill(skill)
+        if normalized in skill_map:
+            # Use proper casing from database
+            mapped_skills.append(skill_map[normalized])
+        else:
+            # Keep original if not in database
+            mapped_skills.append(skill)
+
+    return mapped_skills
 
 
 def parse_json_field(value):
@@ -56,6 +89,10 @@ def generate_random_resume_text(job: JobPosting) -> str:
     # Parse job requirements
     required_skills = json.loads(job.required_skills) if job.required_skills else []
     preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
+
+    # Map skills to SKILLS_DATABASE format so process_resume can extract them
+    required_skills = map_to_skills_database(required_skills)
+    preferred_skills = map_to_skills_database(preferred_skills)
 
     # Parse requirements JSON for hard filters
     requirements_data = {}
@@ -708,11 +745,7 @@ def generate_random_applications(
                 'leadership': job.weight_leadership or 0.05
             }
 
-            # Normalize skills for consistent matching
-            def normalize_skill(skill: str) -> str:
-                """Normalize skill for matching (remove dots, spaces, lowercase)"""
-                return skill.lower().replace('.', '').replace(' ', '').replace('-', '')
-
+            # Normalize skills for consistent matching (use module-level function)
             candidate_skills_normalized = [normalize_skill(s) for s in processed_data['extracted_skills']]
             required_skills_normalized = [normalize_skill(s) for s in required_skills]
             preferred_skills_normalized = [normalize_skill(s) for s in preferred_skills]
