@@ -162,12 +162,12 @@ export default function JobsPage() {
                 <div className="flex items-start justify-between mb-3">
                   <h1 className="text-3xl font-bold text-gray-900 flex-1">{selectedJob.title}</h1>
                   {selectedJob.company_name && (
-                    <div className="flex items-center gap-3 ml-4">
+                    <div className="flex items-center gap-2 ml-4">
                       {selectedJob.company_logo && (
                         <img
                           src={selectedJob.company_logo}
                           alt={selectedJob.company_name}
-                          className="h-12 w-12 rounded object-contain"
+                          className="h-10 w-10 rounded object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none'
                           }}
@@ -418,12 +418,12 @@ export default function JobsPage() {
                       {job.title}
                     </h3>
                     {job.company_name && (
-                      <div className="flex items-center gap-2 ml-3">
+                      <div className="flex items-center gap-1.5 ml-3">
                         {job.company_logo && (
                           <img
                             src={job.company_logo}
                             alt={job.company_name}
-                            className="h-8 w-8 rounded object-contain"
+                            className="h-6 w-6 rounded object-contain"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none'
                             }}
