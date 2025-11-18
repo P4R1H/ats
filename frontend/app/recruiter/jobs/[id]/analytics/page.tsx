@@ -145,9 +145,9 @@ export default function JobAnalyticsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-200 sticky top-0 bg-white z-50 shadow-sm">
+      <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <button
             onClick={() => router.push('/')}
@@ -201,60 +201,57 @@ export default function JobAnalyticsPage() {
           </Card>
         ) : (
           <>
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card className="border border-gray-200 bg-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <Users className="h-5 w-5 text-blue-600" />
-                    <span className="text-2xl font-bold text-gray-900">{totalApplications}</span>
+            {/* Key Metrics - Simplified */}
+            <div className="grid grid-cols-4 gap-4 mb-8">
+              <Card className="border border-gray-200">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Users className="h-4 w-4 text-blue-600" />
+                    <span className="text-xs text-gray-600">Applications</span>
                   </div>
-                  <p className="text-sm text-gray-600">Total Applications</p>
+                  <span className="text-3xl font-bold text-gray-900">{totalApplications}</span>
                 </CardContent>
               </Card>
 
-              <Card className="border border-gray-200 bg-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
-                    <span className="text-2xl font-bold text-gray-900">{avgScore}</span>
+              <Card className="border border-gray-200">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <TrendingUp className="h-4 w-4 text-green-600" />
+                    <span className="text-xs text-gray-600">Avg Score</span>
                   </div>
-                  <p className="text-sm text-gray-600">Average ML Score</p>
+                  <span className="text-3xl font-bold text-gray-900">{avgScore}</span>
                 </CardContent>
               </Card>
 
-              <Card className="border border-gray-200 bg-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <Award className="h-5 w-5 text-amber-600" />
-                    <span className="text-2xl font-bold text-gray-900">{statusCounts.shortlisted}</span>
+              <Card className="border border-gray-200">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Award className="h-4 w-4 text-amber-600" />
+                    <span className="text-xs text-gray-600">Shortlisted</span>
                   </div>
-                  <p className="text-sm text-gray-600">Shortlisted</p>
+                  <span className="text-3xl font-bold text-gray-900">{statusCounts.shortlisted}</span>
                 </CardContent>
               </Card>
 
-              <Card className="border border-gray-200 bg-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <Target className="h-5 w-5 text-purple-600" />
-                    <span className="text-2xl font-bold text-gray-900">{Object.keys(clusterCounts).length}</span>
+              <Card className="border border-gray-200">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Target className="h-4 w-4 text-purple-600" />
+                    <span className="text-xs text-gray-600">Clusters</span>
                   </div>
-                  <p className="text-sm text-gray-600">Talent Clusters</p>
+                  <span className="text-3xl font-bold text-gray-900">{Object.keys(clusterCounts).length}</span>
                 </CardContent>
               </Card>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-8 mb-8">
+            <div className="grid lg:grid-cols-2 gap-6 mb-8">
               {/* Score Distribution */}
               <Card className="border border-gray-200 bg-white">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-6">
+                  <div className="flex items-center gap-2 mb-4">
                     <BarChart3 className="h-5 w-5 text-blue-600" />
-                    <h2 className="text-xl font-semibold text-gray-900">ML Score Distribution</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Score Distribution</h2>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Distribution of final ML-generated scores across all applicants
-                  </p>
                   <div className="space-y-4">
                     {Object.entries(scoreBuckets).map(([range, count]) => (
                       <div key={range}>
@@ -277,13 +274,10 @@ export default function JobAnalyticsPage() {
               {/* Cluster Distribution */}
               <Card className="border border-gray-200 bg-white">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-6">
+                  <div className="flex items-center gap-2 mb-4">
                     <PieChart className="h-5 w-5 text-purple-600" />
-                    <h2 className="text-xl font-semibold text-gray-900">Talent Cluster Analysis</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Talent Clusters</h2>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    ML-based clustering of candidates by skills and experience
-                  </p>
                   {Object.keys(clusterCounts).length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-8">No cluster data available</p>
                   ) : (
@@ -322,17 +316,14 @@ export default function JobAnalyticsPage() {
               </Card>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-8 mb-8">
+            <div className="grid lg:grid-cols-2 gap-6 mb-8">
               {/* Experience Distribution */}
               <Card className="border border-gray-200 bg-white">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-6">
+                  <div className="flex items-center gap-2 mb-4">
                     <TrendingUp className="h-5 w-5 text-green-600" />
-                    <h2 className="text-xl font-semibold text-gray-900">Experience Distribution</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Experience Distribution</h2>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Years of experience across applicant pool
-                  </p>
                   <div className="space-y-4">
                     {Object.entries(experienceBuckets).map(([range, count]) => (
                       <div key={range}>
@@ -355,13 +346,10 @@ export default function JobAnalyticsPage() {
               {/* Top Skills */}
               <Card className="border border-gray-200 bg-white">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-6">
+                  <div className="flex items-center gap-2 mb-4">
                     <Target className="h-5 w-5 text-amber-600" />
-                    <h2 className="text-xl font-semibold text-gray-900">Top Skills in Pool</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Top Skills</h2>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Most frequently appearing skills across all resumes
-                  </p>
                   {topSkills.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-8">No skill data available</p>
                   ) : (
@@ -389,13 +377,10 @@ export default function JobAnalyticsPage() {
             {/* Application Status */}
             <Card className="border border-gray-200 bg-white">
               <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-4">
                   <Users className="h-5 w-5 text-blue-600" />
-                  <h2 className="text-xl font-semibold text-gray-900">Application Status Breakdown</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">Application Status</h2>
                 </div>
-                <p className="text-sm text-gray-600 mb-6">
-                  Current status of all applications in the pipeline
-                </p>
                 <div className="grid grid-cols-3 gap-6">
                   <div className="text-center p-6 bg-amber-50 rounded-xl border border-amber-100">
                     <div className="text-4xl font-bold text-amber-600 mb-2">{statusCounts.pending}</div>
