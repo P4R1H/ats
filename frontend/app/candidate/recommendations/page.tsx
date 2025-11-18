@@ -167,13 +167,10 @@ export default function JobRecommendationsPage() {
         </Button>
 
         {/* Page Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Sparkles className="h-8 w-8 text-amber-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Job Recommendations</h1>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Job Recommendations</h1>
           <p className="text-gray-600">
-            Upload your resume to discover jobs where you're likely to rank high and have the best chances of success
+            Upload your resume to discover jobs where you're likely to rank high
           </p>
         </div>
 
@@ -181,10 +178,7 @@ export default function JobRecommendationsPage() {
         {!resumeAnalysis && (
           <Card className="border border-gray-200 mb-6">
             <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <Upload className="h-5 w-5 text-amber-600" />
-                <h2 className="text-xl font-semibold text-gray-900">Upload Your Resume</h2>
-              </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Upload Your Resume</h2>
 
               <div
                 onDragOver={handleDragOver}
@@ -192,8 +186,8 @@ export default function JobRecommendationsPage() {
                 onDrop={handleDrop}
                 className={`
                   border-2 border-dashed rounded-lg p-12 text-center transition-colors
-                  ${dragging ? 'border-amber-500 bg-amber-50' : 'border-gray-300 bg-gray-50'}
-                  ${analyzing ? 'opacity-50 pointer-events-none' : 'cursor-pointer hover:border-amber-400 hover:bg-amber-50/50'}
+                  ${dragging ? 'border-gray-400 bg-gray-50' : 'border-gray-300 bg-white'}
+                  ${analyzing ? 'opacity-50 pointer-events-none' : 'cursor-pointer hover:border-gray-400 hover:bg-gray-50'}
                 `}
                 onClick={() => !analyzing && fileInputRef.current?.click()}
               >
@@ -207,7 +201,7 @@ export default function JobRecommendationsPage() {
 
                 {analyzing ? (
                   <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="h-12 w-12 text-amber-600 animate-spin" />
+                    <Loader2 className="h-12 w-12 text-gray-900 animate-spin" />
                     <div>
                       <p className="text-lg font-medium text-gray-900 mb-1">Analyzing your resume...</p>
                       <p className="text-sm text-gray-600">
@@ -217,9 +211,7 @@ export default function JobRecommendationsPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-4">
-                    <div className="p-4 bg-white rounded-full border border-gray-200">
-                      <FileText className="h-8 w-8 text-gray-600" />
-                    </div>
+                    <Upload className="h-12 w-12 text-gray-400" />
                     <div>
                       <p className="text-lg font-medium text-gray-900 mb-1">
                         Drop your resume here or click to browse
@@ -232,19 +224,8 @@ export default function JobRecommendationsPage() {
                 )}
               </div>
 
-              <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
-                <div className="flex items-start gap-3">
-                  <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-gray-800">
-                    <p className="font-medium text-gray-900 mb-1">How it works:</p>
-                    <ul className="space-y-1 text-gray-700">
-                      <li>• We'll analyze your resume to extract your skills, experience, and qualifications</li>
-                      <li>• Compare your profile against all open positions</li>
-                      <li>• Show you jobs where you're predicted to rank in the top percentiles</li>
-                      <li>• Highlight positions where you meet requirements and have strong skills match</li>
-                    </ul>
-                  </div>
-                </div>
+              <div className="mt-6 text-sm text-gray-600">
+                <p className="mb-2">We'll analyze your resume to extract your skills, experience, and qualifications, then match you with jobs where you're predicted to rank in the top percentiles.</p>
               </div>
             </CardContent>
           </Card>
@@ -258,10 +239,7 @@ export default function JobRecommendationsPage() {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-6">
                   <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <FileText className="h-5 w-5 text-green-600" />
-                      <h2 className="text-xl font-semibold text-gray-900">Resume Analyzed</h2>
-                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Resume Analyzed</h2>
                     <p className="text-sm text-gray-600">{resumeFile?.name}</p>
                   </div>
                   <Button variant="outline" onClick={handleReset}>
@@ -270,25 +248,25 @@ export default function JobRecommendationsPage() {
                 </div>
 
                 <div className="grid md:grid-cols-4 gap-4">
-                  <div className="p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
-                    <div className="text-2xl font-bold text-blue-700 mb-1">
+                  <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
+                    <div className="text-3xl font-bold text-blue-700 mb-1">
                       {resumeAnalysis.skills.length}
                     </div>
                     <div className="text-sm text-gray-600">Skills Found</div>
                   </div>
-                  <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
-                    <div className="text-2xl font-bold text-green-700 mb-1">
+                  <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
+                    <div className="text-3xl font-bold text-green-700 mb-1">
                       {resumeAnalysis.experience_years}
                     </div>
                     <div className="text-sm text-gray-600">Years Experience</div>
                   </div>
-                  <div className="p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-100">
-                    <div className="text-lg font-semibold text-purple-700 mb-1">
+                  <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                    <div className="text-xl font-semibold text-purple-700 mb-1">
                       {resumeAnalysis.education_level}
                     </div>
                     <div className="text-sm text-gray-600">Education</div>
                   </div>
-                  <div className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-100">
+                  <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-100">
                     <div className="text-lg font-semibold text-amber-700 mb-1">
                       {resumeAnalysis.has_certifications ? 'Yes' : 'No'} / {resumeAnalysis.has_leadership ? 'Yes' : 'No'}
                     </div>
@@ -323,12 +301,9 @@ export default function JobRecommendationsPage() {
             {recommendations.length > 0 && (
               <Card className="border border-gray-200">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <TrendingUp className="h-5 w-5 text-amber-600" />
-                    <h2 className="text-xl font-semibold text-gray-900">
-                      Recommended Jobs ({recommendations.length})
-                    </h2>
-                  </div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                    Recommended Jobs ({recommendations.length})
+                  </h2>
                   <p className="text-sm text-gray-600 mb-6">
                     Jobs ranked by your predicted performance and skills match
                   </p>
@@ -337,22 +312,17 @@ export default function JobRecommendationsPage() {
                     {recommendations.map((rec, idx) => (
                       <div
                         key={rec.job.id}
-                        className="p-6 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-200 hover:bg-amber-50/30 transition-colors"
+                        className="p-6 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <div className="flex items-start gap-3 mb-2">
-                              <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                                #{idx + 1}
-                              </div>
-                              <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                                  {rec.job.title}
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                  {rec.job.company || 'Company'} • {rec.job.location || 'Remote'}
-                                </p>
-                              </div>
+                            <div className="mb-3">
+                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                {rec.job.title}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {rec.job.category}
+                              </p>
                             </div>
 
                             <div className="grid md:grid-cols-3 gap-3 mb-4">
@@ -441,7 +411,8 @@ export default function JobRecommendationsPage() {
 
                           <Button
                             onClick={() => router.push(`/candidate/jobs#${rec.job.id}`)}
-                            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white ml-4"
+                            variant="outline"
+                            className="ml-4"
                           >
                             View Job
                             <ArrowRight className="h-4 w-4 ml-2" />
