@@ -395,13 +395,14 @@ def update_application_status(
     return ApplicationResponse.model_validate(application)
 
 
-@router.post("/job/{job_id}/generate-random", response_model=ApplicationResponse, status_code=status.HTTP_201_CREATED)
-def generate_random_application(
+@router.post("/job/{job_id}/generate-random", status_code=status.HTTP_201_CREATED)
+def generate_random_applications(
     job_id: int,
+    count: int = 1,
     current_user: User = Depends(get_current_recruiter),
     db: Session = Depends(get_db)
 ):
-    """Generate a random test application for a job (recruiters only)."""
+    """Generate random test applications for a job (recruiters only)."""
     # Verify job exists and belongs to recruiter
     job = db.query(JobPosting).filter(JobPosting.id == job_id).first()
 
@@ -417,79 +418,111 @@ def generate_random_application(
             detail="You don't have permission to generate applications for this job"
         )
 
-    # Generate random resume text
-    resume_text = generate_random_resume_text(job.title, job.category)
-
-    try:
-        # Process resume with ML
-        processed_data = process_resume(resume_text)
-
-        # Calculate scores
-        weights = {
-            'skills': job.weight_skills or 0.4,
-            'experience': job.weight_experience or 0.3,
-            'education': job.weight_education or 0.2,
-            'certifications': job.weight_certifications or 0.05,
-            'leadership': job.weight_leadership or 0.05
-        }
-
-        final_score = calculate_final_score(processed_data, weights)
-
-        # Get all scores for percentile calculation
-        all_scores = [app.final_score for app in db.query(Application.final_score).filter(
-            Application.job_id == job_id,
-            Application.final_score.isnot(None)
-        ).all()]
-        all_scores.append(final_score)
-
-        overall_percentile = calculate_percentile(final_score, all_scores)
-
-        # Assign cluster
-        cluster_info = assign_cluster(processed_data)
-
-        # Analyze skill gap
-        job_skills = job.required_skills if job.required_skills else []
-        skill_gap = analyze_skill_gap(processed_data['extracted_skills'], job_skills)
-
-        # Create application (use recruiter as fake candidate for testing)
-        new_application = Application(
-            job_id=job_id,
-            candidate_id=current_user.id,  # Using recruiter ID for test data
-            resume_file_path=f"test_resume_{job_id}_{current_user.id}.txt",
-            resume_text=resume_text,
-            # ML fields
-            extracted_skills=json.dumps(processed_data['extracted_skills']),
-            num_skills=processed_data['num_skills'],
-            skill_diversity=processed_data.get('skill_diversity', 0.0),
-            experience_years=processed_data.get('experience_years', 0.0),
-            education_level=processed_data.get('education_level'),
-            has_certifications=processed_data.get('has_certifications', False),
-            has_leadership=processed_data.get('has_leadership', False),
-            # Scores
-            skills_score=processed_data.get('skills_score', 0.0),
-            experience_score=processed_data.get('experience_score', 0.0),
-            education_score=processed_data.get('education_score', 0.0),
-            bonus_score=processed_data.get('bonus_score', 0.0),
-            final_score=final_score,
-            overall_percentile=overall_percentile,
-            category_percentile=overall_percentile,  # Simplified
-            # Clustering
-            cluster_id=cluster_info.get('cluster_id'),
-            cluster_name=cluster_info.get('cluster_name'),
-            # Skill gap
-            matched_skills=json.dumps(skill_gap['matched_skills']),
-            missing_skills=json.dumps(skill_gap['missing_skills']),
-            skill_match_percentage=skill_gap['match_percentage'],
-            recommendations=json.dumps(skill_gap['recommendations']),
-            # Status
-            status='pending'
+    # Validate count
+    if count < 1 or count > 50:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Count must be between 1 and 50"
         )
 
-        db.add(new_application)
-        db.commit()
-        db.refresh(new_application)
+    created_applications = []
 
-        return ApplicationResponse.model_validate(new_application)
+    try:
+        for i in range(count):
+            # Generate random resume text
+            resume_text = generate_random_resume_text(job.title, job.category)
+
+            # Process resume with ML
+            processed_data = process_resume(resume_text)
+
+            # Calculate scores
+            weights = {
+                'skills': job.weight_skills or 0.4,
+                'experience': job.weight_experience or 0.3,
+                'education': job.weight_education or 0.2,
+                'certification': job.weight_certifications or 0.05,
+                'leadership': job.weight_leadership or 0.05
+            }
+
+            scores = calculate_final_score(
+                num_skills=processed_data['num_skills'],
+                skill_diversity=processed_data['skill_diversity'],
+                experience_years=processed_data['experience_years'],
+                education_level=processed_data['education_level'],
+                has_certifications=processed_data['has_certifications'],
+                has_leadership=processed_data['has_leadership'],
+                weights=weights
+            )
+
+            # Get all scores for percentile calculation
+            all_scores = [app.final_score for app in db.query(Application.final_score).filter(
+                Application.job_id == job_id,
+                Application.final_score.isnot(None)
+            ).all()]
+            all_scores.append(scores['final_score'])
+
+            overall_percentile = calculate_percentile(scores['final_score'], all_scores)
+
+            # Assign cluster
+            cluster_info = assign_cluster(
+                experience_years=processed_data['experience_years'],
+                num_skills=processed_data['num_skills'],
+                skill_diversity=processed_data['skill_diversity']
+            )
+
+            # Analyze skill gap
+            required_skills = json.loads(job.required_skills) if job.required_skills else []
+            preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
+            gap_analysis = analyze_skill_gap(
+                candidate_skills=processed_data['extracted_skills'],
+                required_skills=required_skills,
+                preferred_skills=preferred_skills
+            )
+
+            # Create application (use recruiter as fake candidate for testing)
+            new_application = Application(
+                job_id=job_id,
+                candidate_id=current_user.id,  # Using recruiter ID for test data
+                resume_file_path=f"test_resume_{job_id}_{i+1}.txt",
+                resume_text=resume_text,
+                # ML fields
+                extracted_skills=json.dumps(processed_data['extracted_skills']),
+                num_skills=processed_data['num_skills'],
+                skill_diversity=processed_data.get('skill_diversity', 0.0),
+                experience_years=processed_data.get('experience_years', 0.0),
+                education_level=processed_data.get('education_level'),
+                has_certifications=processed_data.get('has_certifications', False),
+                has_leadership=processed_data.get('has_leadership', False),
+                # Scores
+                skills_score=scores['skills_score'],
+                experience_score=scores['experience_score'],
+                education_score=scores['education_score'],
+                bonus_score=scores['bonus_score'],
+                final_score=scores['final_score'],
+                overall_percentile=overall_percentile,
+                category_percentile=overall_percentile,  # Simplified
+                # Clustering
+                cluster_id=cluster_info['cluster_id'],
+                cluster_name=cluster_info['cluster_name'],
+                # Skill gap
+                matched_skills=json.dumps(gap_analysis['matched_skills']),
+                missing_skills=json.dumps(gap_analysis['missing_skills']),
+                skill_match_percentage=gap_analysis['overall_match_percentage'],
+                recommendations=json.dumps(gap_analysis['recommendations']),
+                # Status
+                status='pending'
+            )
+
+            db.add(new_application)
+            created_applications.append(new_application)
+
+        db.commit()
+
+        return {
+            "success": True,
+            "count": len(created_applications),
+            "message": f"Successfully generated {len(created_applications)} test application(s)"
+        }
 
     except Exception as e:
         raise HTTPException(
