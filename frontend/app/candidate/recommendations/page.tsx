@@ -141,7 +141,7 @@ export default function JobRecommendationsPage() {
             onClick={() => router.push('/')}
             className="flex items-center gap-2 group"
           >
-            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+            <div className="p-1.5 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg group-hover:shadow-md transition-shadow">
               <Wheat className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-semibold text-gray-900">Bread</span>

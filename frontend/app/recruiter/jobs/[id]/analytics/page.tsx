@@ -427,10 +427,10 @@ export default function JobAnalyticsPage() {
             onClick={() => router.push('/')}
             className="flex items-center gap-2 group"
           >
-            <div className="p-1.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
+            <div className="p-1.5 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg group-hover:shadow-md transition-shadow">
               <Wheat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent">
               Bread
             </span>
           </button>
@@ -1182,7 +1182,7 @@ export default function JobAnalyticsPage() {
                     {correlations.map((corr, idx) => {
                       const absValue = Math.abs(corr.value)
                       const strength = absValue > 0.7 ? 'Strong' : absValue > 0.4 ? 'Moderate' : 'Weak'
-                      const colorClass = absValue > 0.7 ? 'from-green-500 to-emerald-600' : absValue > 0.4 ? 'from-amber-500 to-orange-500' : 'from-gray-400 to-gray-500'
+                      const colorClass = absValue > 0.7 ? 'from-green-500 to-emerald-600' : absValue > 0.4 ? 'from-amber-600 via-orange-500 to-amber-600' : 'from-gray-400 to-gray-500'
                       return (
                         <div key={idx} className="h-full p-5 bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 shadow-md hover:shadow-lg transition-all duration-300">
                           <p className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">{corr.x} × {corr.y}</p>

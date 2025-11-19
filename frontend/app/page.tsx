@@ -15,7 +15,7 @@ export default function HomePage() {
         <div className="rounded-full border border-amber-200/50 bg-white/80 backdrop-blur-md shadow-lg shadow-amber-100/50 px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Wheat className="h-6 w-6 text-amber-600" />
-            <span className="font-bold text-xl bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+            <span className="font-bold text-xl bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent">
               Bread
             </span>
           </div>
@@ -125,7 +125,7 @@ export default function HomePage() {
             {/* Feature 1 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
                   <TrendingUp className="h-7 w-7 text-white" />
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function HomePage() {
             {/* Feature 2 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
                   <Target className="h-7 w-7 text-white" />
                 </div>
               </div>
@@ -157,7 +157,7 @@ export default function HomePage() {
             {/* Feature 3 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
                   <BarChart3 className="h-7 w-7 text-white" />
                 </div>
               </div>
@@ -173,7 +173,7 @@ export default function HomePage() {
             {/* Feature 4 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
                   <Layers className="h-7 w-7 text-white" />
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function HomePage() {
             {/* Feature 5 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
                   <Sparkles className="h-7 w-7 text-white" />
                 </div>
               </div>
@@ -205,7 +205,7 @@ export default function HomePage() {
             {/* Feature 6 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
                   <Shield className="h-7 w-7 text-white" />
                 </div>
               </div>
@@ -248,7 +248,7 @@ export default function HomePage() {
                     <th className="text-center py-6 px-6 font-semibold">
                       <div className="flex flex-col items-center">
                         <Wheat className="h-8 w-8 text-amber-600 mb-2" />
-                        <span className="bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent font-bold">
+                        <span className="bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent font-bold">
                           Bread
                         </span>
                       </div>
@@ -271,7 +271,7 @@ export default function HomePage() {
                     </td>
                     <td className="py-5 px-6 text-center">
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white" />
                         </div>
                       </div>
@@ -299,7 +299,7 @@ export default function HomePage() {
                     </td>
                     <td className="py-5 px-6 text-center">
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white" />
                         </div>
                       </div>
@@ -327,7 +327,7 @@ export default function HomePage() {
                     </td>
                     <td className="py-5 px-6 text-center">
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white" />
                         </div>
                       </div>
@@ -353,7 +353,7 @@ export default function HomePage() {
                     </td>
                     <td className="py-5 px-6 text-center">
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white" />
                         </div>
                       </div>
@@ -381,7 +381,7 @@ export default function HomePage() {
                     </td>
                     <td className="py-5 px-6 text-center">
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white" />
                         </div>
                       </div>
@@ -403,7 +403,7 @@ export default function HomePage() {
                     </td>
                     <td className="py-5 px-6 text-center">
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white" />
                         </div>
                       </div>
@@ -433,7 +433,7 @@ export default function HomePage() {
                     </td>
                     <td className="py-5 px-6 text-center">
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white" />
                         </div>
                       </div>
@@ -474,7 +474,7 @@ export default function HomePage() {
         </div>
 
         <div className="relative max-w-4xl mx-auto text-center pb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent pb-2">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent pb-2">
             Ready to Rise?
           </h2>
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
@@ -508,7 +508,7 @@ export default function HomePage() {
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
                 <Wheat className="h-8 w-8 text-amber-600" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent">
                   Bread
                 </span>
               </div>
