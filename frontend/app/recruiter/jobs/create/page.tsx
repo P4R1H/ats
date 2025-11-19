@@ -160,10 +160,10 @@ export default function CreateJobPage() {
             onClick={() => router.push('/')}
             className="flex items-center gap-2"
           >
-            <div className="p-1.5 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg">
+            <div className="p-1.5 bg-gradient-to-br from-amber-600 to-orange-500 rounded-lg">
               <Wheat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent">
+            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
               Bread
             </span>
           </button>

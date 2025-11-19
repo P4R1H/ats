@@ -128,13 +128,13 @@
   animation: scaleIn 0.3s ease-out;
 }
 
-/* Bread-themed gradients - unified dark-light-dark pattern */
+/* Bread-themed gradients - dark to light */
 .gradient-bg {
-  background: linear-gradient(135deg, #d97706 0%, #f97316 50%, #d97706 100%);
+  background: linear-gradient(135deg, #d97706 0%, #f97316 100%);
 }
 
 .gradient-text {
-  background: linear-gradient(to right, #d97706 0%, #f97316 50%, #d97706 100%);
+  background: linear-gradient(to right, #d97706 0%, #f97316 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

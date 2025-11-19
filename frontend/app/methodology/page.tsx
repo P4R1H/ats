@@ -96,10 +96,10 @@ export default function MethodologyPage() {
             onClick={() => router.push('/')}
             className="flex items-center gap-2 group"
           >
-            <div className="p-1.5 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg group-hover:shadow-md transition-shadow">
+            <div className="p-1.5 bg-gradient-to-br from-amber-600 to-orange-500 rounded-lg group-hover:shadow-md transition-shadow">
               <Wheat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent">
+            <span className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
               Bread
             </span>
           </button>
@@ -126,7 +126,7 @@ export default function MethodologyPage() {
                   onClick={() => setActiveSection(section.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                     activeSection === section.id
-                      ? 'bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 text-white shadow-md'
+                      ? 'bg-gradient-to-r from-amber-600 to-orange-500 text-white shadow-md'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -153,7 +153,7 @@ export default function MethodologyPage() {
               <Card className="border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">
                 <CardContent className="p-8">
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg">
+                    <div className="p-3 bg-gradient-to-br from-amber-600 to-orange-500 rounded-lg">
                       <Wheat className="h-6 w-6 text-white" />
                     </div>
                     <div className="flex-1">
@@ -452,7 +452,7 @@ export default function MethodologyPage() {
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Feature Extraction Pipeline</h2>
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-500 rounded-lg flex items-center justify-center">
                         <FileText className="h-5 w-5 text-white" />
                       </div>
                       <div className="flex-1">
@@ -475,7 +475,7 @@ export default function MethodologyPage() {
                     </div>
 
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-500 rounded-lg flex items-center justify-center">
                         <Search className="h-5 w-5 text-white" />
                       </div>
                       <div className="flex-1">
@@ -498,7 +498,7 @@ export default function MethodologyPage() {
                     </div>
 
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-500 rounded-lg flex items-center justify-center">
                         <Layers className="h-5 w-5 text-white" />
                       </div>
                       <div className="flex-1">
@@ -525,7 +525,7 @@ export default function MethodologyPage() {
                     </div>
 
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 via-orange-500 to-amber-600 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-500 rounded-lg flex items-center justify-center">
                         <BarChart3 className="h-5 w-5 text-white" />
                       </div>
                       <div className="flex-1">
