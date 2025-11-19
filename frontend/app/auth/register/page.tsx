@@ -213,7 +213,7 @@ export default function RegisterPage() {
 
               <Button
                 type="submit"
-                className="w-full h-10 gradient-bg text-white text-sm font-semibold shadow-lg hover:shadow-xl transition-all mt-4"
+                className="w-full h-10 gradient-bg text-white border-2 border-transparent text-sm font-semibold shadow-lg hover:shadow-xl transition-all mt-4"
                 disabled={loading}
               >
                 {loading ? 'Creating account...' : (

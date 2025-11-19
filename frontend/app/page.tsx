@@ -28,7 +28,7 @@ export default function HomePage() {
               Sign In
             </Button>
             <Button
-              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
+              className="gradient-bg text-white border-2 border-transparent shadow-lg hover:shadow-xl transition-all"
               onClick={() => router.push('/auth/register')}
             >
               Get Started
@@ -74,16 +74,16 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button
               size="lg"
-              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all text-lg px-8"
+              className="gradient-bg text-white border-2 border-transparent shadow-lg hover:shadow-xl transition-all text-lg px-8"
               onClick={() => router.push('/auth/register?role=candidate')}
             >
               <Users className="mr-2 h-5 w-5" />
               I'm Looking for Work
             </Button>
-            <Button 
+            <Button
               size="lg"
               variant="outline"
-              className="border-2 border-amber-300 hover:bg-amber-50 text-amber-700 text-lg px-8"
+              className="border-2 border-amber-300 hover:bg-amber-50 text-amber-700 text-lg px-8 transition-all"
               onClick={() => router.push('/auth/register?role=recruiter')}
             >
               <Target className="mr-2 h-5 w-5" />
@@ -483,7 +483,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all text-lg px-8"
+              className="gradient-bg text-white border-2 border-transparent shadow-lg hover:shadow-xl transition-all text-lg px-8"
               onClick={() => router.push('/auth/register')}
             >
               Create Free Account
@@ -491,7 +491,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-amber-300 hover:bg-amber-50 text-amber-700 text-lg px-8"
+              className="border-2 border-amber-300 hover:bg-amber-50 text-amber-700 text-lg px-8 transition-all"
               onClick={() => router.push('/auth/login')}
             >
               Sign In

@@ -113,7 +113,7 @@ export default function RecruiterDashboard() {
           </div>
           <Button
             onClick={() => router.push('/recruiter/jobs/create')}
-            className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
+            className="gradient-bg text-white border-2 border-transparent shadow-lg hover:shadow-xl transition-all"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Job
@@ -171,7 +171,7 @@ export default function RecruiterDashboard() {
                 </p>
                 <Button
                   onClick={() => router.push('/recruiter/jobs/create')}
-                  className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
+                  className="gradient-bg text-white border-2 border-transparent shadow-lg hover:shadow-xl transition-all"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Job

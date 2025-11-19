@@ -178,7 +178,7 @@ export default function CandidateDashboard() {
                 </p>
                 <Button
                   onClick={() => router.push('/candidate/jobs')}
-                  className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all"
+                  className="gradient-bg text-white border-2 border-transparent shadow-lg hover:shadow-xl transition-all"
                 >
                   Browse Open Positions
                 </Button>
@@ -322,7 +322,7 @@ export default function CandidateDashboard() {
                           Applied
                         </Button>
                       ) : (
-                        <Button className="gradient-bg text-white shadow-lg hover:shadow-xl transition-all" size="sm">
+                        <Button className="gradient-bg text-white border-2 border-transparent shadow-lg hover:shadow-xl transition-all" size="sm">
                           View & Apply
                         </Button>
                       )}
