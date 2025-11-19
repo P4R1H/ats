@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8 animate-scale-in">
         <div className="text-center space-y-4">
           <Link href="/" className="inline-flex items-center space-x-3">
-            <div className="p-3 bg-gradient-to-br from-amber-600 via-orange-600 to-amber-600 rounded-2xl shadow-lg">
+            <div className="p-3 bg-gradient-to-br from-amber-600 to-orange-500 rounded-2xl shadow-lg">
               <Wheat className="h-8 w-8 text-white" />
             </div>
             <span className="text-3xl font-bold gradient-text">Bread</span>
