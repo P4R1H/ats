@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -29,12 +29,12 @@ export default function MethodologyPage() {
   const [animatedScore, setAnimatedScore] = useState(0)
 
   // Set page title
-  useState(() => {
+  useEffect(() => {
     document.title = 'ML Methodology - Bread ATS'
-  })
+  }, [])
 
   // Animate score on mount
-  useState(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setAnimatedScore(prev => {
         if (prev >= 74) {
@@ -45,7 +45,7 @@ export default function MethodologyPage() {
       })
     }, 20)
     return () => clearInterval(interval)
-  })
+  }, [])
 
   const sections = [
     { id: 'overview', label: 'Overview', icon: Target },
