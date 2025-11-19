@@ -1,6 +1,5 @@
 # Bread ATS - Project Submission Report
-## Foundations of Data Science | Shiv Nadar University
-
+## Foundations of Data Science
 
 **Project Title**: Intelligent Applicant Tracking System with Machine Learning
 **Developer**: Parth Gupta
