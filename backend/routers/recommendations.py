@@ -96,19 +96,22 @@ async def get_job_recommendations(
     recommendations = []
 
     for job in jobs:
-        # Parse JSON fields from job
+        # Parse JSON fields from job - convert Column types to strings
         try:
-            required_skills = json.loads(job.required_skills) if job.required_skills else []
+            required_skills_str: str = str(job.required_skills) if job.required_skills else "[]"
+            required_skills = json.loads(required_skills_str)
         except (json.JSONDecodeError, TypeError):
             required_skills = []
 
         try:
-            preferred_skills = json.loads(job.preferred_skills) if job.preferred_skills else []
+            preferred_skills_str: str = str(job.preferred_skills) if job.preferred_skills else "[]"
+            preferred_skills = json.loads(preferred_skills_str)
         except (json.JSONDecodeError, TypeError):
             preferred_skills = []
 
         try:
-            requirements = json.loads(job.requirements) if job.requirements else {}
+            requirements_str: str = str(job.requirements) if job.requirements else "{}"
+            requirements = json.loads(requirements_str)
         except (json.JSONDecodeError, TypeError):
             requirements = {}
 
