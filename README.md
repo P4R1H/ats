@@ -32,27 +32,6 @@ Traditional applicant tracking systems fail both candidates and recruiters:
 
 ---
 
-## Screenshots
-
-*Note: Add screenshots to `docs/screenshots/` directory*
-
-**Landing Page** - Modern interface with gradient design and feature comparison
-![Landing Page](docs/screenshots/landing.png)
-
-**Candidate Dashboard** - Application tracking and job recommendations
-![Candidate Dashboard](docs/screenshots/candidate-dashboard.png)
-
-**Application Analysis** - Detailed ML-powered scoring breakdown
-![Application Details](docs/screenshots/application-details.png)
-
-**Recruiter Analytics** - Cluster visualization and candidate insights
-![Recruiter Analytics](docs/screenshots/recruiter-analytics.png)
-
-**ML Methodology** - Comprehensive documentation of algorithms
-![ML Methodology](docs/screenshots/methodology.png)
-
----
-
 ## Quick Start
 
 ### Prerequisites
