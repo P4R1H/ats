@@ -417,6 +417,9 @@ for i in range(800):
 - Experience range: 1-10 years (mean: 5.1, std: 2.3)
 - Education distribution: Bachelor's (50%), Master's (30%), PhD (10%), Diploma (10%)
 
+![Category Distribution](images/distribution_of_category.png)
+*Figure 1b: Balanced distribution of resumes across 10 job categories*
+
 **Secondary Dataset: Kaggle Resume Dataset**
 
 For validation and testing with real-world data, we integrate the "Resume Dataset" from Kaggle (Snehaanbhawal, 2023), containing 962 actual resumes across 24 job categories. This dataset introduces realistic noise (typos, formatting variations, missing sections) that tests robustness and validates our approach on authentic data.
@@ -1483,6 +1486,9 @@ def generate_recommendations(missing_skills, job_category):
 
 **Cluster Validation**: Hierarchical clustering (Ward linkage) performed as comparison method showed 68% agreement (Adjusted Rand Index = 0.68), confirming cluster structure validity.
 
+![Hierarchical Dendrogram](images/hierarchical_clustering_dendogram.png)
+*Figure 6b: Dendrogram from hierarchical clustering used to validate K-means structure*
+
 #### 5.2.2 Skill Extraction Performance
 
 Validated on 50 manually annotated resumes:
@@ -1544,6 +1550,9 @@ Cohen's d: 0.58 (medium effect size)
 ```
 
 **Conclusion**: **REJECT H₀** (p < 0.05). Higher education candidates score significantly higher (mean difference = 8.2 points).
+
+![Score by Education](images/score_by_education_level.png)
+*Figure 8b: Box plot showing significant score differences by education level*
 
 #### Hypothesis Test 2: Certification Impact
 
@@ -1633,6 +1642,9 @@ p-value: < 0.0001
 | Has Certifications | 87% | 42% | +45 pp | +107% |
 | Has Leadership | 65% | 28% | +37 pp | +132% |
 | Avg Education Score | 82.5 | 65.0 | +17.5 | +27% |
+
+![High Performers Comparison](images/feature_comparision_highscore_v_others.png)
+*Figure 9b: Feature comparison between top 25% performers and other candidates*
 
 **Profile of Top 25% Candidate**:
 - 18+ skills across diverse categories
