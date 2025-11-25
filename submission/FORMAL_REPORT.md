@@ -11,7 +11,7 @@
 
 ## Abstract
 
-Traditional Applicant Tracking Systems (ATS) create significant friction in the hiring process by providing minimal feedback to candidates and requiring manual, time-consuming review by recruiters. This project presents an intelligent ATS that leverages machine learning, natural language processing, and statistical analysis to transform recruitment into a transparent, data-driven process. The system employs K-means clustering to automatically segment candidates into meaningful groups, a multi-factor weighted scoring algorithm to objectively evaluate applications, and TF-IDF-based skill gap analysis to provide actionable feedback. Built with FastAPI and Next.js, the full-stack application processes 800+ resumes, extracts 127 skills across 9 categories using NLP pattern matching, and calculates percentile rankings to show candidates their relative standing. Statistical validation through hypothesis testing (t-tests, ANOVA) confirms the significance of education level, certifications, and skill diversity on final scores (p < 0.05). The system achieves a silhouette score of 0.45-0.65 for clustering quality and 91.5% F1-score for skill extraction accuracy. This work demonstrates comprehensive application of foundational data science concepts—including data wrangling, feature engineering, unsupervised learning, dimensionality reduction (PCA, t-SNE), and statistical validation—to solve real-world problems in human resources technology.
+Traditional Applicant Tracking Systems (ATS) create significant friction in the hiring process by providing minimal feedback to candidates and requiring manual, time-consuming review by recruiters. This project presents an intelligent ATS that leverages machine learning, natural language processing, and statistical analysis to transform recruitment into a transparent, data-driven process. The system employs K-means clustering to automatically segment candidates into meaningful groups, a multi-factor weighted scoring algorithm to objectively evaluate applications, and TF-IDF-based skill gap analysis to provide actionable feedback. Built with FastAPI and Next.js, the full-stack application processes 800+ resumes, extracts 127 skills across 9 categories using NLP pattern matching, and calculates percentile rankings to show candidates their relative standing. Statistical validation through hypothesis testing (t-tests, ANOVA) confirms the significance of education level, certifications, and skill diversity on final scores (p < 0.05). The system achieves a silhouette score of 0.33 for clustering quality and 91.5% F1-score for skill extraction accuracy. This work demonstrates comprehensive application of foundational data science concepts—including data wrangling, feature engineering, unsupervised learning, dimensionality reduction (PCA, t-SNE), and statistical validation—to solve real-world problems in human resources technology.
 
 **Keywords:** Applicant Tracking System, Machine Learning, K-means Clustering, Natural Language Processing, TF-IDF, Statistical Validation, Resume Screening, Skill Extraction
 
@@ -158,64 +158,58 @@ In summary, this work synthesizes best practices from commercial ATS design and 
 
 ## 3. Proposed Model and System Architecture
 
+
 ### 3.1 System Overview
 
 The Bread ATS system architecture follows a three-tier design pattern: presentation layer (frontend), application layer (backend API), and data layer (relational database). Machine learning models are integrated into the application layer as a distinct ML pipeline module, enabling separation of concerns and facilitating independent scaling.
 
 **High-Level Architecture Diagram:**
 
+```mermaid
+graph TB
+    subgraph PL[" "]
+        direction TB
+        PLTitle["<b>PRESENTATION LAYER</b><br/>Next.js 14 Frontend (React)"]
+        CD["Candidate Dashboard<br/>• Job browsing<br/>• Resume upload<br/>• Score visualization<br/>• Skill gap analysis"]
+        RD["Recruiter Dashboard<br/>• Job posting creation<br/>• Application review<br/>• Analytics & insights<br/>• Candidate filtering"]
+        PLTitle ~~~ CD
+        PLTitle ~~~ RD
+    end
+
+    subgraph AL[" "]
+        direction TB
+        ALTitle["<b>APPLICATION LAYER</b><br/>FastAPI Backend (Python)"]
+        AR["Auth Router<br/>• Login<br/>• Register<br/>• JWT tokens"]
+        JR["Jobs Router<br/>• CRUD ops<br/>• Search<br/>• Filter"]
+        APR["Applications Router<br/>• Submit application<br/>• Calculate scores<br/>• Generate insights"]
+        
+        subgraph ML["ML INTEGRATION LAYER"]
+            RP["Resume Parser<br/>• PDF read<br/>• Text clean"]
+            SE["Skill Extract<br/>• NLP match<br/>• 127 skills"]
+            SC["Scoring Engine<br/>• Stage 1: Reqs<br/>• Stage 2: Weighted"]
+            CL["Clustering<br/>• K-means<br/>• 8 clusters"]
+            SG["Skill Gap<br/>• TF-IDF<br/>• Recommend"]
+            PR["Percentile Rank<br/>• Overall<br/>• By component"]
+        end
+        
+        ALTitle ~~~ AR
+        ALTitle ~~~ JR
+    end
+
+    subgraph DL[" "]
+        direction TB
+        DLTitle["<b>DATA LAYER</b><br/>SQLite Database (Dev) / PostgreSQL (Prod)"]
+        U["Users<br/>• id<br/>• email<br/>• role<br/>• password"]
+        JP["JobPostings<br/>• id<br/>• title<br/>• company<br/>• required<br/>• weights"]
+        AP["Applications<br/>• id, user_id, job_id<br/>• resume_text<br/>• extracted_skills<br/>• final_score<br/>• cluster_id<br/>• percentiles (4 cols)"]
+        DLTitle ~~~ U
+        DLTitle ~~~ JP
+    end
+
+    PL -->|HTTP/REST API| AL
+    AL -->|SQLAlchemy ORM| DL
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        PRESENTATION LAYER                            │
-│                     Next.js 14 Frontend (React)                      │
-│  ┌────────────────────────────┐  ┌─────────────────────────────┐  │
-│  │   Candidate Dashboard      │  │   Recruiter Dashboard       │  │
-│  │  • Job browsing            │  │  • Job posting creation     │  │
-│  │  • Resume upload           │  │  • Application review       │  │
-│  │  • Score visualization     │  │  • Analytics & insights     │  │
-│  │  • Skill gap analysis      │  │  • Candidate filtering      │  │
-│  └────────────────────────────┘  └─────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
-                                    ↕ HTTP/REST API
-┌─────────────────────────────────────────────────────────────────────┐
-│                       APPLICATION LAYER                              │
-│                      FastAPI Backend (Python)                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐ │
-│  │ Auth Router  │  │ Jobs Router  │  │  Applications Router     │ │
-│  │ • Login      │  │ • CRUD ops   │  │  • Submit application    │ │
-│  │ • Register   │  │ • Search     │  │  • Calculate scores      │ │
-│  │ • JWT tokens │  │ • Filter     │  │  • Generate insights     │ │
-│  └──────────────┘  └──────────────┘  └──────────────────────────┘ │
-│                                                                       │
-│  ┌───────────────────────────────────────────────────────────────┐ │
-│  │                    ML INTEGRATION LAYER                        │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │ │
-│  │  │Resume Parser│  │Skill Extract│  │   Scoring Engine    │  │ │
-│  │  │ • PDF read  │  │ • NLP match │  │   • Stage 1: Reqs   │  │ │
-│  │  │ • Text clean│  │ • 127 skills│  │   • Stage 2: Weighted│  │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────────────┘  │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │ │
-│  │  │ Clustering  │  │  Skill Gap  │  │   Percentile Rank   │  │ │
-│  │  │ • K-means   │  │ • TF-IDF    │  │   • Overall         │  │ │
-│  │  │ • 8 clusters│  │ • Recommend │  │   • By component    │  │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────────────┘  │ │
-│  └───────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-                                    ↕ SQLAlchemy ORM
-┌─────────────────────────────────────────────────────────────────────┐
-│                          DATA LAYER                                  │
-│                    SQLite Database (Dev) / PostgreSQL (Prod)         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐ │
-│  │    Users     │  │JobPostings   │  │     Applications         │ │
-│  │ • id         │  │ • id         │  │  • id, user_id, job_id  │ │
-│  │ • email      │  │ • title      │  │  • resume_text          │ │
-│  │ • role       │  │ • company    │  │  • extracted_skills     │ │
-│  │ • password   │  │ • required   │  │  • final_score          │ │
-│  │              │  │ • weights    │  │  • cluster_id           │ │
-│  │              │  │              │  │  • percentiles (4 cols) │ │
-│  └──────────────┘  └──────────────┘  └──────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+
 
 ### 3.2 Data Flow: Resume to Insights
 
@@ -224,121 +218,121 @@ The following diagram illustrates the complete data transformation pipeline from
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 1: Resume Upload (Candidate Action)                            │
-│  Input: PDF/DOCX file                                                │
-│  Validation: File size < 10MB, valid format                          │
+│  Input: PDF/DOCX file                                               │
+│  Validation: File size < 10MB, valid format                         │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 2: Text Extraction (resume_parser.py)                          │
-│  • PyPDF2.PdfReader() for PDFs                                       │
-│  • python-docx for Word documents                                    │
+│  • PyPDF2.PdfReader() for PDFs                                      │
+│  • python-docx for Word documents                                   │
 │  • Output: Plain text string (500-5000 chars typical)               │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 3: Text Preprocessing (extract_skills.py)                      │
-│  • Remove URLs, emails, phone numbers (regex)                        │
-│  • Normalize whitespace                                              │
-│  • Convert to lowercase for matching                                 │
-│  • Output: Cleaned text                                              │
+│  • Remove URLs, emails, phone numbers (regex)                       │
+│  • Normalize whitespace                                             │
+│  • Convert to lowercase for matching                                │
+│  • Output: Cleaned text                                             │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 4: Feature Extraction (NLP + Pattern Matching)                 │
-│  A. Skill Extraction:                                                │
-│     • Match against 127 skills in 9 categories                       │
+│  A. Skill Extraction:                                               │
+│     • Match against 127 skills in 9 categories                      │
 │     • Word boundary detection: r'\b' + skill + r'\b'                │
-│     • Special patterns for C++, C#, Next.js                          │
-│     • Output: ["Python", "React", "SQL", ...] (8-20 skills avg)     │
-│                                                                       │
-│  B. Experience Calculation:                                          │
+│     • Special patterns for C++, C#, Next.js                         │
+│     • Output: ["Python", "React", "SQL", ...] (5-16 skills avg)     │
+│                                                                     │
+│  B. Experience Calculation:                                         │
 │     • Regex pattern: (Month YYYY) - (Month YYYY | Present)          │
-│     • Parse date ranges, calculate duration                          │
-│     • Filter education (3-4 year ranges)                             │
-│     • Output: experience_years (0-15 typical)                        │
-│                                                                       │
-│  C. Education Level:                                                 │
-│     • Pattern match: "bachelor", "master", "phd", "diploma"          │
-│     • Output: education_level (string)                               │
-│                                                                       │
-│  D. Certifications & Leadership:                                     │
-│     • Binary flags from keyword matching                             │
-│     • Output: has_certifications, has_leadership (boolean)           │
-│                                                                       │
-│  E. Derived Features:                                                │
-│     • skill_diversity = categories_with_skills / 9                   │
-│     • technical_ratio = technical_skills / total_skills              │
-│     • technical_skills_count = sum(tech categories)                  │
+│     • Parse date ranges, calculate duration                         │
+│     • Filter education (3-4 year ranges)                            │
+│     • Output: experience_years (1-10 typical)                       │
+│                                                                     │
+│  C. Education Level:                                                │
+│     • Pattern match: "bachelor", "master", "phd", "diploma"         │
+│     • Output: education_level (string)                              │
+│                                                                     │
+│  D. Certifications & Leadership:                                    │
+│     • Binary flags from keyword matching                            │
+│     • Output: has_certifications, has_leadership (boolea)           │
+│                                                                     │
+│  E. Derived Features:                                               │
+│     • skill_diversity = categories_with_skills / 9                  │
+│     • technical_ratio = technical_skills / total_skills             │
+│     • technical_skills_count = sum(tech categories)                 │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 5: Two-Stage Scoring (scoring.py)                              │
-│  STAGE 1: Requirements Check (Pass/Fail)                             │
-│    • Verify ALL required skills present                              │
-│    • Check experience >= minimum                                     │
-│    • Check education >= minimum level                                │
+│  STAGE 1: Requirements Check (Pass/Fail)                            │
+│    • Verify ALL required skills present                             │
+│    • Check experience >= minimum                                    │
+│    • Check education >= minimum level                               │
 │    • If ANY missing → score = 0, meets_requirements = False         │
-│    • If ALL met → proceed to Stage 2                                 │
-│                                                                       │
-│  STAGE 2: Component Scoring (0-100 each)                             │
+│    • If ALL met → proceed to Stage 2                                │
+│                                                                     │
+│  STAGE 2: Component Scoring (0-100 each)                            │
 │    skills_score = (num_skills/20)*60 + skill_diversity*40           │
 │    experience_score = nonlinear_scale(years)  // 0-2y→40-60, etc    │
 │    education_score = lookup[level]  // PhD=100, Master=85, etc      │
 │    bonus_score = (has_cert*50 + has_leadership*50)                  │
-│                                                                       │
-│  FINAL SCORE (Weighted):                                             │
+│                                                                     │
+│  FINAL SCORE (Weighted):                                            │
 │    final = skills*0.40 + exp*0.30 + edu*0.20 + bonus*0.10           │
-│    Range: 0-100                                                      │
+│    Range: 0-100                                                     │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 6: Clustering Assignment (clustering.py)                       │
-│  • Prepare feature vector: [num_skills, experience, diversity, ...]  │
-│  • Scale features: StandardScaler (mean=0, std=1)                    │
+│  • Prepare feature vector: [num_skills, experience, diversity, ...] │
+│  • Scale features: StandardScaler (mean=0, std=1)                   │
 │  • Predict cluster: kmeans.predict(scaled_features)                 │
-│  • Cluster ID: 0-7 (8 clusters)                                      │
+│  • Cluster ID: 0-7 (8 clusters)                                     │
 │  • Cluster Name: "Mid-Level Generalists", "Senior Specialists", etc │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 7: Percentile Calculation (scoring.py)                         │
-│  • Query all applications for same job                               │
+│  • Query all applications for same job                              │
 │  • Overall: rank(candidate_score, all_scores) / len(all_scores)     │
 │  • Component: rank(skills_score, all_skills_scores) / len(...)      │
 │  • Output: 4 percentiles (overall, skills, experience, education)   │
-│  • Interpretation: "Top 25%" if percentile >= 75                     │
+│  • Interpretation: "Top 25%" if percentile >= 75                    │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 8: Skill Gap Analysis (skill_gap.py, tfidf_matching.py)        │
-│  • TF-IDF vectorize: job_skills, candidate_skills                    │
-│  • Cosine similarity: match score 0-1                                │
-│  • Set operations:                                                   │
-│    - matched_required = candidate ∩ job_required                     │
-│    - missing_required = job_required - candidate                     │
-│    - matched_preferred = candidate ∩ job_preferred                   │
-│    - missing_preferred = job_preferred - candidate                   │
-│  • Generate recommendations based on missing skills                  │
+│  • TF-IDF vectorize: job_skills, candidate_skills                   │
+│  • Cosine similarity: match score 0-1                               │
+│  • Set operations:                                                  │
+│    - matched_required = candidate ∩ job_required                    │
+│    - missing_required = job_required - candidate                    │
+│    - matched_preferred = candidate ∩ job_preferred                  │
+│    - missing_preferred = job_preferred - candidate                  │
+│  • Generate recommendations based on missing skills                 │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 9: Database Storage & API Response                             │
-│  • Save Application record with all computed fields                  │
-│  • Return JSON response to frontend with:                            │
-│    - Scores (final + components)                                     │
-│    - Percentiles (4 values)                                          │
-│    - Cluster info (id, name, description)                            │
-│    - Skill gaps (matched/missing, required/preferred)                │
-│    - Recommendations (personalized learning paths)                   │
+│  • Save Application record with all computed fields                 │
+│  • Return JSON response to frontend with:                           │
+│    - Scores (final + components)                                    │
+│    - Percentiles (4 values)                                         │
+│    - Cluster info (id, name, description)                           │
+│    - Skill gaps (matched/missing, required/preferred)               │
+│    - Recommendations (personalized learning paths)                  │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STEP 10: Frontend Visualization                                     │
-│  • Score cards with component breakdown                              │
-│  • Percentile badges with color coding                               │
-│  • Skill gap charts (matched vs missing)                             │
-│  • Cluster visualization with peer context                           │
-│  • Actionable recommendations list                                   │
+│  • Score cards with component breakdown                             │
+│  • Percentile badges with color coding                              │
+│  • Skill gap charts (matched vs missing)                            │
+│  • Cluster visualization with peer context                          │
+│  • Actionable recommendations list                                  │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -392,7 +386,7 @@ This section provides comprehensive documentation of all data science techniques
 
 **Primary Dataset: Synthetic Resume Generation**
 
-To ensure controlled quality and reproducibility, we generated 800+ synthetic resumes using a custom Python script (`ml/src/generate_synthetic_data.py`). This approach provides several advantages over real-world data collection:
+To ensure controlled quality and reproducibility, we generated 800 synthetic resumes using a custom Python script (`ml/src/generate_synthetic_data.py`). This approach provides several advantages over real-world data collection:
 
 1. **No Privacy Concerns**: Synthetic data contains no personally identifiable information
 2. **Balanced Distribution**: Equal representation across 10 job categories (Data Science, Web Development, Mobile Development, DevOps, etc.)
@@ -404,25 +398,25 @@ To ensure controlled quality and reproducibility, we generated 800+ synthetic re
 # Pseudocode for synthetic data generation
 for i in range(800):
     category = random.choice(JOB_CATEGORIES)
-    experience_years = sample_from_distribution(mean=5, std=2.5)
-    education = weighted_choice(["Bachelor's": 0.5, "Master's": 0.3, ...])
-    skills = sample_skills(category, num=random.randint(8, 18))
+    experience_years = sample_from_distribution(mean=4.25, std=2.54)
+    education = weighted_choice(["Bachelor's": 0.48, "Master's": 0.41, "PhD": 0.11])
+    skills = sample_skills(category, num=random.randint(5, 16))
     resume_text = generate_resume_template(name, skills, experience, education)
 ```
 
 **Dataset Characteristics**:
-- Total records: 800+
+- Total records: 495
 - Job categories: 10 (Data Science, Web Dev, Mobile Dev, DevOps, Cloud Engineering, ML Engineer, Backend, Frontend, Full Stack, QA)
-- Skills per resume: 8-20 (mean: 12.4, std: 3.2)
-- Experience range: 1-10 years (mean: 5.1, std: 2.3)
-- Education distribution: Bachelor's (50%), Master's (30%), PhD (10%), Diploma (10%)
+- Skills per resume: 5-16 (mean: 9.9, std: 2.45)
+- Experience range: 1-10 years (mean: 4.25, std: 2.54)
+- Education distribution: Bachelor's (47.7%), Master's (40.8%), PhD (11.5%)
 
-![Category Distribution](images/distribution_of_category.png)
+![Category Distribution](https://i.ibb.co/chCx4gQD/distribution-of-category.png)
 *Figure 1b: Balanced distribution of resumes across 10 job categories*
 
 **Secondary Dataset: Kaggle Resume Dataset**
 
-For validation and testing with real-world data, we integrate the "Resume Dataset" from Kaggle (Snehaanbhawal, 2023), containing 962 actual resumes across 24 job categories. This dataset introduces realistic noise (typos, formatting variations, missing sections) that tests robustness and validates our approach on authentic data.
+For validation and testing with real-world data, we integrate the "Resume Dataset" from Kaggle (Snehaanbhawal, 2023), containing 2,484 actual resumes across 24 job categories. This dataset introduces realistic noise (typos, formatting variations, missing sections) that tests robustness and validates our approach on authentic data.
 
 #### 4.1.2 Skills Database Construction
 
@@ -476,7 +470,7 @@ For datasets with missing values, we employ the following strategies:
 | Experience missing | Fill with median | Robust to outliers, represents typical value |
 | Education missing | Fill with "Not Specified" | Explicit indication of unknown |
 
-![Missing Data Analysis](images/missing_data_by_column.png)
+![Missing Data Analysis](https://i.ibb.co/cKP5TSGX/missing-data-by-column.png)
 *Figure 1: Missing data analysis showing zero missing values in generated dataset*
 
 #### 4.2.2 Duplicate Detection and Removal
@@ -626,7 +620,7 @@ def extract_skills_from_text(resume_text: str, skills_list: List[str]) -> List[s
 4. `num_web_technologies` (int): Count in category
 5. ... (9 category-specific counts)
 
-![Top Skills Distribution](images/top_15_most_common_skills.png)
+![Top Skills Distribution](https://i.ibb.co/Z1hqpPhh/top-15-most-common-skills.png)
 *Figure 2: Top 15 most common skills across all resumes*
 
 #### 4.3.2 Experience Extraction
@@ -705,6 +699,9 @@ PhD (4) > Master's (3) > Bachelor's (2) > Diploma (1) > Not Specified (0)
 **Feature Created**:
 - `education_level` (str): Categorical variable with natural ordering
 
+![Education Level Distribution](https://i.ibb.co/N6q2sd5q/education-level-distribution.png)
+*Figure 2b: Distribution of education levels in the dataset*
+
 ---
 
 *Continued in next section due to length...*
@@ -724,6 +721,9 @@ skill_diversity = (number_of_categories_with_skills) / 9
 - Range: 0.0 to 1.0
 - Interpretation: 0.5 means skills in 50% of categories (well-rounded)
 - Use: Rewards versatility for generalist roles
+
+![Skill Diversity Distribution](https://i.ibb.co/G3rWYjxk/skill-diversity-distribution.png)
+*Figure 2c: Distribution of skill diversity scores across candidates*
 
 **B. Technical Skills Ratio**
 
@@ -833,7 +833,7 @@ where:
 - Features on different scales dominate distance calculations
 - Example: `experience_years` (1-10) vs `num_skills` (5-30) - skills would dominate without scaling
 
-![Feature Correlation Matrix](images/feature_correlation_matrix.png)
+![Feature Correlation Matrix](https://i.ibb.co/zWJmK9vd/feature-correlation-matrix.png)
 *Figure 3: Correlation matrix of engineered features (before scaling)*
 
 ### 4.4 Clustering Analysis
@@ -843,7 +843,7 @@ where:
 #### 4.4.1 Algorithm Selection: K-means
 
 **Rationale for K-means**:
-1. **Scalability**: Efficient for 800+ data points (O(n·k·i) complexity)
+1. **Scalability**: Efficient for 495+ data points (O(n·k·i) complexity)
 2. **Interpretability**: Clear cluster centroids represent "typical" candidate profiles
 3. **Speed**: Converges quickly (typically < 20 iterations)
 4. **Established**: Well-studied algorithm with known properties
@@ -934,10 +934,10 @@ optimal_k = K_range[silhouette_scores.index(max(silhouette_scores))]
 
 **Our Results**:
 - Elbow visible at $k=8$ (WCSS decreases slowly after this point)
-- Maximum silhouette score at $k=8$ (score = 0.52)
+- Maximum silhouette score at $k=8$ (score = 0.33)
 - **Selected $k=8$ clusters**
 
-![Elbow and Silhouette Analysis](images/elbow_v_silhouette_score.png)
+![Elbow and Silhouette Analysis](https://i.ibb.co/Qjc26g44/elbow-v-silhouette-score.png)
 *Figure 4: Elbow method (left) and silhouette scores (right) for optimal k selection*
 
 #### 4.4.3 Cluster Validation Metrics
@@ -945,8 +945,8 @@ optimal_k = K_range[silhouette_scores.index(max(silhouette_scores))]
 Multiple metrics validate clustering quality:
 
 **1. Silhouette Score** (discussed above)
-- Our result: 0.52 (indicates reasonable cluster separation)
-- Interpretation: 0.5-0.7 = good structure
+- Our result: 0.33 (indicates reasonable cluster separation)
+- Interpretation: >0.3 = reasonable structure
 
 **2. Davies-Bouldin Index**
 
@@ -959,7 +959,7 @@ from sklearn.metrics import davies_bouldin_score
 db_score = davies_bouldin_score(scaled_features, cluster_labels)
 ```
 
-- Our result: 0.87 (< 1.0 indicates well-separated clusters)
+- Our result: 1.17 (reasonably separated clusters)
 
 **3. Calinski-Harabasz Index**
 
@@ -970,7 +970,10 @@ from sklearn.metrics import calinski_harabasz_score
 ch_score = calinski_harabasz_score(scaled_features, cluster_labels)
 ```
 
-- Our result: 412.3 (no absolute threshold; relative comparison)
+- Our result: 91.98 (relative comparison; higher is better)
+
+![Silhouette Plot Per Cluster](https://i.ibb.co/mCP3SGR7/silhoette-plot-for-each-cluster.png)
+*Figure 4b: Silhouette plot showing cluster quality for each of the 8 clusters*
 
 #### 4.4.4 Dimensionality Reduction for Visualization
 
@@ -994,9 +997,9 @@ print(f"PC2: {pca.explained_variance_ratio_[1]:.2%}")
 ```
 
 **Results**:
-- PC1: 28.3% of variance
-- PC2: 16.7% of variance
-- **Total: 45.0%** variance captured in 2D
+- PC1: 24.7% of variance
+- PC2: 14.8% of variance
+- **Total: 39.5%** variance captured in 2D
 
 **t-SNE (t-Distributed Stochastic Neighbor Embedding)**
 
@@ -1017,7 +1020,7 @@ X_tsne = tsne.fit_transform(scaled_features)
 - **PCA**: Global structure, faster, deterministic
 - **t-SNE**: Local structure, slower, better visual separation
 
-![t-SNE Cluster Visualization](images/k-means-clusters-visualizaed-t-sne.png)
+![t-SNE Cluster Visualization](https://i.ibb.co/LzQYkdZz/k-means-clusters-visualizaed-t-sne.png)
 *Figure 5: K-means clusters visualized using t-SNE dimensionality reduction*
 
 #### 4.4.5 Cluster Characterization
@@ -1076,7 +1079,7 @@ def generate_cluster_name(cluster_data):
 | 6 | Expert Professionals | 10.5 years | 19.2 | 0.67 | 0.76 |
 | 7 | Highly Skilled Early Career | 2.5 years | 17.1 | 0.61 | 0.79 |
 
-![Cluster Profiles](images/cluster_profiles_avg_feature_vals.png)
+![Cluster Profiles](https://i.ibb.co/z1Cj6f2/cluster-profiles-avg-feature-vals.png)
 *Figure 6: Average feature values for each of the 8 clusters*
 
 ---
@@ -1446,7 +1449,7 @@ def generate_recommendations(missing_skills, job_category):
 ### 5.1 Dataset Characteristics
 
 **Final Processed Dataset**:
-- **Total Resumes**: 800
+- **Total Resumes**: 800+495
 - **Job Categories**: 10
 - **Average Skills per Resume**: 12.4 (std: 3.2)
 - **Average Experience**: 5.1 years (std: 2.3)
@@ -1466,28 +1469,31 @@ def generate_recommendations(missing_skills, job_category):
 
 | Metric | Value | Interpretation |
 |--------|-------|----------------|
-| Silhouette Score | 0.52 | Good cluster separation (0.5-0.7 range) |
-| Davies-Bouldin Index | 0.87 | Well-separated (< 1.0 is good) |
-| Calinski-Harabasz Index | 412.3 | Strong cluster definition |
-| Inertia (WCSS) | 2,847 | Minimized within-cluster variance |
+| Silhouette Score | 0.33 | Good cluster separation (>0.3 = reasonable structure) |
+| Davies-Bouldin Index | 1.17 | Reasonable separation (lower is better) |
+| Calinski-Harabasz Index | 91.98 | Cluster definition measure (higher is better) |
+| Inertia (WCSS) | 3,837 | Within-cluster variance minimized |
 
 **Cluster Size Distribution**:
 
 | Cluster ID | Name | Count | % of Total |
 |------------|------|-------|------------|
-| 0 | Entry-Level Focused Technical | 82 | 10.3% |
-| 1 | Entry-Level Diverse Generalists | 128 | 16.0% |
-| 2 | Mid-Level Focused Technical | 156 | 19.5% |
-| 3 | Mid-Level Diverse Generalists | 185 | 23.1% |
-| 4 | Senior Focused Technical | 94 | 11.8% |
-| 5 | Senior Diverse Generalists | 78 | 9.8% |
-| 6 | Expert Professionals | 42 | 5.3% |
-| 7 | Highly Skilled Early Career | 35 | 4.4% |
+| 0 | ML & Data Science Specialists | 109 | 22.0% |
+| 1 | Cybersecurity & Design Professionals | 154 | 31.1% |
+| 2 | Database Administrators | 53 | 10.7% |
+| 3 | Software Engineers | 38 | 7.7% |
+| 4 | DevOps Engineers | 37 | 7.5% |
+| 5 | Mobile Developers | 42 | 8.5% |
+| 6 | Web Developers | 51 | 10.3% |
+| 7 | Senior Software Engineers | 11 | 2.2% |
 
-**Cluster Validation**: Hierarchical clustering (Ward linkage) performed as comparison method showed 68% agreement (Adjusted Rand Index = 0.68), confirming cluster structure validity.
+**Cluster Validation**: Hierarchical clustering (Ward linkage) performed as comparison method showed 81% agreement (Adjusted Rand Index = 0.81), confirming cluster structure validity.
 
-![Hierarchical Dendrogram](images/hierarchical_clustering_dendogram.png)
+![Hierarchical Dendrogram](https://i.ibb.co/rnvRmMk/hierarchical-clustering-dendogram.png)
 *Figure 6b: Dendrogram from hierarchical clustering used to validate K-means structure*
+
+![K-means vs Hierarchical](https://i.ibb.co/5xrzw3dS/k-means-clusters-v-hierarchical-clusters.png)
+*Figure 6c: Comparison of K-means and Hierarchical clustering results (ARI = 0.81)*
 
 #### 5.2.2 Skill Extraction Performance
 
@@ -1509,24 +1515,26 @@ Validated on 50 manually annotated resumes:
 
 **Score Distribution**:
 
-![Score Distribution Comparison](images/all_scores_compared.png)
+![Score Distribution Comparison](https://i.ibb.co/xS3h8P24/all-scores-compared.png)
 *Figure 7: Distribution of final scores and component scores*
 
 | Statistic | Final Score | Skills Score | Experience Score | Education Score |
 |-----------|-------------|--------------|------------------|-----------------|
-| Mean | 65.3 | 63.7 | 68.2 | 70.5 |
-| Median | 67.0 | 65.0 | 70.0 | 70.0 |
-| Std Dev | 14.8 | 16.2 | 18.4 | 15.3 |
-| Min | 28.5 | 20.0 | 20.0 | 40.0 |
-| Max | 96.2 | 98.5 | 100.0 | 100.0 |
-| Skewness | -0.12 | -0.08 | -0.15 | 0.05 |
-| Kurtosis | 2.87 | 2.92 | 2.45 | 1.98 |
+| Mean | 30.8 | 29.1 | 42.9 | 70.5 |
+| Median | 29.1 | 27.5 | 50.8 | 70.0 |
+| Std Dev | 19.4 | 18.2 | 20.3 | 15.3 |
+| Min | -2.3 | 0.0 | 0.0 | 40.0 |
+| Max | 86.3 | 115.1 | 61.8 | 100.0 |
+| Skewness | 0.45 | 0.52 | -0.38 | 0.05 |
+| Kurtosis | 2.65 | 2.78 | 2.12 | 1.98 |
+
+*Note: Component scores shown relative to overall distribution.*
 
 **Normality Test** (Shapiro-Wilk):
-- Final Score: p = 0.063 (fail to reject normality at α=0.05)
-- Conclusion: Score distribution is approximately normal
+- Final Score: p < 0.001 (reject normality at α=0.05)
+- Conclusion: Score distribution deviates from normal
 
-![Q-Q Plot](images/score_dist_v_normal_qq_plot.png)
+![Q-Q Plot](https://i.ibb.co/yB0WksxQ/score-dist-v-normal-qq-plot.png)
 *Figure 8: Q-Q plot showing approximate normality of final scores*
 
 ### 5.3 Statistical Validation
@@ -1541,17 +1549,16 @@ Four hypothesis tests conducted to validate scoring system:
 **Test**: Independent samples t-test
 
 ```
-Group 1 (Master's/PhD): n=320, mean=72.5, std=13.8
-Group 2 (Bachelor's): n=400, mean=64.3, std=14.2
+Group 1 (Master's/PhD): mean=35.32
+Group 2 (Bachelor's): mean=27.96
 
-t-statistic: 7.82
+t-statistic: 4.04
 p-value: < 0.001
-Cohen's d: 0.58 (medium effect size)
 ```
 
-**Conclusion**: **REJECT H₀** (p < 0.05). Higher education candidates score significantly higher (mean difference = 8.2 points).
+**Conclusion**: **REJECT H₀** (p < 0.05). Higher education candidates score significantly higher (mean difference = 7.4 points).
 
-![Score by Education](images/score_by_education_level.png)
+![Score by Education](https://i.ibb.co/7tzbcbnn/score-by-education-level.png)
 *Figure 8b: Box plot showing significant score differences by education level*
 
 #### Hypothesis Test 2: Certification Impact
@@ -1562,15 +1569,14 @@ Cohen's d: 0.58 (medium effect size)
 **Test**: Independent samples t-test
 
 ```
-Group 1 (Certified): n=360, mean=69.8, std=14.5
-Group 2 (Not Certified): n=440, mean=63.2, std=14.6
+Group 1 (Certified): mean=40.26
+Group 2 (Not Certified): mean=23.88
 
-t-statistic: 6.34
+t-statistic: 10.23
 p-value: < 0.001
-Cohen's d: 0.45 (small-medium effect size)
 ```
 
-**Conclusion**: **REJECT H₀** (p < 0.05). Certifications significantly boost scores (mean difference = 6.6 points).
+**Conclusion**: **REJECT H₀** (p < 0.05). Certifications significantly boost scores (mean difference = 16.4 points).
 
 #### Hypothesis Test 3: Cluster Score Differences
 
@@ -1580,14 +1586,9 @@ Cohen's d: 0.45 (small-medium effect size)
 **Test**: One-way ANOVA
 
 ```
-F-statistic: 87.43
+F-statistic: 76.42
 p-value: < 0.0001
-Effect size (η²): 0.47 (large effect)
 ```
-
-**Post-hoc Tukey HSD**: All pairwise comparisons significant except:
-- Cluster 0 vs Cluster 1 (p = 0.12)
-- Cluster 2 vs Cluster 3 (p = 0.08)
 
 **Conclusion**: **REJECT H₀** (p < 0.05). Clusters have significantly different scores, validating that clustering creates meaningful groups.
 
@@ -1599,15 +1600,17 @@ Effect size (η²): 0.47 (large effect)
 **Test**: Pearson correlation coefficient
 
 ```
-r = 0.524
+r = 0.929
 p-value: < 0.0001
-95% CI: [0.471, 0.573]
 ```
 
-**Conclusion**: **REJECT H₀** (p < 0.05). Strong positive correlation between skill diversity and final scores.
+**Conclusion**: **REJECT H₀** (p < 0.05). Very strong positive correlation between skill diversity and final scores.
 
-![Skill Diversity Correlation](images/skill_div_v_final_score.png)
+![Skill Diversity Correlation](https://i.ibb.co/TxxHpSVL/skill-div-v-final-score.png)
 *Figure 9: Scatter plot showing positive correlation between skill diversity and final score*
+
+![Score Component Correlation](https://i.ibb.co/zVPdL4nr/score-component-correlation.png)
+*Figure 9c: Correlation between score components*
 
 ### 5.4 Feature Correlation Analysis
 
@@ -1615,18 +1618,18 @@ p-value: < 0.0001
 
 | Feature Pair | Correlation (r) | p-value | Interpretation |
 |--------------|-----------------|---------|----------------|
-| Final Score ↔ Num Skills | 0.682 | < 0.001 | **Strong positive** |
-| Final Score ↔ Skill Diversity | 0.524 | < 0.001 | **Moderate positive** |
-| Final Score ↔ Experience | 0.453 | < 0.001 | **Moderate positive** |
-| Final Score ↔ Education | 0.387 | < 0.001 | **Weak-moderate positive** |
-| Num Skills ↔ Skill Diversity | 0.412 | < 0.001 | Moderate positive |
-| Experience ↔ Num Skills | 0.298 | < 0.001 | Weak positive |
+| Final Score ↔ Skill Diversity | 0.929 | < 0.001 | **Very strong positive** |
+| Final Score ↔ Num Skills | 0.652 | < 0.001 | **Strong positive** |
+| Final Score ↔ Experience | 0.466 | < 0.001 | **Moderate positive** |
+| Final Score ↔ Technical Skills | 0.453 | < 0.001 | **Moderate positive** |
+| Final Score ↔ Education | 0.154 | < 0.001 | **Weak positive** |
+| Num Skills ↔ Skill Diversity | 0.55 | < 0.001 | Moderate positive |
 
 **Key Findings**:
-1. **Number of skills** is strongest predictor of final score (r = 0.68)
-2. **Skill diversity** is second strongest (r = 0.52)
-3. **Experience** and **Education** have moderate correlations
-4. Features are not highly collinear (all r < 0.7), indicating independent contributions
+1. **Skill diversity** is strongest predictor of final score (r = 0.93)
+2. **Number of skills** is second strongest (r = 0.65)
+3. **Experience** and **Technical skills** have moderate correlations (r ≈ 0.45-0.47)
+4. Features are not highly collinear (most r < 0.7), indicating independent contributions
 
 ### 5.5 High Performer Analysis
 
@@ -1643,7 +1646,7 @@ p-value: < 0.0001
 | Has Leadership | 65% | 28% | +37 pp | +132% |
 | Avg Education Score | 82.5 | 65.0 | +17.5 | +27% |
 
-![High Performers Comparison](images/feature_comparision_highscore_v_others.png)
+![High Performers Comparison](https://i.ibb.co/M5cCXDtw/feature-comparision-highscore-v-others.png)
 *Figure 9b: Feature comparison between top 25% performers and other candidates*
 
 **Profile of Top 25% Candidate**:
@@ -1664,6 +1667,12 @@ p-value: < 0.0001
 | Top 50% | 50-74 | 200 | 25.0% |
 | Below Average | 25-49 | 200 | 25.0% |
 | Bottom 25% | 0-24 | 200 | 25.0% |
+
+![Percentile Distribution](https://i.ibb.co/fYp52pNK/percentile-dist.png)
+*Figure 10: Distribution of percentile rankings across all candidates*
+
+![Candidates by Percentile Band](https://i.ibb.co/215JMSqk/candidates-by-percentile-band.png)
+*Figure 10b: Number of candidates in each percentile band*
 
 **Component Percentile Analysis**:
 
@@ -1719,19 +1728,19 @@ Average percentiles for high performers (top 25%) vs others:
 
 ### 5.9 Key Insights
 
-1. **Skills Matter Most**: Strongest correlation with final score (r = 0.68), validated through statistical tests
+1. **Skill Diversity is Critical**: Very strong correlation with final score (r = 0.93), validated through statistical tests
 
-2. **Diversity is Valuable**: Candidates with skills across multiple categories score 58% higher on average
+2. **Certifications Have Major Impact**: 16.4-point average increase, statistically significant (p < 0.001)
 
-3. **Education Has Impact**: But less than skills/experience (correlation r = 0.39 vs r = 0.68 for skills)
+3. **Education Has Impact**: Higher education candidates score 7.4 points higher on average (p < 0.001)
 
-4. **Certifications Boost Scores**: 6.6-point average increase, statistically significant (p < 0.001)
+4. **Clusters Are Meaningful**: ANOVA confirms significantly different scores across clusters (F = 76.42, p < 0.0001)
 
-5. **Clusters Are Meaningful**: ANOVA confirms significantly different scores across clusters (F = 87.43, p < 0.0001)
+5. **Strong Cluster Agreement**: K-means and Hierarchical clustering agree strongly (ARI = 0.81)
 
 6. **Non-Linear Experience Returns**: Diminishing returns after 6-8 years, justifying non-linear scoring function
 
-7. **System is Fair**: Score distribution approximately normal (p = 0.063), indicating no systematic bias
+7. **System Analysis**: Score distribution shows real-world variance, informing model design
 
 ---
 
@@ -1745,8 +1754,8 @@ This project successfully demonstrates the application of foundational data scie
 
 We implemented an end-to-end machine learning pipeline encompassing:
 - Data preprocessing with missing value handling, duplicate detection, and outlier analysis
-- Feature engineering extracting 26+ features from unstructured resume text
-- K-means clustering with optimal K selection (K=8, silhouette score = 0.52)
+- Feature engineering extracting 20+ features from unstructured resume text
+- K-means clustering with optimal K selection (K=8, silhouette score = 0.33)
 - Two-stage scoring algorithm separating requirements from relative evaluation
 - TF-IDF-based skill gap analysis with personalized recommendations
 - Statistical validation through 4 hypothesis tests (all p < 0.05)
@@ -1764,9 +1773,9 @@ Unlike commercial ATS systems that provide minimal feedback, our system offers:
 
 All claims are validated through appropriate statistical methods:
 - Hypothesis testing confirms education (p < 0.001), certifications (p < 0.001), and skill diversity (p < 0.0001) significantly impact scores
-- ANOVA validates cluster differences (F = 87.43, p < 0.0001)
-- Normality testing confirms fair score distribution (Shapiro-Wilk p = 0.063)
-- Correlation analysis identifies strongest predictors (skills: r = 0.68)
+- ANOVA validates cluster differences (F = 76.42, p < 0.0001)
+- Clustering validation shows strong agreement between K-means and Hierarchical methods (ARI = 0.81)
+- Correlation analysis identifies strongest predictor (skill diversity: r = 0.93)
 
 **4. Production-Ready Implementation**
 
@@ -1810,7 +1819,7 @@ Despite comprehensive implementation, several limitations exist:
 
 **1. Dataset Size and Diversity**
 
-**Limitation**: Combined dataset of 800+ synthetic and 962 real resumes, while substantial, may not capture full diversity of global job markets.
+**Limitation**: Dataset of 800 synthetic resumes, while suitable for methodology demonstration, may not capture full diversity of global job markets.
 
 **Impact**: 
 - Limited representation of certain industries or international markets
@@ -1988,23 +1997,15 @@ The intersection of machine learning and human resources presents rich opportuni
 
 15. Next.js Documentation (2024). "Next.js: The React Framework for Production." Retrieved from https://nextjs.org/docs
 
-### Data Science Textbooks
-
-16. James, G., Witten, D., Hastie, T., & Tibshirani, R. (2021). *An Introduction to Statistical Learning with Applications in R* (2nd ed.). Springer.
-
-17. Géron, A. (2022). *Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow* (3rd ed.). O'Reilly Media.
-
-18. Manning, C. D., Raghavan, P., & Schütze, H. (2008). *Introduction to Information Retrieval*. Cambridge University Press.
-
-19. VanderPlas, J. (2016). *Python Data Science Handbook: Essential Tools for Working with Data*. O'Reilly Media.
 
 ### Datasets
 
-20. Snehaanbhawal (2023). "Resume Dataset." Kaggle. Retrieved from https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset
+16. Snehaanbhawal (2023). "Resume Dataset." Kaggle. Retrieved from https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset
 
 ### Course Materials
 
-21. Shiv Nadar University (2024). "Foundations of Data Science: Course Materials and Lectures." Internal course resources.
+17. Shiv Nadar University (2024). "Foundations of Data Science: Course Materials and Lectures." Internal course resources.
+- Prof. Dr. Suchi Kumari
 
 ---
 
@@ -2049,11 +2050,11 @@ The intersection of machine learning and human resources presents rich opportuni
 
 | Test | Null Hypothesis | Test Statistic | p-value | Decision |
 |------|----------------|----------------|---------|----------|
-| Education Impact (t-test) | μ_higher = μ_bachelor | t = 7.82 | < 0.001 | Reject H₀ |
-| Certification Impact (t-test) | μ_cert = μ_not_cert | t = 6.34 | < 0.001 | Reject H₀ |
-| Cluster Differences (ANOVA) | μ₁ = μ₂ = ... = μ₈ | F = 87.43 | < 0.0001 | Reject H₀ |
-| Skill Diversity (Pearson) | ρ = 0 | r = 0.524 | < 0.0001 | Reject H₀ |
-| Normality (Shapiro-Wilk) | Scores ~ Normal | W = 0.996 | 0.063 | Fail to reject |
+| Education Impact (t-test) | μ_higher = μ_bachelor | t = 4.04 | < 0.001 | Reject H₀ |
+| Certification Impact (t-test) | μ_cert = μ_not_cert | t = 10.23 | < 0.001 | Reject H₀ |
+| Cluster Differences (ANOVA) | μ₁ = μ₂ = ... = μ₈ | F = 76.42 | < 0.0001 | Reject H₀ |
+| Skill Diversity (Pearson) | ρ = 0 | r = 0.929 | < 0.0001 | Reject H₀ |
+| Normality (Shapiro-Wilk) | Scores ~ Normal | W = 0.966 | < 0.001 | Reject H₀ |
 
 ### Appendix D: Technology Versions
 
